@@ -16,8 +16,7 @@ export default function Page() {
       <section className="mt-6 mb-6 flex w-full flex-col md:flex-row">
         <div className="flex w-full flex-row items-center justify-between gap-2 md:gap-0">
           <a
-            href={ONCHAINKIT_LINK}
-            title="onchainkit"
+            title=""
             target="_blank"
             rel="noreferrer"
           >

@@ -7,6 +7,7 @@ import OnchainkitSvg from 'src/svg/OnchainkitSvg';
 import { useAccount } from 'wagmi';
 import LoginButton from '../components/LoginButton';
 import SignupButton from '../components/SignupButton';
+import './global.css'; // Ensure this path is correct
 
 export default function Page() {
   const { address } = useAccount();
@@ -16,10 +17,10 @@ export default function Page() {
       {/* Main Content Area */}
       <div className="flex-grow flex items-center justify-center">
         {/* White Container */}
-        <div className="bg-white w-full h-[100vw] max-w-[100vh] max-h-full md:w-[100vh] md:h-[100vh] relative mt-[10px] md:mt-0">
+        <div className="white-container">
           
           {/* Login Section Positioned at Top Right */}
-          <div className="absolute top-4 right-4 flex items-center gap-3">
+          <div className="login-section">
             <SignupButton />
             {!address && <LoginButton />}
           </div>

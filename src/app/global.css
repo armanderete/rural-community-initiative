@@ -5,7 +5,7 @@
 
 :root {
   /* Palette */
-  --palette-bg-black: #fff;
+  --palette-bg-black: #000000;
   --palette-bg-white: rgb(21, 26, 38);
 
   /* Indicates that the element can be rendered using 

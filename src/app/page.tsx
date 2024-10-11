@@ -16,6 +16,8 @@ import Animation3 from './animations/animation3.json';
 import Animation4 from './animations/animation4.json';
 import Animation5 from './animations/animation5.json';
 
+import AbcAnimation from './animations/abcvote.json';
+
 export default function Page() {
   const { address } = useAccount();
   
@@ -40,6 +42,8 @@ export default function Page() {
   // Optional: State to prevent button clicks during animation
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  
   useEffect(() => {
     if (address && !animationPlayed) {
       // User has logged in and animation hasn't played yet
@@ -75,10 +79,13 @@ export default function Page() {
 
   // Handler for Vote Button Click
   const handleVoteButtonClick = () => {
-    // Define the functionality for the vote button here
-    console.log('Vote Button Clicked');
-    // Example: Toggle visibility
-    // setVoteButtonVisible(!voteButtonVisible);
+    // Open the drawer
+    setIsDrawerOpen(true);
+  };
+
+  // Handler to close the drawer
+  const handleCloseDrawer = () => {
+    setIsDrawerOpen(false);
   };
 
   return (
@@ -154,6 +161,47 @@ export default function Page() {
             className="h-[20vh] w-auto object-contain" // Also here specify the size
           />
         </button>
+      )}
+
+      {/* Drawer Component */}
+      {isDrawerOpen && (
+        <div className="fixed inset-0 z-40 flex items-end justify-center">
+          {/* Overlay */}
+          <div
+            className="absolute inset-0 bg-black opacity-50"
+            onClick={handleCloseDrawer}
+          ></div>
+
+          {/* Drawer */}
+          <div
+            className="relative bg-black z-50 rounded-t-lg overflow-hidden"
+            style={{
+              width: '70%',
+              height: '90%',
+            }}
+            onClick={(e) => e.stopPropagation()} // Prevent click from propagating to overlay
+          >
+            {/* Close Button */}
+            <button
+              className="absolute top-2 right-2 text-white"
+              onClick={handleCloseDrawer}
+            >
+              Close
+            </button>
+
+            {/* Lottie Animation inside the Drawer */}
+            <div className="h-full w-full">
+              <Lottie
+                animationData={AbcAnimation}
+                loop={true}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                }}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

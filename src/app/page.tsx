@@ -135,26 +135,26 @@ export default function Page() {
               </button>
             </div>
           )}
-
-          {/* Vote Button */}
-          {address && voteButtonVisible && (
-            <button
-              onClick={handleVoteButtonClick}
-              className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-20 p-0"
-              aria-label="Vote Button"
-            >
-              <Image
-                src="/buttons/votebutton.png"
-                alt="Vote Button"
-                width={0} // Set to 0 to let Tailwind control the width
-                height={0} // Set to 20 (in pixels) instead of "20%"
-                sizes="20vh" // Specify the size
-                className="h-[20vh] w-auto object-contain" // Also here specify the size
-              />
-            </button>
-          )}
         </div>
       </div>
+
+      {/* Vote Button Floating on Top of Whole Web App */}
+      {address && voteButtonVisible && (
+        <button
+          onClick={handleVoteButtonClick}
+          className="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-50 p-0"
+          aria-label="Vote Button"
+        >
+          <Image
+            src="/buttons/votebutton.png"
+            alt="Vote Button"
+            width={0} // Set to 0 to let Tailwind control the width
+            height={0} // Set to 20 (in pixels) instead of "20%"
+            sizes="20vh" // Specify the size
+            className="h-[20vh] w-auto object-contain" // Also here specify the size
+          />
+        </button>
+      )}
     </div>
   );
 }

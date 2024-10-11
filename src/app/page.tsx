@@ -165,7 +165,7 @@ export default function Page() {
 
       {/* Drawer Component */}
       {isDrawerOpen && (
-        <div className="fixed inset-0 z-40 flex items-end justify-center">
+        <div className="fixed inset-0 z-40 flex items-start justify-center">
           {/* Overlay */}
           <div
             className="absolute inset-0 bg-black opacity-50"
@@ -174,11 +174,7 @@ export default function Page() {
 
           {/* Drawer */}
           <div
-            className="relative bg-black z-50 rounded-t-lg overflow-hidden"
-            style={{
-              width: '70%',
-              height: '90%',
-            }}
+            className="relative bg-black z-50 rounded-b-lg overflow-hidden mt-2.5 w-[90%] md:w-1/2 h-[70%]"
             onClick={(e) => e.stopPropagation()} // Prevent click from propagating to overlay
           >
             {/* Close Button */}

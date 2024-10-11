@@ -10,21 +10,56 @@ import './global.css';
 
 // Import your animations
 import Animation1 from './animations/animation1.json';
+import Animation2 from './animations/animation2.json';
+import Animation3 from './animations/animation3.json';
+import Animation4 from './animations/animation4.json';
+import Animation5 from './animations/animation5.json';
 
 export default function Page() {
   const { address } = useAccount();
-  const [animationData, setAnimationData] = useState(Animation1);
-  const [animationPlayed, setAnimationPlayed] = useState(false);
-  const [showButtons, setShowButtons] = useState(false); // State to manage button visibility
+  
+  // Array of animations
+  const animations = [Animation1, Animation2, Animation3, Animation4, Animation5];
+  
+  // State to manage current animation index
+  const [currentAnimationIndex, setCurrentAnimationIndex] = useState<number>(0);
+  
+  // State to trigger animation playback
+  const [animationData, setAnimationData] = useState<any>(null);
+  
+  // State to track if animation has played
+  const [animationPlayed, setAnimationPlayed] = useState<boolean>(false);
+  
+  // State to manage visibility of Prev and Next buttons
+  const [showButtons, setShowButtons] = useState<boolean>(false);
 
   useEffect(() => {
     if (address && !animationPlayed) {
       // User has logged in and animation hasn't played yet
-      setAnimationData(Animation1);
+      setAnimationData(animations[currentAnimationIndex]);
       setAnimationPlayed(true);
-      setShowButtons(true); // Show buttons after login
+      setShowButtons(true); // Show Prev and Next buttons after login
     }
-  }, [address, animationPlayed]);
+  }, [address, animationPlayed, currentAnimationIndex, animations]);
+
+  // Handler for Next button
+  const handleNext = () => {
+    const nextIndex = (currentAnimationIndex + 1) % animations.length;
+    setCurrentAnimationIndex(nextIndex);
+    setAnimationData(animations[nextIndex]);
+  };
+
+  // Handler for Prev button
+  const handlePrev = () => {
+    if (currentAnimationIndex === 0) {
+      // If on the first animation, do not loop back
+      setAnimationData(animations[0]);
+    } else {
+      const prevIndex = currentAnimationIndex - 1;
+      setCurrentAnimationIndex(prevIndex);
+      setAnimationData(animations[prevIndex]);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black flex flex-col">
@@ -33,7 +68,7 @@ export default function Page() {
         {/* White Container */}
         <div className="white-container relative">
           {/* Login Section Positioned at Top Right */}
-          <div className="login-section" style={{ zIndex: 20 }}>
+          <div className="login-section z-20">
             <SignupButton />
             {!address && <LoginButton />}
           </div>
@@ -49,13 +84,13 @@ export default function Page() {
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                zIndex: 10,
+                zIndex: 10, // Ensure animation is below the login section and buttons
               }}
             />
           )}
 
           {/* Centered Content Inside the Container */}
-          <div className="flex items-center justify-center h-full" style={{ zIndex: 5 }}>
+          <div className="flex items-center justify-center h-full z-5">
             {address ? (
               <TransactionWrapper address={address} />
             ) : (
@@ -66,11 +101,21 @@ export default function Page() {
             )}
           </div>
 
-          {/* Conditionally Render the Prev/Next Buttons */}
-          {showButtons && (
-            <div className="absolute bottom-4 right-4 flex gap-4" style={{ zIndex: 20 }}>
-              <button className="prev-button">Prev</button>
-              <button className="next-button">Next</button>
+          {/* Prev and Next Buttons */}
+          {showButtons && address && (
+            <div className="absolute bottom-4 right-4 flex gap-4 z-20">
+              <button
+                className="prev-button px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition"
+                onClick={handlePrev}
+              >
+                Prev
+              </button>
+              <button
+                className="next-button px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition"
+                onClick={handleNext}
+              >
+                Next
+              </button>
             </div>
           )}
         </div>

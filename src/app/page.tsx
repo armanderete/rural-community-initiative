@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import Lottie from 'lottie-react';
+import Image from 'next/image';
 import LoginButton from '../components/LoginButton';
 import SignupButton from '../components/SignupButton';
 import WalletWrapper from 'src/components/WalletWrapper';
@@ -18,7 +19,7 @@ import Animation5 from './animations/animation5.json';
 export default function Page() {
   const { address } = useAccount();
   
-  // Array of animations
+  // Array of animations in order
   const animations = [Animation1, Animation2, Animation3, Animation4, Animation5];
   
   // State to manage current animation index
@@ -32,6 +33,12 @@ export default function Page() {
   
   // State to manage visibility of Prev and Next buttons
   const [showButtons, setShowButtons] = useState<boolean>(false);
+  
+  // State to manage visibility of the vote_button
+  const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(true); // Initialize as needed
+  
+  // Optional: State to prevent button clicks during animation
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
   useEffect(() => {
     if (address && !animationPlayed) {
@@ -39,18 +46,22 @@ export default function Page() {
       setAnimationData(animations[currentAnimationIndex]);
       setAnimationPlayed(true);
       setShowButtons(true); // Show Prev and Next buttons after login
+      setIsAnimating(true); // Animation is playing
     }
   }, [address, animationPlayed, currentAnimationIndex, animations]);
 
   // Handler for Next button
   const handleNext = () => {
+    if (isAnimating) return; // Prevent action if animating
     const nextIndex = (currentAnimationIndex + 1) % animations.length;
     setCurrentAnimationIndex(nextIndex);
     setAnimationData(animations[nextIndex]);
+    setIsAnimating(true); // Animation is playing
   };
 
   // Handler for Prev button
   const handlePrev = () => {
+    if (isAnimating) return; // Prevent action if animating
     if (currentAnimationIndex === 0) {
       // If on the first animation, do not loop back
       setAnimationData(animations[0]);
@@ -59,6 +70,15 @@ export default function Page() {
       setCurrentAnimationIndex(prevIndex);
       setAnimationData(animations[prevIndex]);
     }
+    setIsAnimating(true); // Animation is playing
+  };
+
+  // Handler for Vote Button Click
+  const handleVoteButtonClick = () => {
+    // Define the functionality for the vote button here
+    console.log('Vote Button Clicked');
+    // Example: Toggle visibility
+    // setVoteButtonVisible(!voteButtonVisible);
   };
 
   return (
@@ -78,6 +98,9 @@ export default function Page() {
             <Lottie
               animationData={animationData}
               loop={false}
+              onComplete={() => {
+                setIsAnimating(false); // Animation finished
+              }}
               style={{
                 width: '100%',
                 height: '100%',
@@ -89,34 +112,46 @@ export default function Page() {
             />
           )}
 
-          {/* Centered Content Inside the Container */}
-          <div className="flex items-center justify-center h-full z-5">
-            {address ? (
-              <TransactionWrapper address={address} />
-            ) : (
-              <WalletWrapper
-                className="w-[450px] max-w-full"
-                text="Sign in to transact"
-              />
-            )}
-          </div>
-
           {/* Prev and Next Buttons */}
           {showButtons && address && (
             <div className="absolute bottom-4 right-4 flex gap-4 z-20">
               <button
-                className="prev-button px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition"
+                className={`prev-button px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition ${
+                  currentAnimationIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
                 onClick={handlePrev}
+                disabled={currentAnimationIndex === 0 || isAnimating}
+                aria-label="Previous Animation"
               >
                 Prev
               </button>
               <button
                 className="next-button px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition"
                 onClick={handleNext}
+                disabled={isAnimating}
+                aria-label="Next Animation"
               >
                 Next
               </button>
             </div>
+          )}
+
+          {/* Vote Button */}
+          {address && voteButtonVisible && (
+            <button
+              onClick={handleVoteButtonClick}
+              className="absolute bottom-3 left-1/2 transform -translate-x-1/2 z-20 p-0"
+              aria-label="Vote Button"
+            >
+              <Image
+                src="/buttons/votebutton.png"
+                alt="Vote Button"
+                width={0} // Set to 0 to let Tailwind control the width
+                height={0} // Set to 20 (in pixels) instead of "20%"
+                sizes="20vh" // Specify the size
+                className="h-[20vh] w-auto object-contain" // Also here specify the size
+              />
+            </button>
           )}
         </div>
       </div>

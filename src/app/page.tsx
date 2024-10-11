@@ -142,7 +142,7 @@ export default function Page() {
       {address && voteButtonVisible && (
         <button
           onClick={handleVoteButtonClick}
-          className="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-50 p-0"
+          className="fixed bottom-10 md:bottom-3 left-1/2 transform -translate-x-1/2 z-50 p-0"
           aria-label="Vote Button"
         >
           <Image

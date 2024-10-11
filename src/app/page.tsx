@@ -164,41 +164,46 @@ export default function Page() {
       )}
 
       {/* Drawer Component */}
-      {isDrawerOpen && (
-        <div className="fixed inset-0 z-40 flex items-start justify-center">
-          {/* Overlay */}
+      <div
+        className={`fixed inset-0 z-40 flex items-start justify-center transition-transform duration-300 ease-in-out ${
+          isDrawerOpen ? 'translate-y-0' : 'translate-y-[100vh]'
+        }`}
+      >
+        {/* Overlay */}
+        {isDrawerOpen && (
           <div
             className="absolute inset-0 bg-black opacity-50"
             onClick={handleCloseDrawer}
           ></div>
+        )}
 
-          {/* Drawer */}
-          <div
-            className="relative bg-black z-50 rounded-b-lg overflow-hidden mt-2.5 w-[90%] md:w-1/2 h-[70%]"
-            onClick={(e) => e.stopPropagation()} // Prevent click from propagating to overlay
+        {/* Drawer */}
+        <div
+          className="relative bg-black rounded-t-lg overflow-hidden w-[90%] md:w-1/2 h-[70%] transform transition-transform duration-300 ease-in-out"
+          onClick={(e) => e.stopPropagation()} // Prevent click from propagating to overlay
+        >
+          {/* Close Button */}
+          <button
+            className="absolute top-2 right-2 text-white text-xl focus:outline-none focus:ring-2 focus:ring-white rounded"
+            onClick={handleCloseDrawer}
+            aria-label="Close Drawer"
           >
-            {/* Close Button */}
-            <button
-              className="absolute top-2 right-2 text-white"
-              onClick={handleCloseDrawer}
-            >
-              Close
-            </button>
+            &times;
+          </button>
 
-            {/* Lottie Animation inside the Drawer */}
-            <div className="h-full w-full">
-              <Lottie
-                animationData={AbcAnimation}
-                loop={true}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                }}
-              />
-            </div>
+          {/* Lottie Animation inside the Drawer */}
+          <div className="h-full w-full">
+            <Lottie
+              animationData={AbcAnimation}
+              loop={true}
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
+            />
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

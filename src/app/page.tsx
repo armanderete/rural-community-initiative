@@ -154,10 +154,7 @@ export default function Page() {
           const poolBalance = await fetchCommunityPoolBalance();
           setCommunityPoolBalance(poolBalance);
 
-          // Create alert showing the contract balance and the top 3 addresses
-          // Calculate contract balance
-          const contractBalanceBN = await provider.getBalance(CONTRACT_ADDRESS);
-          const contractBalance = ethers.utils.formatEther(contractBalanceBN);
+          
 
           // Sort the results by balance descending
           const top3 = results
@@ -165,8 +162,21 @@ export default function Page() {
             .sort((a, b) => (b.balance as number) - (a.balance as number))
             .slice(0, 3);
 
-          // Prepare alert message
-          let alertMessage = `Contract Balance: ${contractBalance} ETH\nCommunity Pool Balance: ${communityPoolBalance}\nTop 3 Addresses by Community USDC:\n`;
+          // Find the current user's balance
+          const currentUser = results.find(
+            (item) => item.address.toLowerCase() === address?.toLowerCase()
+          );
+
+          const currentUserBalance =
+            typeof currentUser?.balance === 'number'
+              ? (currentUser.balance ).toFixed(0) // Multiply by 10,000 to get original balance
+              : '--';
+
+          // Prepare alert message with additional lines
+          let alertMessage = `Contract Balance: ${poolBalance}\n`;
+          alertMessage += `Current User: ${address}\n`;
+          alertMessage += `Current User Balance: ${currentUserBalance}\n`;
+          alertMessage += `Top 3 Addresses by Community USDC:\n`;
           top3.forEach((item, index) => {
             alertMessage += `${index + 1}. ${item.address} - Community USDC: ${item.balance}\n`;
           });

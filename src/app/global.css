@@ -52,7 +52,7 @@ a {
   }
 
   .brown-container {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     height: 100vh;
@@ -61,11 +61,11 @@ a {
   }
 
   .red-container {
-    position: absolute;
+    position: fixed; /* Keep it always visible */
     top: 0;
     right: 0;
-    height: 100vh;
-    width: calc(50vw - 50vh); /* Space left after yellow container */
+    height: 100vh; /* Full height */
+    width: calc(50vw - 50vh);/* Adjust width to use remaining space */
     background-color: red; /* Visualization */
   }
 
@@ -82,17 +82,15 @@ a {
   .vote-button {
     position: absolute;
     bottom: 10px; /* Padding from bottom */
-    left: 50%;
-    transform: translateX(-50%); /* Center horizontally */
+    left: 5%;
     z-index: 50;
   }
 
   .prev-next-buttons {
-    position: absolute;
-    bottom: 10px;
+    position: absolute; /* Change to absolute positioning */
+    bottom: 10px; /* 10 pixels from the bottom of the yellow container */
+    right: 20px; /* 10 pixels from the right of the yellow container */
     display: flex;
-    justify-content: center;
-    width: 100%;
     z-index: 20; /* Ensure it stays above other elements */
   }
 }
@@ -101,7 +99,7 @@ a {
 @media (max-width: 767px) {
   .green-container {
     width: 100vw; /* Full width */
-    height: 20vh; /* 20% height */
+    height: 10vh; /* 20% height */
     background-color: green; /* Visualization */
   }
 
@@ -114,7 +112,7 @@ a {
 
   .blue-container {
     width: 100vw; /* Full width */
-    height: calc(100vh - 20vh - 100vw); /* Remaining height */
+    height: calc(100vh - 10vh - 100vw); /* Remaining height */
     background-color: blue; /* Visualization */
   }
 
@@ -130,7 +128,7 @@ a {
   .vote-button {
     position: absolute;
     bottom: 5px; /* Padding from bottom */
-    left: 50%;
+    left: 15%;
     transform: translateX(-50%); /* Center horizontally */
     z-index: 50;
   }
@@ -181,4 +179,3 @@ a {
   border-radius: 10px;
   overflow: hidden;
 }
-

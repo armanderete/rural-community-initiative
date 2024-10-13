@@ -248,14 +248,9 @@ export default function Page() {
 
           {/* Prev and Next Buttons */}
           {showButtons && address && (
-            <div
-              className="absolute z-20"
-              style={{ bottom: '10px', width: '100%', display: 'flex', justifyContent: 'center' }}
-            >
+            <div className="prev-next-buttons z-20">
               <button
-                className={`prev-button px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition ${
-                  currentAnimationIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                className={`prev-button`}
                 onClick={handlePrev}
                 disabled={currentAnimationIndex === 0 || isAnimating}
                 aria-label="Previous Animation"
@@ -263,7 +258,7 @@ export default function Page() {
                 Prev
               </button>
               <button
-                className="next-button px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition ml-4"
+                className="next-button ml-4"
                 onClick={handleNext}
                 disabled={isAnimating}
                 aria-label="Next Animation"
@@ -277,14 +272,14 @@ export default function Page() {
           {address && voteButtonVisible && (
             <button
               onClick={handleVoteButtonClick}
-              className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 p-0"
+              className="vote-button z-20" // Use the class defined in global.css
               aria-label="Vote Button"
             >
               <Image
-                src="/buttons/votebutton.png"
+                src="/buttons/dashboardbutton.png"
                 alt="Vote Button"
-                width={50}
-                height={50}
+                width={100}
+                height={100}
                 className="object-contain"
               />
             </button>
@@ -406,14 +401,14 @@ export default function Page() {
           {address && voteButtonVisible && (
             <button
               onClick={handleVoteButtonClick}
-              className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-20 p-0"
+              className="vote-button z-20" // Use the class defined in global.css
               aria-label="Vote Button"
             >
               <Image
-                src="/buttons/votebutton.png"
+                src="/buttons/dashboardbutton.png"
                 alt="Vote Button"
-                width={50}
-                height={50}
+                width={100}
+                height={100}
                 className="object-contain"
               />
             </button>

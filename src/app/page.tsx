@@ -220,17 +220,14 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
-      {/* Main Content Area */}
-      <div className="flex-grow flex items-center justify-center">
-        {/* White Container */}
-        <div className="white-container relative">
-          {/* Login Section Positioned at Top Right */}
-          <div className="login-section z-20">
-            <SignupButton />
-            {!address && <LoginButton />}
-          </div>
+      {/* Desktop View */}
+      <div className="hidden md:block">
+        {/* Brown Container (left side) */}
+        <div className="brown-container"></div>
 
-          {/* Lottie Animation */}
+        {/* Yellow Container (center) */}
+        <div className="yellow-container relative">
+          {/* Main Animations */}
           {animationData && (
             <Lottie
               animationData={animationData}
@@ -244,14 +241,17 @@ export default function Page() {
                 position: 'absolute',
                 top: 0,
                 left: 0,
-                zIndex: 10, // Ensure animation is below the login section and buttons
+                zIndex: 10,
               }}
             />
           )}
 
           {/* Prev and Next Buttons */}
           {showButtons && address && (
-            <div className="absolute bottom-4 right-4 flex gap-4 z-20">
+            <div
+              className="absolute z-20"
+              style={{ bottom: '10px', width: '100%', display: 'flex', justifyContent: 'center' }}
+            >
               <button
                 className={`prev-button px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition ${
                   currentAnimationIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
@@ -263,7 +263,7 @@ export default function Page() {
                 Prev
               </button>
               <button
-                className="next-button px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition"
+                className="next-button px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 transition ml-4"
                 onClick={handleNext}
                 disabled={isAnimating}
                 aria-label="Next Animation"
@@ -273,14 +273,30 @@ export default function Page() {
             </div>
           )}
 
-          {/* Error Message */}
+          {/* Vote Button */}
+          {address && voteButtonVisible && (
+            <button
+              onClick={handleVoteButtonClick}
+              className="absolute bottom-10 left-1/2 transform -translate-x-1/2 z-20 p-0"
+              aria-label="Vote Button"
+            >
+              <Image
+                src="/buttons/votebutton.png"
+                alt="Vote Button"
+                width={50}
+                height={50}
+                className="object-contain"
+              />
+            </button>
+          )}
+
+          {/* Error and Loading Indicators */}
           {error && (
             <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded">
               {error}
             </div>
           )}
 
-          {/* Loading Indicator */}
           {loading && (
             <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-gray-700 text-white px-4 py-2 rounded flex items-center">
               <svg
@@ -307,24 +323,103 @@ export default function Page() {
             </div>
           )}
         </div>
+
+        {/* Red Container (right side) */}
+        <div className="red-container">
+          {/* Login Buttons */}
+          <div
+            className="flex justify-center"
+            style={{ paddingTop: '10px' }}
+          >
+            <SignupButton />
+            {!address && <LoginButton />}
+          </div>
+        </div>
       </div>
 
-      {/* Vote Button Floating on Top of Whole Web App */}
-      {address && voteButtonVisible && (
-        <button
-          onClick={handleVoteButtonClick}
-          className="fixed bottom-10 md:bottom-3 left-1/2 transform -translate-x-1/2 z-50 p-0"
-          aria-label="Vote Button"
-        >
-          <Image
-            src="/buttons/votebutton.png"
-            alt="Vote Button"
-            width={50} // Set desired width
-            height={50} // Set desired height
-            className="object-contain"
-          />
-        </button>
-      )}
+      {/* Mobile View */}
+      <div className="block md:hidden">
+        {/* Green Container */}
+        <div className="green-container relative">
+          {/* Login Buttons */}
+          <div
+            className="absolute top-0 right-0 flex items-center"
+            style={{ paddingTop: '5px', paddingRight: '5px' }}
+          >
+            <SignupButton />
+            {!address && <LoginButton />}
+          </div>
+        </div>
+
+        {/* Yellow Container */}
+        <div className="yellow-container relative">
+          {/* Main Animations */}
+          {animationData && (
+            <Lottie
+              animationData={animationData}
+              loop={false}
+              onComplete={() => {
+                setIsAnimating(false); // Animation finished
+              }}
+              style={{
+                width: '100%',
+                height: '100%',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                zIndex: 10,
+              }}
+            />
+          )}
+        </div>
+
+        {/* Blue Container */}
+        <div className="blue-container relative">
+          {/* Prev and Next Buttons */}
+          {showButtons && address && (
+            <div
+              className="absolute top-0 right-0 z-20"
+              style={{ paddingTop: '5px', paddingRight: '5px' }}
+            >
+              <button
+                className={`prev-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ${
+                  currentAnimationIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                onClick={handlePrev}
+                disabled={currentAnimationIndex === 0 || isAnimating}
+                aria-label="Previous Animation"
+              >
+                Prev
+              </button>
+              <button
+                className="next-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ml-2"
+                onClick={handleNext}
+                disabled={isAnimating}
+                aria-label="Next Animation"
+              >
+                Next
+              </button>
+            </div>
+          )}
+
+          {/* Vote Button */}
+          {address && voteButtonVisible && (
+            <button
+              onClick={handleVoteButtonClick}
+              className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-20 p-0"
+              aria-label="Vote Button"
+            >
+              <Image
+                src="/buttons/votebutton.png"
+                alt="Vote Button"
+                width={50}
+                height={50}
+                className="object-contain"
+              />
+            </button>
+          )}
+        </div>
+      </div>
 
       {/* Drawer Component */}
       <div

@@ -6,8 +6,8 @@
 :root {
   /* Palette */
   --palette-bg-black: #000000;
-  --palette-bg-white: rgb(21, 26, 38);
-
+  --palette-bg-white: #ffffff; /* Adjust as needed */
+  
   /* Indicates that the element can be rendered using 
    * the operating system dark color scheme. 
    * https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme */
@@ -25,72 +25,127 @@ html {
   scroll-behavior: smooth;
 }
 
-html .font-robotoMono {
-  font-family: var(--font-roboto-mono);
+body {
+  height: 100%;
+  margin: 0;
+  background-color: var(--palette-bg-black);
+  color: var(--palette-bg-white);
+  font-family: Inter, sans-serif;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
-html .font-inter {
-  font-family: var(--font-inter);
+a {
+  text-decoration: none;
 }
 
-.white-container {
-  background-color: white;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  max-width: 100vw;
-  max-height: 100vw;
-}
+/* Desktop View */
+@media (min-width: 768px) {
+  .yellow-container {
+    height: 100vh; /* Full height */
+    aspect-ratio: 1 / 1; /* Square aspect ratio */
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
+    background-color: yellow; /* Visualization */
+  }
 
-@media (max-width: 767px) {
-  .white-container {
-    position: relative;
-    width: 100%;
-    max-width: 100%;
-    max-height: none;
-    aspect-ratio: 1 / 1;
-    transform: none;
+  .brown-container {
+    position: absolute;
+    top: 0;
     left: 0;
+    height: 100vh;
+    width: calc(50vw - 50vh); /* Space left after yellow container */
+    background-color: brown; /* Visualization */
+  }
+
+  .red-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: calc(50vw - 50vh); /* Space left after yellow container */
+    background-color: red; /* Visualization */
   }
 
   .login-section {
     position: absolute;
-    top: 10px; /* Adjust as needed for spacing */
-    right: 10px; /* Adjust as needed for spacing */
+    top: 10px; /* 10px padding from top */
+    right: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
     z-index: 20; /* Ensure it stays above other elements */
+  }
+
+  .vote-button {
+    position: absolute;
+    bottom: 10px; /* Padding from bottom */
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
+    z-index: 50;
   }
 
   .prev-next-buttons {
     position: absolute;
-    bottom: 10px; /* Adjust as needed for spacing */
-    right: 10px; /* Adjust as needed for spacing */
+    bottom: 10px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
     z-index: 20; /* Ensure it stays above other elements */
   }
 }
 
-@media (min-width: 768px) {
-  .white-container {
-    width: 100vh;
-    height: 100vh;
-    max-width: 100vh;
-    max-height: 100vh;
-    top: 50%;
-    transform: translate(-50%, -50%);
+/* Mobile View */
+@media (max-width: 767px) {
+  .green-container {
+    width: 100vw; /* Full width */
+    height: 20vh; /* 20% height */
+    background-color: green; /* Visualization */
+  }
+
+  .yellow-container {
+    width: 100vw; /* Full width */
+    aspect-ratio: 1 / 1; /* Square aspect ratio */
+    background-color: yellow; /* Visualization */
+    position: relative;
+  }
+
+  .blue-container {
+    width: 100vw; /* Full width */
+    height: calc(100vh - 20vh - 100vw); /* Remaining height */
+    background-color: blue; /* Visualization */
+  }
+
+  .login-section {
+    position: absolute;
+    top: 5px; /* Padding from top */
+    right: 5px; /* Padding from right */
+    display: flex;
+    align-items: center;
+    z-index: 20; /* Ensure it stays above other elements */
+  }
+
+  .vote-button {
+    position: absolute;
+    bottom: 5px; /* Padding from bottom */
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
+    z-index: 50;
+  }
+
+  .prev-next-buttons {
+    position: absolute;
+    top: 5px; /* Padding from top */
+    right: 5px; /* Padding from right */
+    display: flex;
+    justify-content: flex-end;
+    z-index: 20; /* Ensure it stays above other elements */
   }
 }
 
-.login-section {
-  position: absolute;
-  top: 16px; /* 16px = 1rem */
-  right: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px; /* 12px = 0.75rem */
-}
-
+/* Button Styling */
 .prev-button,
 .next-button {
   padding: 10px 20px;
@@ -106,54 +161,24 @@ html .font-inter {
   background-color: #333;
 }
 
-
-body {
-  height: 100%;
-  margin: 0;
-  background-color: var(--palette-bg-black);
-  color: var(--palette-bg-white);
-  font-family: Inter, sans-serif;
-  overflow-x: hidden;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+/* Drawer Overlay */
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 40;
 }
 
-a {
-  text-decoration: underline;
+.drawer-content {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: black;
+  z-index: 50;
+  width: 90%;
+  height: 70%;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-svg {
-  display: block;
-  overflow: visible;
-  vertical-align: middle;
-}
-
-ul {
-  padding-inline-start: 0;
-}
-
-/* stylelint-disable-next-line */
-#__next {
-  position: relative;
-  z-index: 0;
-}
-
-.ockConnectWallet_Container span {
-  color: #030712;
-}
-
-/* i believe this is necessary because 
-of a div added by rainbowkit provider */
-body > div {
-  height: 100%;
-  max-width: 100vw;
-  box-sizing: border-box;
-}
-
-a {
-  text-decoration: none;
-}
-
-.templateSection > div {
-  max-width: 100%;;
-}

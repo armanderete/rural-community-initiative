@@ -18,7 +18,7 @@ import Animation3 from './animations/animation3.json';
 import Animation4 from './animations/animation4.json';
 import Animation5 from './animations/animation5.json';
 
-import AbcAnimation from './animations/abcvote.json';
+import DashboardAnimation from './animations/dashboard.json';
 
 // Define constants
 const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
@@ -447,7 +447,7 @@ export default function Page() {
           {/* Lottie Animation inside the Drawer */}
           <div className="h-full w-full">
             <Lottie
-              animationData={AbcAnimation}
+              animationData={DashboardAnimation}
               loop={true}
               style={{
                 width: '100%',

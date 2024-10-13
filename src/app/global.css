@@ -38,18 +38,47 @@ html .font-inter {
   width: 100%;
   aspect-ratio: 1 / 1;
   position: absolute;
-  top: 0px; /* 10px from the top */
-  left: 0;
-  right: 0;
-  margin: 0 auto; /* Center horizontally */
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 100vw;
+  max-height: 100vw;
+}
+
+@media (max-width: 767px) {
+  .white-container {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    max-height: none;
+    aspect-ratio: 1 / 1;
+    transform: none;
+    left: 0;
+  }
+
+  .login-section {
+    position: absolute;
+    top: 10px; /* Adjust as needed for spacing */
+    right: 10px; /* Adjust as needed for spacing */
+    z-index: 20; /* Ensure it stays above other elements */
+  }
+
+  .prev-next-buttons {
+    position: absolute;
+    bottom: 10px; /* Adjust as needed for spacing */
+    right: 10px; /* Adjust as needed for spacing */
+    z-index: 20; /* Ensure it stays above other elements */
+  }
 }
 
 @media (min-width: 768px) {
   .white-container {
     width: 100vh;
     height: 100vh;
-    top: 0px; /* 10px from the top */
-    margin-top: 0;
+    max-width: 100vh;
+    max-height: 100vh;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
 }
 

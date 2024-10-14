@@ -10,6 +10,8 @@ import WalletWrapper from 'src/components/WalletWrapper';
 import TransactionWrapper from 'src/components/TransactionWrapper';
 import abi from './abi.json'; // Import ABI from the JSON file
 import './global.css';
+import { getBasename, type Basename } from '../basenames';
+import { truncateWalletAddress } from '../utils'; // Assuming you have this utility function
 
 // Import your animations
 import Animation1 from './animations/animation1.json';
@@ -62,6 +64,9 @@ export default function Page() {
 
   // State to handle loading
   const [loading, setLoading] = useState<boolean>(false);
+
+  // New state variable to store the top basename
+  const [topBasename, setTopBasename] = useState<Basename | null>(null);
 
   // Initialize ethers provider and contract
   const provider = new ethers.providers.JsonRpcProvider(ALCHEMY_API_URL);
@@ -162,6 +167,13 @@ export default function Page() {
             .sort((a, b) => (b.balance as number) - (a.balance as number))
             .slice(0, 3);
 
+          // Fetch basename for the top address
+          const topAddress = top3[0]?.address;
+          if (topAddress) {
+            const basename = await getBasename(topAddress as `0x${string}`);
+            setTopBasename(basename || null);
+          }
+
           // Find the current user's balance
           const currentUser = results.find(
             (item) => item.address.toLowerCase() === address?.toLowerCase()
@@ -176,6 +188,8 @@ export default function Page() {
           let alertMessage = `Contract Balance: ${poolBalance}\n`;
           alertMessage += `Current User: ${address}\n`;
           alertMessage += `Current User Balance: ${currentUserBalance}\n`;
+          alertMessage += `1st place base name (else address): ${topBasename || truncateWalletAddress(top3[0]?.address)}\n`;
+          alertMessage += `2nd place base name (else address): ${top3[1] ? (await getBasename(top3[1].address as `0x${string}`)) || truncateWalletAddress(top3[1]?.address) : 'N/A'}\n`; // New line for 2nd place basename
           alertMessage += `Top 3 Addresses by Community USDC:\n`;
           top3.forEach((item, index) => {
             alertMessage += `${index + 1}. ${item.address} - Community USDC: ${item.balance}\n`;

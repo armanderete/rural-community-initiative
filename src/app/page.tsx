@@ -162,13 +162,13 @@ export default function Page() {
           
 
           // Sort the results by balance descending
-          const top3 = results
+          const top10 = results
             .filter((item) => typeof item.balance === 'number')
             .sort((a, b) => (b.balance as number) - (a.balance as number))
-            .slice(0, 3);
+            .slice(0, 10); // Changed to top 10
 
           // Fetch basename for the top address
-          const topAddress = top3[0]?.address;
+          const topAddress = top10[0]?.address; // Updated to top10
           if (topAddress) {
             const basename = await getBasename(topAddress as `0x${string}`);
             setTopBasename(basename || null);
@@ -188,10 +188,10 @@ export default function Page() {
           let alertMessage = `Contract Balance: ${poolBalance}\n`;
           alertMessage += `Current User: ${address}\n`;
           alertMessage += `Current User Balance: ${currentUserBalance}\n`;
-          alertMessage += `1st place base name (else address): ${topBasename || truncateWalletAddress(top3[0]?.address)}\n`;
-          alertMessage += `2nd place base name (else address): ${top3[1] ? (await getBasename(top3[1].address as `0x${string}`)) || truncateWalletAddress(top3[1]?.address) : 'N/A'}\n`; // New line for 2nd place basename
-          alertMessage += `Top 3 Addresses by Community USDC:\n`;
-          top3.forEach((item, index) => {
+          alertMessage += `1st place base name (else address): ${topBasename || truncateWalletAddress(top10[0]?.address)}\n`;
+          alertMessage += `2nd place base name (else address): ${top10[1] ? (await getBasename(top10[1].address as `0x${string}`)) || truncateWalletAddress(top10[1]?.address) : 'N/A'}\n`; // New line for 2nd place basename
+          alertMessage += `Top 10 Addresses by Community USDC:\n`;
+          top10.forEach((item, index) => {
             alertMessage += `${index + 1}. ${item.address} - Community USDC: ${item.balance}\n`;
           });
 

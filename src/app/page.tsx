@@ -172,12 +172,6 @@ export default function Page() {
             .sort((a, b) => (b.balance as number) - (a.balance as number))
             .slice(0, 10); // Changed to top 10
 
-          // Fetch basename for the top address
-          const topAddress = top10[0]?.address; // Updated to top10
-          if (topAddress) {
-            const basename = await getBasename(topAddress as `0x${string}`);
-            setTopBasename(basename || null);
-          }
 
           // Find the current user's balance
           const currentUser = results.find(

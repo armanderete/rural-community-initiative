@@ -71,10 +71,7 @@ export default function Page() {
 
   const [top10, setTop10] = useState<{ address: string; balance: number }[]>([]);
 
-  // Define the showAlert function
-const showAlert = () => {
-  alert('This is a test alert!');
-};
+ 
 
   // Initialize ethers provider and contract
   const provider = new ethers.providers.JsonRpcProvider(ALCHEMY_API_URL);
@@ -199,6 +196,7 @@ const showAlert = () => {
           alertMessage += `1st place base name:  ${top10[0] ? (await getBasename(top10[0].address as `0x${string}`)) || truncateWalletAddress(top10[0]?.address) : 'N/A'}\n`;
           alertMessage += `2nd place base name: ${top10[1] ? (await getBasename(top10[1].address as `0x${string}`)) || truncateWalletAddress(top10[1]?.address) : 'N/A'}\n`; 
           alertMessage += `3rd place base name: ${top10[2] ? (await getBasename(top10[2].address as `0x${string}`)) || truncateWalletAddress(top10[2]?.address) : 'N/A'}\n`; 
+          alertMessage += `10th place ENS: ${top10[9] ? (await getEnsName(top10[9].address as `0x${string}`)) || truncateWalletAddress(top10[9]?.address) : 'N/A'}\n`; 
           alertMessage += `Top 10 Addresses by Community USDC:\n`;
           top10.forEach((item, index) => {
             alertMessage += `${index + 1}. ${item.address} - Community USDC: ${item.balance}\n`;
@@ -409,13 +407,6 @@ const showAlert = () => {
               className="absolute top-0 right-0 z-20"
               style={{ paddingTop: '5px', paddingRight: '5px' }}
             >
-              <button
-                onClick={showAlert}
-                className="test-alert-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ml-2"
-                aria-label="Test New Alert Button"
-              >
-                Test New Alert
-              </button>
               <button
                 className={`prev-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ${
                   currentAnimationIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''

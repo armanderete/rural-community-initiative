@@ -166,27 +166,17 @@ export default function Page() {
 
           
 
-          // Sort the results by balance descending
+          // Top 10 results by balance descending
           const top10 = results
             .filter((item) => typeof item.balance === 'number')
             .sort((a, b) => (b.balance as number) - (a.balance as number))
             .slice(0, 10); // Changed to top 10
 
-
-          // Find the current user's balance
-          const currentUser = results.find(
-            (item) => item.address.toLowerCase() === address?.toLowerCase()
-          );
-
-          const currentUserBalance =
-            typeof currentUser?.balance === 'number'
-              ? (currentUser.balance ).toFixed(0) // Multiply by 10,000 to get original balance
-              : '--';
-
-          // Step 7: Prepare alert message with additional lines
+          // Step 7: Construct Alert Message
           let alertMessage = `Contract Balance: ${poolBalance}\n`;
           alertMessage += `Current User: ${address}\n`;
-          alertMessage += `Current User Balance: ${currentUserBalance}\n`;
+          
+          
 
           // Modified 1st Place Alert: ENS Name > Base Name > Truncated Address, with Community USDC balance
           alertMessage += `1st place: ${

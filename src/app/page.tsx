@@ -11,6 +11,7 @@ import TransactionWrapper from 'src/components/TransactionWrapper';
 import abi from './abi.json'; // Import ABI from the JSON file
 import './global.css';
 import { getBasename, type Basename } from '../basenames';
+import { getEnsName } from '../ensnames';
 import { truncateWalletAddress } from '../utils'; // Assuming you have this utility function
 
 // Import your animations

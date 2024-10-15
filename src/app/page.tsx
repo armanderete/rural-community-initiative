@@ -189,18 +189,100 @@ export default function Page() {
               ? (currentUser.balance ).toFixed(0) // Multiply by 10,000 to get original balance
               : '--';
 
-          // Prepare alert message with additional lines
+          // Step 7: Prepare alert message with additional lines
           let alertMessage = `Contract Balance: ${poolBalance}\n`;
           alertMessage += `Current User: ${address}\n`;
           alertMessage += `Current User Balance: ${currentUserBalance}\n`;
-          alertMessage += `1st place base name:  ${top10[0] ? (await getBasename(top10[0].address as `0x${string}`)) || truncateWalletAddress(top10[0]?.address) : 'N/A'}\n`;
-          alertMessage += `2nd place base name: ${top10[1] ? (await getBasename(top10[1].address as `0x${string}`)) || truncateWalletAddress(top10[1]?.address) : 'N/A'}\n`; 
-          alertMessage += `3rd place base name: ${top10[2] ? (await getBasename(top10[2].address as `0x${string}`)) || truncateWalletAddress(top10[2]?.address) : 'N/A'}\n`; 
-          alertMessage += `10th place ENS: ${top10[9] ? (await getEnsName(top10[9].address as `0x${string}`)) || truncateWalletAddress(top10[9]?.address) : 'N/A'}\n`; 
-          alertMessage += `Top 10 Addresses by Community USDC:\n`;
-          top10.forEach((item, index) => {
-            alertMessage += `${index + 1}. ${item.address} - Community USDC: ${item.balance}\n`;
-          });
+
+          // Modified 1st Place Alert: ENS Name > Base Name > Truncated Address, with Community USDC balance
+          alertMessage += `1st place: ${
+            top10[0]
+              ? (await getEnsName(top10[0].address as `0x${string}`)) ||
+                (await getBasename(top10[0].address as `0x${string}`)) ||
+                truncateWalletAddress(top10[0]?.address)
+              : 'N/A'
+          } - Community USDC: ${top10[0].balance}\n`;
+
+          // Modified 2nd Place Alert: ENS Name > Base Name > Truncated Address, with Community USDC balance
+          alertMessage += `2nd place: ${
+            top10[1]
+              ? (await getEnsName(top10[1].address as `0x${string}`)) ||
+                (await getBasename(top10[1].address as `0x${string}`)) ||
+                truncateWalletAddress(top10[1]?.address)
+              : 'N/A'
+          } - Community USDC: ${top10[1].balance}\n`;
+
+          // Modified 3rd Place Alert
+          alertMessage += `3rd place: ${
+            top10[2]
+              ? (await getEnsName(top10[2].address as `0x${string}`)) ||
+                (await getBasename(top10[2].address as `0x${string}`)) ||
+                truncateWalletAddress(top10[2]?.address)
+              : 'N/A'
+          } - Community USDC: ${top10[2].balance}\n`;
+
+          // Modified 4th Place Alert
+          alertMessage += `4th place: ${
+            top10[3]
+              ? (await getEnsName(top10[3].address as `0x${string}`)) ||
+                (await getBasename(top10[3].address as `0x${string}`)) ||
+                truncateWalletAddress(top10[3]?.address)
+              : 'N/A'
+          } - Community USDC: ${top10[3].balance}\n`;
+
+          // Modified 5th Place Alert
+          alertMessage += `5th place: ${
+            top10[4]
+              ? (await getEnsName(top10[4].address as `0x${string}`)) ||
+                (await getBasename(top10[4].address as `0x${string}`)) ||
+                truncateWalletAddress(top10[4]?.address)
+              : 'N/A'
+          } - Community USDC: ${top10[4].balance}\n`;
+
+          // Modified 6th Place Alert
+          alertMessage += `6th place: ${
+            top10[5]
+              ? (await getEnsName(top10[5].address as `0x${string}`)) ||
+                (await getBasename(top10[5].address as `0x${string}`)) ||
+                truncateWalletAddress(top10[5]?.address)
+              : 'N/A'
+          } - Community USDC: ${top10[5].balance}\n`;
+
+          // Modified 7th Place Alert
+          alertMessage += `7th place: ${
+            top10[6]
+              ? (await getEnsName(top10[6].address as `0x${string}`)) ||
+                (await getBasename(top10[6].address as `0x${string}`)) ||
+                truncateWalletAddress(top10[6]?.address)
+              : 'N/A'
+          } - Community USDC: ${top10[6].balance}\n`;
+
+          // Modified 8th Place Alert
+          alertMessage += `8th place: ${
+            top10[7]
+              ? (await getEnsName(top10[7].address as `0x${string}`)) ||
+                (await getBasename(top10[7].address as `0x${string}`)) ||
+                truncateWalletAddress(top10[7]?.address)
+              : 'N/A'
+          } - Community USDC: ${top10[7].balance}\n`;
+
+          // Modified 9th Place Alert
+          alertMessage += `9th place: ${
+            top10[8]
+              ? (await getEnsName(top10[8].address as `0x${string}`)) ||
+                (await getBasename(top10[8].address as `0x${string}`)) ||
+                truncateWalletAddress(top10[8]?.address)
+              : 'N/A'
+          } - Community USDC: ${top10[8].balance}\n`;
+
+          // Modified 10th Place Alert
+          alertMessage += `10th place: ${
+            top10[9]
+              ? (await getEnsName(top10[9].address as `0x${string}`)) ||
+                (await getBasename(top10[9].address as `0x${string}`)) ||
+                truncateWalletAddress(top10[9]?.address)
+              : 'N/A'
+          } - Community USDC: ${top10[9].balance}\n`;
 
           alert(alertMessage);
         } catch (err) {

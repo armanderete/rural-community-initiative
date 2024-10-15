@@ -69,6 +69,13 @@ export default function Page() {
   // New state variable to store the top basename
   const [topBasename, setTopBasename] = useState<Basename | null>(null);
 
+  const [top10, setTop10] = useState<{ address: string; balance: number }[]>([]);
+
+  // Define the showAlert function
+const showAlert = () => {
+  alert('This is a test alert!');
+};
+
   // Initialize ethers provider and contract
   const provider = new ethers.providers.JsonRpcProvider(ALCHEMY_API_URL);
   const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
@@ -402,6 +409,13 @@ export default function Page() {
               className="absolute top-0 right-0 z-20"
               style={{ paddingTop: '5px', paddingRight: '5px' }}
             >
+              <button
+                onClick={showAlert}
+                className="test-alert-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ml-2"
+                aria-label="Test New Alert Button"
+              >
+                Test New Alert
+              </button>
               <button
                 className={`prev-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ${
                   currentAnimationIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''

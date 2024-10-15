@@ -40,6 +40,8 @@ a {
   text-decoration: none;
 }
 
+
+
 /* Desktop View */
 @media (min-width: 768px) {
   .yellow-container {
@@ -92,6 +94,25 @@ a {
     right: 20px; /* 10 pixels from the right of the yellow container */
     display: flex;
     z-index: 20; /* Ensure it stays above other elements */
+  }
+
+  .test-alert-button {
+    background-color: #1d4ed8; /* Blue */
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem; /* Rounded corners */
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .test-alert-button:hover {
+    background-color: #2563eb; /* Lighter blue on hover */
+  }
+  
+  .test-alert-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 

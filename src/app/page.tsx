@@ -188,8 +188,9 @@ export default function Page() {
           let alertMessage = `Contract Balance: ${poolBalance}\n`;
           alertMessage += `Current User: ${address}\n`;
           alertMessage += `Current User Balance: ${currentUserBalance}\n`;
-          alertMessage += `1st place base name (else address): ${topBasename || truncateWalletAddress(top10[0]?.address)}\n`;
-          alertMessage += `2nd place base name (else address): ${top10[1] ? (await getBasename(top10[1].address as `0x${string}`)) || truncateWalletAddress(top10[1]?.address) : 'N/A'}\n`; // New line for 2nd place basename
+          alertMessage += `1st place base name:  ${top10[0] ? (await getBasename(top10[0].address as `0x${string}`)) || truncateWalletAddress(top10[0]?.address) : 'N/A'}\n`;
+          alertMessage += `2nd place base name: ${top10[1] ? (await getBasename(top10[1].address as `0x${string}`)) || truncateWalletAddress(top10[1]?.address) : 'N/A'}\n`; 
+          alertMessage += `3rd place base name: ${top10[2] ? (await getBasename(top10[2].address as `0x${string}`)) || truncateWalletAddress(top10[2]?.address) : 'N/A'}\n`; 
           alertMessage += `Top 10 Addresses by Community USDC:\n`;
           top10.forEach((item, index) => {
             alertMessage += `${index + 1}. ${item.address} - Community USDC: ${item.balance}\n`;

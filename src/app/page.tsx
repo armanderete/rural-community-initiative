@@ -566,8 +566,8 @@ export default function Page() {
                 className="w-full h-full"
               />
 
-              {/* Only render the balance if top10 has been populated */}
-              {top10.length > 0 && top10[0]?.balance !== undefined ? (
+              {/* Only render the balances if top10 has been populated */}
+              {top10.length > 0 && top10[0]?.balance !== undefined && (
                 <div
                   className="absolute"
                   style={{
@@ -581,27 +581,27 @@ export default function Page() {
                 >
                   {top10[0].balance}
                 </div>
-              ) : (
+              )}
+
+              {top10.length > 1 && top10[1]?.balance !== undefined && (
                 <div
                   className="absolute"
                   style={{
-                    bottom: '10%',
-                    left: '40%',
-                    fontSize: '20px',
+                    bottom: '5%',
+                    left: '50%',
+                    fontSize: '30px',
                     fontWeight: 'bold',
                     color: 'black',
                     backgroundColor: 'transparent',
                   }}
                 >
-                  Loading...
+                  {top10[1].balance}
                 </div>
               )}
-            </div>
-
-
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+</div>
+</div>
+</div>
+</div>
+</div>
+);
 }

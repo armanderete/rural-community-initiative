@@ -529,28 +529,41 @@ export default function Page() {
 
         {/* Drawer */}
         <div
-          className="relative bg-black rounded-t-lg overflow-hidden w-[90%] md:w-1/2 h-[70%] transform transition-transform duration-300 ease-in-out"
-          onClick={(e) => e.stopPropagation()} // Prevent click from propagating to overlay
+          className={`fixed inset-0 z-40 flex items-center justify-center transition-transform duration-300 ease-in-out ${
+            isDrawerOpen ? 'translate-y-0' : 'translate-y-full'
+          }`}
         >
-          {/* Close Button */}
-          <button
-            className="absolute top-2 right-2 text-white text-xl focus:outline-none focus:ring-2 focus:ring-white rounded"
-            onClick={handleCloseDrawer}
-            aria-label="Close Drawer"
-          >
-            &times;
-          </button>
+          {/* Overlay */}
+          {isDrawerOpen && (
+            <div
+              className="absolute inset-0 bg-black opacity-50"
+              onClick={handleCloseDrawer}
+            ></div>
+          )}
 
-          {/* Lottie Animation inside the Drawer */}
-          <div className="h-full w-full">
-            <Lottie
-              animationData={DashboardAnimation}
-              loop={true}
-              style={{
-                width: '100%',
-                height: '100%',
-              }}
-            />
+          {/* Drawer */}
+          <div
+            className="relative bg-black rounded-t-lg overflow-hidden transform transition-transform duration-300 ease-in-out w-11/12 md:w-auto md:h-4/5 aspect-square md:aspect-square"
+            onClick={(e) => e.stopPropagation()} // Prevent click from propagating to overlay
+          >
+            {/* Close Button */}
+            <button
+              className="absolute top-2 right-2 text-white text-xl focus:outline-none focus:ring-2 focus:ring-white rounded"
+              onClick={handleCloseDrawer}
+              aria-label="Close Drawer"
+            >
+              &times;
+            </button>
+
+            {/* Drawer Container */}
+            <div className="drawer-container w-full h-full">
+              {/* Lottie Animation */}
+              <Lottie
+                animationData={DashboardAnimation}
+                loop={true}
+                className="w-full h-full"
+              />
+            </div>
           </div>
         </div>
       </div>

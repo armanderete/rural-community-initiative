@@ -175,6 +175,8 @@ export default function Page() {
           // Step 7: Construct Alert Message
           let alertMessage = `Contract Balance: ${poolBalance}\n`;
           alertMessage += `Current User: ${address}\n`;
+
+          setTop10(top10); // **Add this line to update the top10 state**
           
           
 
@@ -556,14 +558,47 @@ export default function Page() {
             </button>
 
             {/* Drawer Container */}
-            <div className="drawer-container w-full h-full">
+            <div className="drawer-container w-full h-full relative">
               {/* Lottie Animation */}
               <Lottie
                 animationData={DashboardAnimation}
                 loop={true}
                 className="w-full h-full"
               />
+
+              {/* Only render the balance if top10 has been populated */}
+              {top10.length > 0 && top10[0]?.balance !== undefined ? (
+                <div
+                  className="absolute"
+                  style={{
+                    bottom: '5%',
+                    left: '35%',
+                    fontSize: '30px',
+                    fontWeight: 'bold',
+                    color: 'black',
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  {top10[0].balance}
+                </div>
+              ) : (
+                <div
+                  className="absolute"
+                  style={{
+                    bottom: '10%',
+                    left: '40%',
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                    color: 'black',
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  Loading...
+                </div>
+              )}
             </div>
+
+
           </div>
         </div>
       </div>

@@ -122,7 +122,7 @@ export default function Page() {
       const poolBalance = await contract.unassignedPoolBalance();
       // Assuming poolBalance is a BigNumber, convert it appropriately
       // Here, dividing by 1,000,000 and adding '$' sign
-      const formattedBalance = (poolBalance.toNumber() / 1000000).toFixed(2);
+      const formattedBalance = (poolBalance.toNumber() / 1000000).toFixed(0);
       return `$${formattedBalance}`;
     } catch (err) {
       console.error('Error fetching community pool balance:', err);
@@ -559,47 +559,80 @@ export default function Page() {
 
             {/* Drawer Container */}
             <div className="drawer-container w-full h-full relative">
-              {/* Lottie Animation */}
-              <Lottie
-                animationData={DashboardAnimation}
-                loop={true}
-                className="w-full h-full"
-              />
+                  {/* Lottie Animation */}
+                  <Lottie
+                    animationData={DashboardAnimation}
+                    loop={true}
+                    className="w-full h-full"
+                  />
 
-              {/* Only render the balances if top10 has been populated */}
-              {top10.length > 0 && top10[0]?.balance !== undefined && (
-                <div
-                  className="absolute"
-                  style={{
-                    bottom: '5%',
-                    left: '35%',
-                    fontSize: '30px',
-                    fontWeight: 'bold',
-                    color: 'black',
-                    backgroundColor: 'transparent',
-                  }}
-                >
-                  {top10[0].balance}
-                </div>
-              )}
+                  {/* Only render the pool balance if it has been populated */}
+                  {communityPoolBalance && communityPoolBalance !== '--' && (
+                    <div
+                      className="absolute"
+                      style={{
+                        bottom: '53%',
+                        left: '32%',
+                        fontSize: '40px',
+                        fontWeight: 'bold',
+                        color: 'black',
+                        backgroundColor: 'transparent',
+                      }}
+                    >
+                      {communityPoolBalance} usd
+                    </div>
+                  )}
 
-              {top10.length > 1 && top10[1]?.balance !== undefined && (
-                <div
-                  className="absolute"
-                  style={{
-                    bottom: '5%',
-                    left: '50%',
-                    fontSize: '30px',
-                    fontWeight: 'bold',
-                    color: 'black',
-                    backgroundColor: 'transparent',
-                  }}
-                >
-                  {top10[1].balance}
-                </div>
-              )}
-</div>
-</div>
+                  {/* Only render the balances if top10 has been populated */}
+                  {top10.length > 0 && typeof top10[0].balance === 'number' && (
+                    <div
+                      className="absolute"
+                      style={{
+                        bottom: '5%',
+                        left: '35%',
+                        fontSize: '30px',
+                        fontWeight: 'bold',
+                        color: 'black',
+                        backgroundColor: 'transparent',
+                      }}
+                    >
+                      {top10[0].balance}
+                    </div>
+                  )}
+
+                  {top10.length > 1 && typeof top10[1].balance === 'number' && (
+                    <div
+                      className="absolute"
+                      style={{
+                        bottom: '5%',
+                        left: '50%',
+                        fontSize: '30px',
+                        fontWeight: 'bold',
+                        color: 'black',
+                        backgroundColor: 'transparent',
+                      }}
+                    >
+                      {top10[1].balance}
+                    </div>
+                  )}
+
+                  {top10.length > 2 && typeof top10[2].balance === 'number' && (
+                    <div
+                      className="absolute"
+                      style={{
+                        bottom: '5%',
+                        left: '70%',
+                        fontSize: '30px',
+                        fontWeight: 'bold',
+                        color: 'black',
+                        backgroundColor: 'transparent',
+                      }}
+                    >
+                      {top10[2].balance}
+                    </div>
+      )}
+    </div>
+  </div>
 </div>
 </div>
 </div>

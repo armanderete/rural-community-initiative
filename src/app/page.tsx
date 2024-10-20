@@ -431,7 +431,7 @@ export default function Page() {
               style={{ paddingTop: '5px', paddingRight: '5px' }}
             >
               <button
-                className={`prev-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ${
+                className={`prev-button px-2 py-1 bg-SteelBlue-700 text-white rounded hover:bg-SteelBlue-600 transition ${
                   currentAnimationIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 onClick={handlePrev}
@@ -441,7 +441,7 @@ export default function Page() {
                 Prev
               </button>
               <button
-                className="next-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ml-2"
+                className="next-button px-2 py-1 bg-SteelBlue-700 text-white rounded hover:bg-SteelBlue-600 transition ml-2"
                 onClick={handleNext}
                 disabled={isAnimating}
                 aria-label="Next Animation"

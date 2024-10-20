@@ -59,7 +59,7 @@ a {
     left: 0;
     height: 100vh;
     width: calc(50vw - 50vh); /* Space left after yellow container */
-    background-color: brown; /* Visualization */
+    background-color: black; /* Visualization */
   }
 
   .red-container {
@@ -68,7 +68,7 @@ a {
     right: 0;
     height: 100vh; /* Full height */
     width: calc(50vw - 50vh);/* Adjust width to use remaining space */
-    background-color: red; /* Visualization */
+    background-color: black; /* Visualization */
   }
 
   .login-section {
@@ -121,20 +121,20 @@ a {
   .green-container {
     width: 100vw; /* Full width */
     height: 10vh; /* 20% height */
-    background-color: green; /* Visualization */
+    background-color: black; /* Visualization */
   }
 
   .yellow-container {
     width: 100vw; /* Full width */
     aspect-ratio: 1 / 1; /* Square aspect ratio */
-    background-color: yellow; /* Visualization */
+    background-color: black; /* Visualization */
     position: relative;
   }
 
   .blue-container {
     width: 100vw; /* Full width */
     height: calc(100vh - 10vh - 100vw); /* Remaining height */
-    background-color: blue; /* Visualization */
+    background-color: black; /* Visualization */
   }
 
   .login-section {
@@ -168,7 +168,7 @@ a {
 .prev-button,
 .next-button {
   padding: 10px 20px;
-  background-color: #1a1a1a;
+  background-color: SteelBlue;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -177,7 +177,7 @@ a {
 
 .prev-button:hover,
 .next-button:hover {
-  background-color: #333;
+  background-color: LightSkyBlue;
 }
 
 /* Drawer Overlay */

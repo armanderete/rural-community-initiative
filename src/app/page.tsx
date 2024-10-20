@@ -57,6 +57,8 @@ export default function Page() {
   // State to store balances
   const [balances, setBalances] = useState<{ address: string; balance: number }[]>([]);
 
+  const [userBalance, setUserBalance] = useState(null);
+
   // State to store community pool balance
   const [communityPoolBalance, setCommunityPoolBalance] = useState<string>('');
 
@@ -159,6 +161,7 @@ export default function Page() {
           const results = await Promise.all(balancePromises);
 
           setBalances(results);
+          console.log('Fetched Balances:', results);
 
           // Step 5: Fetch Community Pool Balance
           const poolBalance = await fetchCommunityPoolBalance();
@@ -172,11 +175,20 @@ export default function Page() {
             .sort((a, b) => (b.balance as number) - (a.balance as number))
             .slice(0, 10); // Changed to top 10
 
+          setTop10(top10); // **Add this line to update the top10 state**
+          console.log('Top 10 Balances:', top10);
+
+          // Find user's balance (case-insensitive)
+          const userBalanceObj = results.find(
+            (item) => item.address.toLowerCase() === address?.toLowerCase()
+          );
+          setUserBalance(userBalanceObj ? userBalanceObj.balance : null);
+          console.log('User Balance:', userBalanceObj ? userBalanceObj.balance : null);
+        
+
           // Step 7: Construct Alert Message
           let alertMessage = `Contract Balance: ${poolBalance}\n`;
           alertMessage += `Current User: ${address}\n`;
-
-          setTop10(top10); // **Add this line to update the top10 state**
           
           
 
@@ -580,6 +592,23 @@ export default function Page() {
                       }}
                     >
                       {communityPoolBalance} usd
+                    </div>
+                  )}
+
+                  {/* Render the user's balance */}
+                  {userBalance !== null && (
+                    <div
+                      className="absolute"
+                      style={{
+                        bottom: '5%',
+                        left: '20%',
+                        fontSize: '30px',
+                        fontWeight: 'bold',
+                        color: 'black',
+                        backgroundColor: 'transparent',
+                      }}
+                    >
+                      {userBalance}
                     </div>
                   )}
 

@@ -643,12 +643,31 @@ export default function Page() {
               </div>
             )}
 
+            {/* Display the 1st place balance */}
+            {top10UserInfos.length > 0 && (
+              <div
+                className="absolute left-[9%] bottom-[89%] text-[18px] md:text-[23px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[0].balanceInfo}`}
+              </div>
+            )}
+
+
             {/* Display the 2st place user */}
             {top10UserInfos.length > 0 && (
               <div
                 className="absolute left-[42%] bottom-[76%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
                 {`${top10UserInfos[1].userInfo}`}
+              </div>
+            )}
+
+            {/* Display the 2nd place balance */}
+            {top10UserInfos.length > 1 && (
+              <div
+                className="absolute left-[30%] bottom-[75%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[1].balanceInfo}`}
               </div>
             )}
 
@@ -661,12 +680,30 @@ export default function Page() {
               </div>
             )}
 
+            {/* Display the 3rd place balance */}
+            {top10UserInfos.length > 2 && (
+              <div
+                className="absolute left-[33%] bottom-[67%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[2].balanceInfo}`}
+              </div>
+            )}
+
             {/* Display the 4th place user */}
             {top10UserInfos.length > 0 && (
               <div
                 className="absolute left-[50%] bottom-[61%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
                 {`${top10UserInfos[3].userInfo}`}
+              </div>
+            )}
+
+            {/* Display the 4rd place balance */}
+            {top10UserInfos.length > 3 && (
+              <div
+                className="absolute left-[34%] bottom-[59%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[3].balanceInfo}`}
               </div>
             )}
 
@@ -679,12 +716,30 @@ export default function Page() {
               </div>
             )}
 
+            {/* Display the 5th place balance */}
+            {top10UserInfos.length > 4 && (
+              <div
+                className="absolute left-[36%] bottom-[51%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[4].balanceInfo}`}
+              </div>
+            )}
+
             {/* Display the 6th place user */}
             {top10UserInfos.length > 0 && (
               <div
                 className="absolute left-[57%] bottom-[46%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
                 {`${top10UserInfos[5].userInfo}`}
+              </div>
+            )}
+
+            {/* Display the 6th place balance */}
+            {top10UserInfos.length > 5 && (
+              <div
+                className="absolute left-[37%] bottom-[43%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[5].balanceInfo}`}
               </div>
             )}
 
@@ -697,12 +752,30 @@ export default function Page() {
               </div>
             )}
 
+            {/* Display the 7th place balance */}
+            {top10UserInfos.length > 6 && (
+              <div
+                className="absolute left-[36%] bottom-[35%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[6].balanceInfo}`}
+              </div>
+            )}
+
             {/* Display the 8th place user */}
             {top10UserInfos.length > 0 && (
               <div
-                className="absolute left-[66%] bottom-[28%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+                className="absolute left-[66%] bottom-[27%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
                 {`${top10UserInfos[7].userInfo}`}
+              </div>
+            )}
+
+            {/* Display the 8th place balance */}
+            {top10UserInfos.length > 7 && (
+              <div
+                className="absolute left-[32%] bottom-[22%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[7].balanceInfo}`}
               </div>
             )}
           </div>

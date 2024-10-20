@@ -584,7 +584,7 @@ export default function Page() {
                       className="absolute"
                       style={{
                         bottom: '53%',
-                        left: '32%',
+                        left: '34%',
                         fontSize: '40px',
                         fontWeight: 'bold',
                         color: 'black',
@@ -600,8 +600,8 @@ export default function Page() {
                     <div
                       className="absolute"
                       style={{
-                        bottom: '5%',
-                        left: '20%',
+                        bottom: '7%',
+                        left: '8%',
                         fontSize: '30px',
                         fontWeight: 'bold',
                         color: 'black',
@@ -634,7 +634,7 @@ export default function Page() {
                       className="absolute"
                       style={{
                         bottom: '5%',
-                        left: '50%',
+                        left: '51%',
                         fontSize: '30px',
                         fontWeight: 'bold',
                         color: 'black',
@@ -650,7 +650,7 @@ export default function Page() {
                       className="absolute"
                       style={{
                         bottom: '5%',
-                        left: '70%',
+                        left: '68%',
                         fontSize: '30px',
                         fontWeight: 'bold',
                         color: 'black',

@@ -1,0 +1,196 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+
+contract CommunityPool is Ownable, ReentrancyGuard {
+    using SafeMath for uint256;
+
+    IERC20 public usdc;
+    mapping(address => uint256) public communityUSDC;
+    uint256 public totalAssigned;
+    uint256 public unassignedPoolBalance;
+
+    event Assigned(address indexed user, uint256 amount, string tag, string concept);
+    event CashedOut(address indexed user, uint256 amount, string tag, string concept);
+    event Transferred(address indexed from, address indexed to, uint256 amount, string tag, string concept);
+    event ExternalTransfer(address indexed to, uint256 amount, string tag, string concept);
+    event Deposit(address indexed from, uint256 amount, string tag, string concept);
+    event FreeVote(address indexed user, address contractAddress, uint256 amount, string tag, string concept);
+
+    constructor(address _usdc, address _owner) Ownable(_owner) {
+        usdc = IERC20(_usdc);
+    }
+
+    function assignCommunityUSDC(address _recipient, uint256 _amount, string memory _tag, string memory _concept) external onlyOwner nonReentrant {
+        require(unassignedPoolBalance >= _amount, "Insufficient unassigned pool balance");
+        communityUSDC[_recipient] = communityUSDC[_recipient].add(_amount);
+        totalAssigned = totalAssigned.add(_amount);
+        unassignedPoolBalance = unassignedPoolBalance.sub(_amount);
+        emit Assigned(_recipient, _amount, _tag, _concept);
+    }
+
+    function transferCommunityUSDC(address _to, uint256 _amount, string memory _tag, string memory _concept) external nonReentrant {
+        require(communityUSDC[msg.sender] >= _amount, "Insufficient community USDC");
+        require(communityUSDC[_to] > 0 || _to == address(this), "Recipient not in community or not the contract");
+
+        communityUSDC[msg.sender] = communityUSDC[msg.sender].sub(_amount);
+        if (_to == address(this)) {
+            unassignedPoolBalance = unassignedPoolBalance.add(_amount);
+            totalAssigned = totalAssigned.sub(_amount); // Reduce total assigned when transferring to the contract
+        } else {
+            communityUSDC[_to] = communityUSDC[_to].add(_amount);
+        }
+
+        emit Transferred(msg.sender, _to, _amount, _tag, _concept);
+    }
+
+    function executeMetaTransactionTransfer(
+        address _from,
+        address _to,
+        uint256 _amount,
+        string memory _tag,
+        string memory _concept,
+        bytes memory _signature
+    ) public nonReentrant {
+        bytes32 message = keccak256(abi.encodePacked(address(this), _from, _to, _amount, _tag, _concept));
+        address signer = recoverSigner(message, _signature);
+        require(signer == _from, "Invalid signature");
+
+        require(communityUSDC[_from] >= _amount, "Insufficient community USDC");
+        require(communityUSDC[_to] > 0 || _to == address(this), "Recipient not in community or not the contract");
+
+        communityUSDC[_from] = communityUSDC[_from].sub(_amount);
+        if (_to == address(this)) {
+            unassignedPoolBalance = unassignedPoolBalance.add(_amount);
+            totalAssigned = totalAssigned.sub(_amount); // Reduce total assigned when transferring to the contract
+        } else {
+            communityUSDC[_to] = communityUSDC[_to].add(_amount);
+        }
+
+        emit Transferred(_from, _to, _amount, _tag, _concept);
+    }
+
+    function cashOutCommunityUSDC(uint256 _amount, string memory _tag, string memory _concept) external nonReentrant {
+        require(communityUSDC[msg.sender] >= _amount, "Insufficient community USDC");
+
+        // Update the internal ledger
+        communityUSDC[msg.sender] = communityUSDC[msg.sender].sub(_amount);
+        totalAssigned = totalAssigned.sub(_amount);
+
+        // Transfer real USDC to the user's wallet
+        usdc.transfer(msg.sender, _amount);
+
+        emit CashedOut(msg.sender, _amount, _tag, _concept);
+    }
+
+    function executeMetaTransactionCashOut(
+        address _from,
+        uint256 _amount,
+        string memory _tag,
+        string memory _concept,
+        bytes memory _signature
+    ) public nonReentrant {
+        bytes32 message = keccak256(abi.encodePacked(address(this), _from, _amount, _tag, _concept));
+        address signer = recoverSigner(message, _signature);
+        require(signer == _from, "Invalid signature");
+
+        require(communityUSDC[_from] >= _amount, "Insufficient community USDC");
+
+        // Update the internal ledger
+        communityUSDC[_from] = communityUSDC[_from].sub(_amount);
+        totalAssigned = totalAssigned.sub(_amount);
+
+        // Transfer real USDC to the user's wallet
+        usdc.transfer(_from, _amount);
+
+        emit CashedOut(_from, _amount, _tag, _concept);
+    }
+
+    function externalTransfer(address _to, uint256 _amount, string memory _tag, string memory _concept) external onlyOwner nonReentrant {
+        require(unassignedPoolBalance >= _amount, "Insufficient unassigned pool balance");
+        usdc.transfer(_to, _amount);
+        unassignedPoolBalance = unassignedPoolBalance.sub(_amount);
+        emit ExternalTransfer(_to, _amount, _tag, _concept);
+    }
+
+    function depositUSDC(uint256 _amount, string memory _tag, string memory _concept) external nonReentrant {
+        usdc.transferFrom(msg.sender, address(this), _amount);
+        unassignedPoolBalance = unassignedPoolBalance.add(_amount);
+        emit Deposit(msg.sender, _amount, _tag, _concept);
+    }
+
+    function freeVote(uint256 _amount, string memory _tag, string memory _concept) external nonReentrant {
+        require(communityUSDC[address(this)] >= _amount, "Insufficient community USDC in the contract");
+
+        // Update the internal ledger
+        communityUSDC[address(this)] = communityUSDC[address(this)].sub(_amount);
+        totalAssigned = totalAssigned.sub(_amount);
+        unassignedPoolBalance = unassignedPoolBalance.add(_amount);
+
+        emit FreeVote(msg.sender, address(this), _amount, _tag, _concept);
+    }
+
+    function executeMetaTransactionFreeVote(
+        uint256 _amount,
+        string memory _tag,
+        string memory _concept,
+        bytes memory _signature
+    ) public nonReentrant {
+        bytes32 message = keccak256(abi.encodePacked(address(this), _amount, _tag, _concept));
+        address signer = recoverSigner(message, _signature);
+        require(signer == msg.sender, "Invalid signature");
+
+        require(communityUSDC[address(this)] >= _amount, "Insufficient community USDC in the contract");
+
+        // Update the internal ledger
+        communityUSDC[address(this)] = communityUSDC[address(this)].sub(_amount);
+        totalAssigned = totalAssigned.sub(_amount);
+        unassignedPoolBalance = unassignedPoolBalance.add(_amount);
+
+        emit FreeVote(msg.sender, address(this), _amount, _tag, _concept);
+    }
+
+    function getCommunityUSDC(address _user) external view returns (uint256) {
+        return communityUSDC[_user];
+    }
+
+    function totalAssignedUSDC() external view returns (uint256) {
+        return totalAssigned;
+    }
+
+    function getUnassignedPoolBalance() external returns (uint256) {
+        uint256 currentBalance = usdc.balanceOf(address(this));
+        unassignedPoolBalance = currentBalance.sub(totalAssigned);
+        return unassignedPoolBalance;
+    }
+
+    function totalPoolBalance() external view returns (uint256) {
+        return usdc.balanceOf(address(this));
+    }
+
+    function recoverSigner(bytes32 _message, bytes memory _signature) public pure returns (address) {
+        bytes32 ethSignedMessageHash = getEthSignedMessageHash(_message);
+
+        (bytes32 r, bytes32 s, uint8 v) = splitSignature(_signature);
+
+        return ecrecover(ethSignedMessageHash, v, r, s);
+    }
+
+    function getEthSignedMessageHash(bytes32 _messageHash) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", _messageHash));
+    }
+
+    function splitSignature(bytes memory _sig) public pure returns (bytes32 r, bytes32 s, uint8 v) {
+        require(_sig.length == 65, "Invalid signature length");
+
+        assembly {
+            r := mload(add(_sig, 32))
+            s := mload(add(_sig, 64))
+            v := byte(0, mload(add(_sig, 96)))
+        }
+    }
+}

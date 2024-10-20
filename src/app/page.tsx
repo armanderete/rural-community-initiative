@@ -595,10 +595,10 @@ export default function Page() {
               onClick={handleOpenSecondaryDrawer}
               className="absolute"
               style={{
-                bottom: '5%',
-                left: '85%',
-                width: '10%',
-                height: '10%',
+                bottom: '4%',
+                left: '82%',
+                width: '13%',
+                height: '13%',
                 backgroundColor: 'transparent', // Transparent background as per your requirement
                 border: 'none',
                 padding: 0,

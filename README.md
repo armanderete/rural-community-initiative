@@ -53,6 +53,10 @@ bun run dev
 
 <br />
 
+## Smart Contract Sample
+added a sample of the smart contract I used for the contest in src/app/smart-contract/smart-contract-sample
+
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

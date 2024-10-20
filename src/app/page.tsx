@@ -18,6 +18,7 @@ import Animation2 from './animations/animation2.json';
 import Animation3 from './animations/animation3.json';
 import Animation4 from './animations/animation4.json';
 import Animation5 from './animations/animation5.json';
+import Animation6 from './animations/animation6.json';
 
 import DashboardAnimation from './animations/dashboard.json';
 import LeaderboardAnimation from './animations/leaderboard.json';
@@ -30,7 +31,7 @@ export default function Page() {
   const { address } = useAccount();
 
   // Array of animations in order
-  const animations = [Animation1, Animation2, Animation3, Animation4, Animation5];
+  const animations = [Animation1, Animation2, Animation3, Animation4, Animation5, Animation6];
 
   // State to manage current animation index
   const [currentAnimationIndex, setCurrentAnimationIndex] = useState<number>(0);

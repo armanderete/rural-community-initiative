@@ -52,13 +52,13 @@ export default function Page() {
   // State to prevent button clicks during animation
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
-  // State to manage the drawer visibility
+  // State to manage drawer states
   const [drawerState, setDrawerState] = useState<'closed' | 'primary-open' | 'secondary-open'>('closed');
 
   // State to store balances
   const [balances, setBalances] = useState<{ address: string; balance: number }[]>([]);
 
-  const [userBalance, setUserBalance] = useState(null);
+  const [userBalance, setUserBalance] = useState<number | null>(null);
 
   // State to store community pool balance
   const [communityPoolBalance, setCommunityPoolBalance] = useState<string>('');
@@ -73,8 +73,6 @@ export default function Page() {
   const [topBasename, setTopBasename] = useState<Basename | null>(null);
 
   const [top10, setTop10] = useState<{ address: string; balance: number }[]>([]);
-
- 
 
   // Initialize ethers provider and contract
   const provider = new ethers.providers.JsonRpcProvider(ALCHEMY_API_URL);
@@ -167,121 +165,40 @@ export default function Page() {
           // Step 5: Fetch Community Pool Balance
           const poolBalance = await fetchCommunityPoolBalance();
           setCommunityPoolBalance(poolBalance);
-
-          
+          console.log('Community Pool Balance:', poolBalance);
 
           // Top 10 results by balance descending
-          const top10 = results
+          const top10Results = results
             .filter((item) => typeof item.balance === 'number')
             .sort((a, b) => (b.balance as number) - (a.balance as number))
             .slice(0, 10); // Changed to top 10
 
-          setTop10(top10); // **Add this line to update the top10 state**
-          console.log('Top 10 Balances:', top10);
+          setTop10(top10Results);
+          console.log('Top 10 Balances:', top10Results);
 
           // Find user's balance (case-insensitive)
           const userBalanceObj = results.find(
             (item) => item.address.toLowerCase() === address?.toLowerCase()
           );
-          setUserBalance(userBalanceObj ? userBalanceObj.balance : null);
-          console.log('User Balance:', userBalanceObj ? userBalanceObj.balance : null);
-        
+          const fetchedUserBalance = userBalanceObj ? userBalanceObj.balance : null;
+          setUserBalance(fetchedUserBalance);
+          console.log('User Balance:', fetchedUserBalance);
 
           // Step 7: Construct Alert Message
           let alertMessage = `Contract Balance: ${poolBalance}\n`;
           alertMessage += `Current User: ${address}\n`;
-          
-          
 
-          // Modified 1st Place Alert: ENS Name > Base Name > Truncated Address, with Community USDC balance
-          alertMessage += `1st place: ${
-            top10[0]
-              ? (await getEnsName(top10[0].address as `0x${string}`)) ||
-                (await getBasename(top10[0].address as `0x${string}`)) ||
-                truncateWalletAddress(top10[0]?.address)
-              : 'N/A'
-          } - Community USDC: ${top10[0].balance}\n`;
-
-          // Modified 2nd Place Alert: ENS Name > Base Name > Truncated Address, with Community USDC balance
-          alertMessage += `2nd place: ${
-            top10[1]
-              ? (await getEnsName(top10[1].address as `0x${string}`)) ||
-                (await getBasename(top10[1].address as `0x${string}`)) ||
-                truncateWalletAddress(top10[1]?.address)
-              : 'N/A'
-          } - Community USDC: ${top10[1].balance}\n`;
-
-          // Modified 3rd Place Alert
-          alertMessage += `3rd place: ${
-            top10[2]
-              ? (await getEnsName(top10[2].address as `0x${string}`)) ||
-                (await getBasename(top10[2].address as `0x${string}`)) ||
-                truncateWalletAddress(top10[2]?.address)
-              : 'N/A'
-          } - Community USDC: ${top10[2].balance}\n`;
-
-          // Modified 4th Place Alert
-          alertMessage += `4th place: ${
-            top10[3]
-              ? (await getEnsName(top10[3].address as `0x${string}`)) ||
-                (await getBasename(top10[3].address as `0x${string}`)) ||
-                truncateWalletAddress(top10[3]?.address)
-              : 'N/A'
-          } - Community USDC: ${top10[3].balance}\n`;
-
-          // Modified 5th Place Alert
-          alertMessage += `5th place: ${
-            top10[4]
-              ? (await getEnsName(top10[4].address as `0x${string}`)) ||
-                (await getBasename(top10[4].address as `0x${string}`)) ||
-                truncateWalletAddress(top10[4]?.address)
-              : 'N/A'
-          } - Community USDC: ${top10[4].balance}\n`;
-
-          // Modified 6th Place Alert
-          alertMessage += `6th place: ${
-            top10[5]
-              ? (await getEnsName(top10[5].address as `0x${string}`)) ||
-                (await getBasename(top10[5].address as `0x${string}`)) ||
-                truncateWalletAddress(top10[5]?.address)
-              : 'N/A'
-          } - Community USDC: ${top10[5].balance}\n`;
-
-          // Modified 7th Place Alert
-          alertMessage += `7th place: ${
-            top10[6]
-              ? (await getEnsName(top10[6].address as `0x${string}`)) ||
-                (await getBasename(top10[6].address as `0x${string}`)) ||
-                truncateWalletAddress(top10[6]?.address)
-              : 'N/A'
-          } - Community USDC: ${top10[6].balance}\n`;
-
-          // Modified 8th Place Alert
-          alertMessage += `8th place: ${
-            top10[7]
-              ? (await getEnsName(top10[7].address as `0x${string}`)) ||
-                (await getBasename(top10[7].address as `0x${string}`)) ||
-                truncateWalletAddress(top10[7]?.address)
-              : 'N/A'
-          } - Community USDC: ${top10[7].balance}\n`;
-
-          // Modified 9th Place Alert
-          alertMessage += `9th place: ${
-            top10[8]
-              ? (await getEnsName(top10[8].address as `0x${string}`)) ||
-                (await getBasename(top10[8].address as `0x${string}`)) ||
-                truncateWalletAddress(top10[8]?.address)
-              : 'N/A'
-          } - Community USDC: ${top10[8].balance}\n`;
-
-          // Modified 10th Place Alert
-          alertMessage += `10th place: ${
-            top10[9]
-              ? (await getEnsName(top10[9].address as `0x${string}`)) ||
-                (await getBasename(top10[9].address as `0x${string}`)) ||
-                truncateWalletAddress(top10[9]?.address)
-              : 'N/A'
-          } - Community USDC: ${top10[9].balance}\n`;
+          // Dynamically build top 10 alert messages
+          for (let i = 0; i < top10Results.length; i++) {
+            const place = `${i + 1}${getOrdinalSuffix(i + 1)} place`;
+            const userInfo = top10Results[i]
+              ? (await getEnsName(top10Results[i].address as `0x${string}`)) ||
+                (await getBasename(top10Results[i].address as `0x${string}`)) ||
+                truncateWalletAddress(top10Results[i]?.address)
+              : 'N/A';
+            const balanceInfo = typeof top10Results[i]?.balance === 'number' ? top10Results[i].balance : 'N/A';
+            alertMessage += `${place}: ${userInfo} - Community USDC: ${balanceInfo}\n`;
+          }
 
           alert(alertMessage);
         } catch (err) {
@@ -295,6 +212,22 @@ export default function Page() {
       fetchData();
     }
   }, [address, animationPlayed, currentAnimationIndex, animations]);
+
+  // Function to get ordinal suffix
+  const getOrdinalSuffix = (i: number) => {
+    const j = i % 10,
+      k = i % 100;
+    if (j === 1 && k !== 11) {
+      return 'st';
+    }
+    if (j === 2 && k !== 12) {
+      return 'nd';
+    }
+    if (j === 3 && k !== 13) {
+      return 'rd';
+    }
+    return 'th';
+  };
 
   // Handler for Next button
   const handleNext = () => {
@@ -320,25 +253,24 @@ export default function Page() {
   };
 
   // Handler to open the primary drawer
-const handleVoteButtonClick = () => {
-  setDrawerState('primary-open');
-};
+  const handleVoteButtonClick = () => {
+    setDrawerState('primary-open');
+  };
 
-// Handler to close the primary drawer
-const handleClosePrimaryDrawer = () => {
-  setDrawerState('closed');
-};
+  // Handler to close the primary drawer
+  const handleClosePrimaryDrawer = () => {
+    setDrawerState('closed');
+  };
 
-// Handler to open the secondary drawer
-const handleOpenSecondaryDrawer = () => {
-  setDrawerState('secondary-open');
-};
+  // Handler to open the secondary drawer
+  const handleOpenSecondaryDrawer = () => {
+    setDrawerState('secondary-open');
+  };
 
-// Handler to close the secondary drawer and reopen the primary drawer
-const handleCloseSecondaryDrawer = () => {
-  setDrawerState('primary-open');
-};
-  
+  // Handler to close the secondary drawer and reopen the primary drawer
+  const handleCloseSecondaryDrawer = () => {
+    setDrawerState('primary-open');
+  };
 
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
@@ -538,188 +470,188 @@ const handleCloseSecondaryDrawer = () => {
         </div>
       </div>
 
-          {/* Primary Drawer */}
-          {drawerState === 'primary-open' && (
+      {/* Primary Drawer */}
+      <div
+        className={`fixed inset-0 z-40 flex items-start justify-center transition-transform duration-300 ease-in-out transform ${
+          drawerState === 'primary-open' ? 'translate-y-0' : 'translate-y-[100vh]'
+        }`}
+      >
+        {/* Overlay */}
         <div
-          className={`fixed inset-0 z-40 flex items-start justify-center transition-transform duration-300 ease-in-out transform ${
-            drawerState === 'primary-open' ? 'translate-y-0' : 'translate-y-[100vh]'
+          className={`absolute inset-0 bg-black opacity-50 transition-opacity duration-300 ease-in-out ${
+            drawerState === 'primary-open' ? 'opacity-50' : 'opacity-0 pointer-events-none'
           }`}
+          onClick={drawerState === 'primary-open' ? handleClosePrimaryDrawer : undefined}
+        ></div>
+
+        {/* Drawer Content */}
+        <div
+          className="relative bg-black rounded-t-lg overflow-hidden transform transition-transform duration-300 ease-in-out w-11/12 md:w-auto md:h-4/5 aspect-square md:aspect-square"
+          onClick={(e) => e.stopPropagation()} // Prevent click from closing drawer
         >
-          {/* Overlay */}
-          <div
-            className="absolute inset-0 bg-black opacity-50"
+          {/* Close Button */}
+          <button
+            className="absolute top-2 right-2 text-white text-xl focus:outline-none focus:ring-2 focus:ring-white rounded"
             onClick={handleClosePrimaryDrawer}
-          ></div>
-
-          {/* Drawer Content */}
-          <div
-            className="relative bg-black rounded-t-lg overflow-hidden transform transition-transform duration-300 ease-in-out w-11/12 md:w-auto md:h-4/5 aspect-square md:aspect-square"
-            onClick={(e) => e.stopPropagation()} // Prevent click from closing drawer
+            aria-label="Close Primary Drawer"
           >
-            {/* Close Button */}
-            <button
-              className="absolute top-2 right-2 text-white text-xl focus:outline-none focus:ring-2 focus:ring-white rounded"
-              onClick={handleClosePrimaryDrawer}
-              aria-label="Close Primary Drawer"
-            >
-              &times;
-            </button>
+            &times;
+          </button>
 
-            {/* Drawer Container */}
-            <div className="drawer-container w-full h-full relative">
-              {/* Lottie Animation */}
-              <Lottie
-                animationData={DashboardAnimation}
-                loop={true}
-                className="w-full h-full"
-              />
+          {/* Drawer Container */}
+          <div className="drawer-container w-full h-full relative">
+            {/* Lottie Animation */}
+            <Lottie
+              animationData={DashboardAnimation}
+              loop={true}
+              className="w-full h-full"
+            />
 
-              {/* Only render the pool balance if it has been populated */}
-              {communityPoolBalance && communityPoolBalance !== '--' && (
-                <div
-                  className="absolute"
-                  style={{
-                    bottom: '53%',
-                    left: '34%',
-                    fontSize: '40px',
-                    fontWeight: 'bold',
-                    color: 'black',
-                    backgroundColor: 'transparent',
-                  }}
-                >
-                  {communityPoolBalance} usd
-                </div>
-              )}
+            {/* Only render the pool balance if it has been populated */}
+            {communityPoolBalance && communityPoolBalance !== '--' && (
+              <div
+                className="absolute"
+                style={{
+                  bottom: '53%',
+                  left: '34%',
+                  fontSize: '40px',
+                  fontWeight: 'bold',
+                  color: 'black',
+                  backgroundColor: 'transparent',
+                }}
+              >
+                {communityPoolBalance} usd
+              </div>
+            )}
 
-              {/* Render the user's balance */}
-              {userBalance !== null && (
-                <div
-                  className="absolute"
-                  style={{
-                    bottom: '7%',
-                    left: '8%',
-                    fontSize: '30px',
-                    fontWeight: 'bold',
-                    color: 'black',
-                    backgroundColor: 'transparent',
-                  }}
-                >
-                  {userBalance}
-                </div>
-              )}
+            {/* Render the user's balance */}
+            {userBalance !== null && (
+              <div
+                className="absolute"
+                style={{
+                  bottom: '7%',
+                  left: '8%',
+                  fontSize: '30px',
+                  fontWeight: 'bold',
+                  color: 'black',
+                  backgroundColor: 'transparent',
+                }}
+              >
+                {userBalance}
+              </div>
+            )}
 
-              {/* Only render the balances if top10 has been populated */}
-              {top10.length > 0 && typeof top10[0].balance === 'number' && (
-                    <div
-                      className="absolute"
-                      style={{
-                        bottom: '5%',
-                        left: '35%',
-                        fontSize: '30px',
-                        fontWeight: 'bold',
-                        color: 'black',
-                        backgroundColor: 'transparent',
-                      }}
-                    >
-                      {top10[0].balance}
-                    </div>
-                  )}
-
-                  {top10.length > 1 && typeof top10[1].balance === 'number' && (
-                    <div
-                      className="absolute"
-                      style={{
-                        bottom: '5%',
-                        left: '51%',
-                        fontSize: '30px',
-                        fontWeight: 'bold',
-                        color: 'black',
-                        backgroundColor: 'transparent',
-                      }}
-                    >
-                      {top10[1].balance}
-                    </div>
-                  )}
-
-                  {top10.length > 2 && typeof top10[2].balance === 'number' && (
-                    <div
-                      className="absolute"
-                      style={{
-                        bottom: '5%',
-                        left: '68%',
-                        fontSize: '30px',
-                        fontWeight: 'bold',
-                        color: 'black',
-                        backgroundColor: 'transparent',
-                      }}
-                    >
-                      {top10[2].balance}
-                    </div>
-                  )}
-
-              {/* Button to Open Secondary Drawer */}
-              <button
-                onClick={handleOpenSecondaryDrawer}
+            {/* Only render the balances if top10 has been populated */}
+            {top10.length > 0 && typeof top10[0].balance === 'number' && (
+              <div
                 className="absolute"
                 style={{
                   bottom: '5%',
-                  left: '85%',
-                  width: '10%',
-                  height: '10%',
-                  backgroundColor: 'transparent', // Transparent background as per your requirement
-                  border: 'none',
-                  padding: 0,
-                  margin: 0,
-                  cursor: 'pointer',
+                  left: '35%',
+                  fontSize: '30px',
+                  fontWeight: 'bold',
+                  color: 'black',
+                  backgroundColor: 'transparent',
                 }}
-                aria-label="Open Secondary Drawer"
-              ></button>
-            </div>
+              >
+                {top10[0].balance}
+              </div>
+            )}
+
+            {top10.length > 1 && typeof top10[1].balance === 'number' && (
+              <div
+                className="absolute"
+                style={{
+                  bottom: '5%',
+                  left: '51%',
+                  fontSize: '30px',
+                  fontWeight: 'bold',
+                  color: 'black',
+                  backgroundColor: 'transparent',
+                }}
+              >
+                {top10[1].balance}
+              </div>
+            )}
+
+            {top10.length > 2 && typeof top10[2].balance === 'number' && (
+              <div
+                className="absolute"
+                style={{
+                  bottom: '5%',
+                  left: '68%',
+                  fontSize: '30px',
+                  fontWeight: 'bold',
+                  color: 'black',
+                  backgroundColor: 'transparent',
+                }}
+              >
+                {top10[2].balance}
+              </div>
+            )}
+
+            {/* Button to Open Secondary Drawer */}
+            <button
+              onClick={handleOpenSecondaryDrawer}
+              className="absolute"
+              style={{
+                bottom: '5%',
+                left: '85%',
+                width: '10%',
+                height: '10%',
+                backgroundColor: 'transparent', // Transparent background as per your requirement
+                border: 'none',
+                padding: 0,
+                margin: 0,
+                cursor: 'pointer',
+              }}
+              aria-label="Open Secondary Drawer"
+            ></button>
           </div>
         </div>
-      )}
+      </div>
 
       {/* Secondary Drawer */}
-      {drawerState === 'secondary-open' && (
+      <div
+        className={`fixed inset-0 z-50 flex items-start justify-center transition-transform duration-300 ease-in-out transform ${
+          drawerState === 'secondary-open' ? 'translate-y-0' : 'translate-y-[100vh]'
+        }`}
+      >
+        {/* Overlay */}
         <div
-          className={`fixed inset-0 z-50 flex items-start justify-center transition-transform duration-300 ease-in-out transform ${
-            drawerState === 'secondary-open' ? 'translate-y-0' : 'translate-y-[100vh]'
+          className={`absolute inset-0 bg-black opacity-50 transition-opacity duration-300 ease-in-out ${
+            drawerState === 'secondary-open' ? 'opacity-50' : 'opacity-0 pointer-events-none'
           }`}
+          onClick={drawerState === 'secondary-open' ? handleCloseSecondaryDrawer : undefined}
+        ></div>
+
+        {/* Drawer Content */}
+        <div
+          className="relative bg-black rounded-t-lg overflow-hidden transform transition-transform duration-300 ease-in-out w-11/12 md:w-auto md:h-4/5 aspect-square md:aspect-square"
+          onClick={(e) => e.stopPropagation()} // Prevent click from closing drawer
         >
-          {/* Overlay */}
-          <div
-            className="absolute inset-0 bg-black opacity-50"
+          {/* Close Button */}
+          <button
+            className="absolute top-2 right-2 text-white text-xl focus:outline-none focus:ring-2 focus:ring-white rounded"
             onClick={handleCloseSecondaryDrawer}
-          ></div>
-
-          {/* Drawer Content */}
-          <div
-            className="relative bg-black rounded-t-lg overflow-hidden transform transition-transform duration-300 ease-in-out w-11/12 md:w-auto md:h-4/5 aspect-square md:aspect-square"
-            onClick={(e) => e.stopPropagation()} // Prevent click from closing drawer
+            aria-label="Close Secondary Drawer"
           >
-            {/* Close Button */}
-            <button
-              className="absolute top-2 right-2 text-white text-xl focus:outline-none focus:ring-2 focus:ring-white rounded"
-              onClick={handleCloseSecondaryDrawer}
-              aria-label="Close Secondary Drawer"
-            >
-              &times;
-            </button>
+            &times;
+          </button>
 
-            {/* Drawer Container */}
-            <div className="drawer-container w-full h-full relative">
-              {/* Leaderboard Lottie Animation */}
-              <Lottie
-                animationData={LeaderboardAnimation}
-                loop={true}
-                className="w-full h-full"
-              />
+          {/* Drawer Container */}
+          <div className="drawer-container w-full h-full relative">
+            {/* Leaderboard Lottie Animation */}
+            <Lottie
+              animationData={LeaderboardAnimation}
+              loop={true}
+              className="w-full h-full"
+            />
 
-              {/* Add any additional content for the Secondary Drawer here */}
-            </div>
+            {/* Add any additional content for the Secondary Drawer here */}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

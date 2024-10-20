@@ -520,7 +520,7 @@ export default function Page() {
                   left: '8%',
                   fontSize: '30px',
                   fontWeight: 'bold',
-                  color: 'black',
+                  color: 'DarkViolet',
                   backgroundColor: 'transparent',
                 }}
               >

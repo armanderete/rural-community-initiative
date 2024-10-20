@@ -637,18 +637,9 @@ export default function Page() {
             {/* Display the 1st place user */}
             {top10UserInfos.length > 0 && (
               <div
-                className="absolute"
-                style={{
-                  left: '10%',
-                  bottom: '90%',
-                  fontSize: '15px',
-                  fontWeight: 'bold',
-                  color: 'black',
-                  backgroundColor: 'transparent',
-                  whiteSpace: 'nowrap', // Prevent breaking to a new line
-                }}
+                className="absolute left-[35%] bottom-[90%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
-                {`1st Place: ${top10UserInfos[0].userInfo}`}
+                {`${top10UserInfos[0].userInfo}`}
               </div>
             )}
 

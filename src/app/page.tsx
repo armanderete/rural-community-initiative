@@ -22,6 +22,7 @@ import Animation4 from './animations/animation4.json';
 import Animation5 from './animations/animation5.json';
 
 import DashboardAnimation from './animations/dashboard.json';
+import LeaderboardAnimation from './animations/leaderboard.json';
 
 // Define constants
 const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
@@ -52,7 +53,7 @@ export default function Page() {
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
   // State to manage the drawer visibility
-  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [drawerState, setDrawerState] = useState<'closed' | 'primary-open' | 'secondary-open'>('closed');
 
   // State to store balances
   const [balances, setBalances] = useState<{ address: string; balance: number }[]>([]);
@@ -318,16 +319,26 @@ export default function Page() {
     setIsAnimating(true); // Animation is playing
   };
 
-  // Handler for Vote Button Click
-  const handleVoteButtonClick = () => {
-    // Open the drawer
-    setIsDrawerOpen(true);
-  };
+  // Handler to open the primary drawer
+const handleVoteButtonClick = () => {
+  setDrawerState('primary-open');
+};
 
-  // Handler to close the drawer
-  const handleCloseDrawer = () => {
-    setIsDrawerOpen(false);
-  };
+// Handler to close the primary drawer
+const handleClosePrimaryDrawer = () => {
+  setDrawerState('closed');
+};
+
+// Handler to open the secondary drawer
+const handleOpenSecondaryDrawer = () => {
+  setDrawerState('secondary-open');
+};
+
+// Handler to close the secondary drawer and reopen the primary drawer
+const handleCloseSecondaryDrawer = () => {
+  setDrawerState('primary-open');
+};
+  
 
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
@@ -527,93 +538,78 @@ export default function Page() {
         </div>
       </div>
 
-      {/* Drawer Component */}
-      <div
-        className={`fixed inset-0 z-40 flex items-start justify-center transition-transform duration-300 ease-in-out ${
-          isDrawerOpen ? 'translate-y-0' : 'translate-y-[100vh]'
-        }`}
-      >
-        {/* Overlay */}
-        {isDrawerOpen && (
-          <div
-            className="absolute inset-0 bg-black opacity-50"
-            onClick={handleCloseDrawer}
-          ></div>
-        )}
-
-        {/* Drawer */}
+          {/* Primary Drawer */}
+          {drawerState === 'primary-open' && (
         <div
-          className={`fixed inset-0 z-40 flex items-center justify-center transition-transform duration-300 ease-in-out ${
-            isDrawerOpen ? 'translate-y-0' : 'translate-y-full'
+          className={`fixed inset-0 z-40 flex items-start justify-center transition-transform duration-300 ease-in-out transform ${
+            drawerState === 'primary-open' ? 'translate-y-0' : 'translate-y-[100vh]'
           }`}
         >
           {/* Overlay */}
-          {isDrawerOpen && (
-            <div
-              className="absolute inset-0 bg-black opacity-50"
-              onClick={handleCloseDrawer}
-            ></div>
-          )}
+          <div
+            className="absolute inset-0 bg-black opacity-50"
+            onClick={handleClosePrimaryDrawer}
+          ></div>
 
-          {/* Drawer */}
+          {/* Drawer Content */}
           <div
             className="relative bg-black rounded-t-lg overflow-hidden transform transition-transform duration-300 ease-in-out w-11/12 md:w-auto md:h-4/5 aspect-square md:aspect-square"
-            onClick={(e) => e.stopPropagation()} // Prevent click from propagating to overlay
+            onClick={(e) => e.stopPropagation()} // Prevent click from closing drawer
           >
             {/* Close Button */}
             <button
               className="absolute top-2 right-2 text-white text-xl focus:outline-none focus:ring-2 focus:ring-white rounded"
-              onClick={handleCloseDrawer}
-              aria-label="Close Drawer"
+              onClick={handleClosePrimaryDrawer}
+              aria-label="Close Primary Drawer"
             >
               &times;
             </button>
 
             {/* Drawer Container */}
             <div className="drawer-container w-full h-full relative">
-                  {/* Lottie Animation */}
-                  <Lottie
-                    animationData={DashboardAnimation}
-                    loop={true}
-                    className="w-full h-full"
-                  />
+              {/* Lottie Animation */}
+              <Lottie
+                animationData={DashboardAnimation}
+                loop={true}
+                className="w-full h-full"
+              />
 
-                  {/* Only render the pool balance if it has been populated */}
-                  {communityPoolBalance && communityPoolBalance !== '--' && (
-                    <div
-                      className="absolute"
-                      style={{
-                        bottom: '53%',
-                        left: '34%',
-                        fontSize: '40px',
-                        fontWeight: 'bold',
-                        color: 'black',
-                        backgroundColor: 'transparent',
-                      }}
-                    >
-                      {communityPoolBalance} usd
-                    </div>
-                  )}
+              {/* Only render the pool balance if it has been populated */}
+              {communityPoolBalance && communityPoolBalance !== '--' && (
+                <div
+                  className="absolute"
+                  style={{
+                    bottom: '53%',
+                    left: '34%',
+                    fontSize: '40px',
+                    fontWeight: 'bold',
+                    color: 'black',
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  {communityPoolBalance} usd
+                </div>
+              )}
 
-                  {/* Render the user's balance */}
-                  {userBalance !== null && (
-                    <div
-                      className="absolute"
-                      style={{
-                        bottom: '7%',
-                        left: '8%',
-                        fontSize: '30px',
-                        fontWeight: 'bold',
-                        color: 'black',
-                        backgroundColor: 'transparent',
-                      }}
-                    >
-                      {userBalance}
-                    </div>
-                  )}
+              {/* Render the user's balance */}
+              {userBalance !== null && (
+                <div
+                  className="absolute"
+                  style={{
+                    bottom: '7%',
+                    left: '8%',
+                    fontSize: '30px',
+                    fontWeight: 'bold',
+                    color: 'black',
+                    backgroundColor: 'transparent',
+                  }}
+                >
+                  {userBalance}
+                </div>
+              )}
 
-                  {/* Only render the balances if top10 has been populated */}
-                  {top10.length > 0 && typeof top10[0].balance === 'number' && (
+              {/* Only render the balances if top10 has been populated */}
+              {top10.length > 0 && typeof top10[0].balance === 'number' && (
                     <div
                       className="absolute"
                       style={{
@@ -659,11 +655,71 @@ export default function Page() {
                     >
                       {top10[2].balance}
                     </div>
+                  )}
+
+              {/* Button to Open Secondary Drawer */}
+              <button
+                onClick={handleOpenSecondaryDrawer}
+                className="absolute"
+                style={{
+                  bottom: '5%',
+                  left: '85%',
+                  width: '10%',
+                  height: '10%',
+                  backgroundColor: 'transparent', // Transparent background as per your requirement
+                  border: 'none',
+                  padding: 0,
+                  margin: 0,
+                  cursor: 'pointer',
+                }}
+                aria-label="Open Secondary Drawer"
+              ></button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Secondary Drawer */}
+      {drawerState === 'secondary-open' && (
+        <div
+          className={`fixed inset-0 z-50 flex items-start justify-center transition-transform duration-300 ease-in-out transform ${
+            drawerState === 'secondary-open' ? 'translate-y-0' : 'translate-y-[100vh]'
+          }`}
+        >
+          {/* Overlay */}
+          <div
+            className="absolute inset-0 bg-black opacity-50"
+            onClick={handleCloseSecondaryDrawer}
+          ></div>
+
+          {/* Drawer Content */}
+          <div
+            className="relative bg-black rounded-t-lg overflow-hidden transform transition-transform duration-300 ease-in-out w-11/12 md:w-auto md:h-4/5 aspect-square md:aspect-square"
+            onClick={(e) => e.stopPropagation()} // Prevent click from closing drawer
+          >
+            {/* Close Button */}
+            <button
+              className="absolute top-2 right-2 text-white text-xl focus:outline-none focus:ring-2 focus:ring-white rounded"
+              onClick={handleCloseSecondaryDrawer}
+              aria-label="Close Secondary Drawer"
+            >
+              &times;
+            </button>
+
+            {/* Drawer Container */}
+            <div className="drawer-container w-full h-full relative">
+              {/* Leaderboard Lottie Animation */}
+              <Lottie
+                animationData={LeaderboardAnimation}
+                loop={true}
+                className="w-full h-full"
+              />
+
+              {/* Add any additional content for the Secondary Drawer here */}
+            </div>
+          </div>
+        </div>
       )}
     </div>
-  </div>
-</div>
-</div>
-</div>
-);
+  );
 }

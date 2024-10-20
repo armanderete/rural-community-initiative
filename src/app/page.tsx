@@ -643,25 +643,68 @@ export default function Page() {
               </div>
             )}
 
-            {/* Future Implementation: Add more places separately */}
-            {/* Example for 2nd place:
-                {top10UserInfos.length > 1 && (
-                  <div
-                    className="absolute"
-                    style={{
-                      left: '10%',
-                      bottom: '85%',
-                      fontSize: '15px',
-                      fontWeight: 'bold',
-                      color: 'black',
-                      backgroundColor: 'transparent',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {`2nd Place: ${top10UserInfos[1].userInfo}`}
-                  </div>
-                )}
-            */}
+            {/* Display the 2st place user */}
+            {top10UserInfos.length > 0 && (
+              <div
+                className="absolute left-[42%] bottom-[76%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[1].userInfo}`}
+              </div>
+            )}
+
+            {/* Display the 3rd place user */}
+            {top10UserInfos.length > 0 && (
+              <div
+                className="absolute left-[47%] bottom-[68%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[2].userInfo}`}
+              </div>
+            )}
+
+            {/* Display the 4th place user */}
+            {top10UserInfos.length > 0 && (
+              <div
+                className="absolute left-[50%] bottom-[61%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[3].userInfo}`}
+              </div>
+            )}
+
+            {/* Display the 5th place user */}
+            {top10UserInfos.length > 0 && (
+              <div
+                className="absolute left-[54%] bottom-[54%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[4].userInfo}`}
+              </div>
+            )}
+
+            {/* Display the 6th place user */}
+            {top10UserInfos.length > 0 && (
+              <div
+                className="absolute left-[57%] bottom-[46%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[5].userInfo}`}
+              </div>
+            )}
+
+            {/* Display the 7th place user */}
+            {top10UserInfos.length > 0 && (
+              <div
+                className="absolute left-[62%] bottom-[37%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[6].userInfo}`}
+              </div>
+            )}
+
+            {/* Display the 8th place user */}
+            {top10UserInfos.length > 0 && (
+              <div
+                className="absolute left-[66%] bottom-[28%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+              >
+                {`${top10UserInfos[7].userInfo}`}
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -635,6 +635,23 @@ export default function Page() {
               className="w-full h-full"
             />
 
+            {/* Render the user's balance */}
+            {userBalance !== null && (
+              <div
+                className="absolute"
+                style={{
+                  bottom: '4%',
+                  left: '63%',
+                  fontSize: '25px',
+                  fontWeight: 'bold',
+                  color: 'MediumPurple',
+                  backgroundColor: 'transparent',
+                }}
+              >
+                {userBalance}
+              </div>
+            )}
+
             {/* Display the 1st place user */}
             {top10UserInfos.length > 0 && (
               <div
@@ -647,7 +664,7 @@ export default function Page() {
             {/* Display the 1st place balance */}
             {top10UserInfos.length > 0 && (
               <div
-                className="absolute left-[9%] bottom-[89%] text-[18px] md:text-[23px] font-bold text-black bg-transparent whitespace-nowrap"
+                className="absolute left-[9%] bottom-[89%] text-[18px] md:text-[23px] font-bold text-pink-500 bg-transparent whitespace-nowrap"
               >
                 {`${top10UserInfos[0].balanceInfo}`}
               </div>

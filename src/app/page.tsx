@@ -6,8 +6,6 @@ import Lottie from 'lottie-react';
 import Image from 'next/image';
 import LoginButton from '../components/LoginButton';
 import SignupButton from '../components/SignupButton';
-import WalletWrapper from 'src/components/WalletWrapper';
-import TransactionWrapper from 'src/components/TransactionWrapper';
 import abi from './abi.json'; // Import ABI from the JSON file
 import './global.css';
 import { getBasename, type Basename } from '../basenames';
@@ -74,6 +72,11 @@ export default function Page() {
 
   const [top10, setTop10] = useState<{ address: string; balance: number }[]>([]);
 
+  // New state variable for top 10 users' information
+  const [top10UserInfos, setTop10UserInfos] = useState<
+    { place: string; userInfo: string; balanceInfo: string }[]
+  >([]);
+
   // Initialize ethers provider and contract
   const provider = new ethers.providers.JsonRpcProvider(ALCHEMY_API_URL);
   const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
@@ -86,10 +89,8 @@ export default function Page() {
 
       const addressesSet = new Set<string>();
       events.forEach((event) => {
-        // Check if event.args is defined
         if (event.args) {
           const userAddress = event.args.user;
-          // Exclude the contract address itself
           if (userAddress.toLowerCase() !== CONTRACT_ADDRESS.toLowerCase()) {
             addressesSet.add(userAddress);
           }
@@ -107,9 +108,7 @@ export default function Page() {
   const fetchBalance = async (userAddress: string) => {
     try {
       const balance = await contract.getCommunityUSDC(userAddress);
-      // Convert to cents by dividing by 10,000
       const balanceInCents = balance.div(ethers.BigNumber.from(10000));
-      // Convert BigNumber to Number (assuming balance is not too large)
       return balanceInCents.toNumber();
     } catch (err) {
       console.error(`Error fetching balance for ${userAddress}:`, err);
@@ -121,8 +120,6 @@ export default function Page() {
   const fetchCommunityPoolBalance = async () => {
     try {
       const poolBalance = await contract.unassignedPoolBalance();
-      // Assuming poolBalance is a BigNumber, convert it appropriately
-      // Here, dividing by 1,000,000 and adding '$' sign
       const formattedBalance = (poolBalance.toNumber() / 1000000).toFixed(0);
       return `$${formattedBalance}`;
     } catch (err) {
@@ -133,16 +130,13 @@ export default function Page() {
 
   useEffect(() => {
     if (address && !animationPlayed) {
-      // User has logged in and animation hasn't played yet
       setAnimationData(animations[currentAnimationIndex]);
       setAnimationPlayed(true);
-      setShowButtons(true); // Show Prev and Next buttons after login
-      setLoading(true); // Start loading
+      setShowButtons(true);
+      setLoading(true);
 
-      // Fetch data from smart contract
       const fetchData = async () => {
         try {
-          // Step 1: Fetch all addresses from Assigned events
           const addresses = await fetchAllAddresses();
 
           if (addresses.length === 0) {
@@ -151,7 +145,6 @@ export default function Page() {
             return;
           }
 
-          // Step 2: Fetch all balances in parallel
           const balancePromises = addresses.map(async (addr: string) => {
             const balance = await fetchBalance(addr);
             return { address: addr, balance };
@@ -162,21 +155,18 @@ export default function Page() {
           setBalances(results);
           console.log('Fetched Balances:', results);
 
-          // Step 5: Fetch Community Pool Balance
           const poolBalance = await fetchCommunityPoolBalance();
           setCommunityPoolBalance(poolBalance);
           console.log('Community Pool Balance:', poolBalance);
 
-          // Top 10 results by balance descending
           const top10Results = results
             .filter((item) => typeof item.balance === 'number')
             .sort((a, b) => (b.balance as number) - (a.balance as number))
-            .slice(0, 10); // Changed to top 10
+            .slice(0, 10);
 
           setTop10(top10Results);
           console.log('Top 10 Balances:', top10Results);
 
-          // Find user's balance (case-insensitive)
           const userBalanceObj = results.find(
             (item) => item.address.toLowerCase() === address?.toLowerCase()
           );
@@ -184,23 +174,23 @@ export default function Page() {
           setUserBalance(fetchedUserBalance);
           console.log('User Balance:', fetchedUserBalance);
 
-          // Step 7: Construct Alert Message
-          let alertMessage = `Contract Balance: ${poolBalance}\n`;
-          alertMessage += `Current User: ${address}\n`;
+          // Compute and set the top 10 users' information
+          let top10UserInfosArray: { place: string; userInfo: string; balanceInfo: string }[] = [];
 
-          // Dynamically build top 10 alert messages
           for (let i = 0; i < top10Results.length; i++) {
             const place = `${i + 1}${getOrdinalSuffix(i + 1)} place`;
-            const userInfo = top10Results[i]
-              ? (await getEnsName(top10Results[i].address as `0x${string}`)) ||
-                (await getBasename(top10Results[i].address as `0x${string}`)) ||
-                truncateWalletAddress(top10Results[i]?.address)
-              : 'N/A';
-            const balanceInfo = typeof top10Results[i]?.balance === 'number' ? top10Results[i].balance : 'N/A';
-            alertMessage += `${place}: ${userInfo} - Community USDC: ${balanceInfo}\n`;
+            const ensName = await getEnsName(top10Results[i].address as `0x${string}`);
+            const baseName = await getBasename(top10Results[i].address as `0x${string}`);
+            const truncatedAddress = truncateWalletAddress(top10Results[i]?.address);
+            const userInfo = ensName || baseName || truncatedAddress;
+            const balanceInfo =
+              typeof top10Results[i]?.balance === 'number' ? top10Results[i].balance.toString() : 'N/A';
+
+            // Populate the top10UserInfosArray
+            top10UserInfosArray.push({ place, userInfo, balanceInfo });
           }
 
-          alert(alertMessage);
+          setTop10UserInfos(top10UserInfosArray);
         } catch (err) {
           console.error('Error executing calculations:', err);
           setError('An error occurred while executing calculations.');
@@ -231,25 +221,24 @@ export default function Page() {
 
   // Handler for Next button
   const handleNext = () => {
-    if (isAnimating) return; // Prevent action if animating
+    if (isAnimating) return;
     const nextIndex = (currentAnimationIndex + 1) % animations.length;
     setCurrentAnimationIndex(nextIndex);
     setAnimationData(animations[nextIndex]);
-    setIsAnimating(true); // Animation is playing
+    setIsAnimating(true);
   };
 
   // Handler for Prev button
   const handlePrev = () => {
-    if (isAnimating) return; // Prevent action if animating
+    if (isAnimating) return;
     if (currentAnimationIndex === 0) {
-      // If on the first animation, do not loop back
       setAnimationData(animations[0]);
     } else {
       const prevIndex = currentAnimationIndex - 1;
       setCurrentAnimationIndex(prevIndex);
       setAnimationData(animations[prevIndex]);
     }
-    setIsAnimating(true); // Animation is playing
+    setIsAnimating(true);
   };
 
   // Handler to open the primary drawer
@@ -376,10 +365,7 @@ export default function Page() {
         {/* Red Container (right side) */}
         <div className="red-container">
           {/* Login Buttons */}
-          <div
-            className="flex justify-center"
-            style={{ paddingTop: '10px' }}
-          >
+          <div className="flex justify-center" style={{ paddingTop: '10px' }}>
             <SignupButton />
             {!address && <LoginButton />}
           </div>
@@ -431,7 +417,7 @@ export default function Page() {
               style={{ paddingTop: '5px', paddingRight: '5px' }}
             >
               <button
-                className={`prev-button px-2 py-1 bg-SteelBlue-700 text-white rounded hover:bg-SteelBlue-600 transition ${
+                className={`prev-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ${
                   currentAnimationIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
                 onClick={handlePrev}
@@ -441,7 +427,7 @@ export default function Page() {
                 Prev
               </button>
               <button
-                className="next-button px-2 py-1 bg-SteelBlue-700 text-white rounded hover:bg-SteelBlue-600 transition ml-2"
+                className="next-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ml-2"
                 onClick={handleNext}
                 disabled={isAnimating}
                 aria-label="Next Animation"
@@ -648,7 +634,43 @@ export default function Page() {
               className="w-full h-full"
             />
 
-            {/* Add any additional content for the Secondary Drawer here */}
+            {/* Display the 1st place user */}
+            {top10UserInfos.length > 0 && (
+              <div
+                className="absolute"
+                style={{
+                  left: '10%',
+                  bottom: '90%',
+                  fontSize: '15px',
+                  fontWeight: 'bold',
+                  color: 'black',
+                  backgroundColor: 'transparent',
+                  whiteSpace: 'nowrap', // Prevent breaking to a new line
+                }}
+              >
+                {`1st Place: ${top10UserInfos[0].userInfo}`}
+              </div>
+            )}
+
+            {/* Future Implementation: Add more places separately */}
+            {/* Example for 2nd place:
+                {top10UserInfos.length > 1 && (
+                  <div
+                    className="absolute"
+                    style={{
+                      left: '10%',
+                      bottom: '85%',
+                      fontSize: '15px',
+                      fontWeight: 'bold',
+                      color: 'black',
+                      backgroundColor: 'transparent',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {`2nd Place: ${top10UserInfos[1].userInfo}`}
+                  </div>
+                )}
+            */}
           </div>
         </div>
       </div>

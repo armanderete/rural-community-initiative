@@ -5,6 +5,27 @@
   </picture>
 </p>
 
+## Smart Contract Sample
+added a sample of the smart contract I used for the contest in src/app/smart-contract/smart-contract-sample
+
+## Env file that you need to prepare:
+
+# See https://portal.cdp.coinbase.com/products/onchainkit
+NEXT_PUBLIC_CDP_API_KEY="(key-here)"
+
+# ~~~
+NEXT_PUBLIC_ENVIRONMENT=localhost
+
+# See https://cloud.walletconnect.com/
+NEXT_PUBLIC_WC_PROJECT_ID="(id-here)"
+
+NEXT_PUBLIC_PAYMASTER_AND_BUNDLER_ENDPOINT=(coinbase-paymaster-url-here)
+
+NEXT_PUBLIC_ALCHEMY_API_URL=(alchemy-url-base-network)
+
+NEXT_PUBLIC_ALCHEMY_MAINNET_API_URL=(alchemy-url-mainnet)
+
+
 # Onchain App Template
 
 An Onchain App Template build with [OnchainKit](https://onchainkit.xyz), and ready to be deployed to Vercel.
@@ -53,8 +74,7 @@ bun run dev
 
 <br />
 
-## Smart Contract Sample
-added a sample of the smart contract I used for the contest in src/app/smart-contract/smart-contract-sample
+
 
 
 ## License

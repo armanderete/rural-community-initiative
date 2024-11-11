@@ -33,6 +33,9 @@ export default function Page() {
   // Array of animations in order
   const animations = [Animation1, Animation2, Animation3, Animation4, Animation5, Animation6];
 
+  // Array indicating whether each animation should loop
+  const animationLoopSettings = [true, false, true, false, true, false];
+
   // State to manage current animation index
   const [currentAnimationIndex, setCurrentAnimationIndex] = useState<number>(0);
 
@@ -135,7 +138,15 @@ export default function Page() {
       setAnimationPlayed(true);
       setShowButtons(true);
       setLoading(true);
+  
+      // Set isAnimating based on whether the initial animation loops
+      if (animationLoopSettings[currentAnimationIndex]) {
+        setIsAnimating(false); // Looped animations don't block navigation
+      } else {
+        setIsAnimating(true); // Non-looping animation is playing
+      }
 
+      // Fetch data from smart contract
       const fetchData = async () => {
         try {
           const addresses = await fetchAllAddresses();
@@ -221,26 +232,34 @@ export default function Page() {
   };
 
   // Handler for Next button
-  const handleNext = () => {
-    if (isAnimating) return;
-    const nextIndex = (currentAnimationIndex + 1) % animations.length;
-    setCurrentAnimationIndex(nextIndex);
-    setAnimationData(animations[nextIndex]);
-    setIsAnimating(true);
-  };
+const handleNext = () => {
+  if (isAnimating) return; // Prevent action if animating
+  const nextIndex = (currentAnimationIndex + 1) % animations.length;
+  setCurrentAnimationIndex(nextIndex);
+  setAnimationData(animations[nextIndex]);
 
-  // Handler for Prev button
-  const handlePrev = () => {
-    if (isAnimating) return;
-    if (currentAnimationIndex === 0) {
-      setAnimationData(animations[0]);
-    } else {
-      const prevIndex = currentAnimationIndex - 1;
-      setCurrentAnimationIndex(prevIndex);
-      setAnimationData(animations[prevIndex]);
-    }
-    setIsAnimating(true);
-  };
+  // Set isAnimating based on whether the next animation loops
+  if (animationLoopSettings[nextIndex]) {
+    setIsAnimating(false); // Looped animations don't block navigation
+  } else {
+    setIsAnimating(true); // Non-looping animation is playing
+  }
+};
+
+// Handler for Prev button
+const handlePrev = () => {
+  if (isAnimating) return; // Prevent action if animating
+  const prevIndex = currentAnimationIndex === 0 ? 0 : currentAnimationIndex - 1;
+  setCurrentAnimationIndex(prevIndex);
+  setAnimationData(animations[prevIndex]);
+
+  // Set isAnimating based on whether the previous animation loops
+  if (animationLoopSettings[prevIndex]) {
+    setIsAnimating(false); // Looped animations don't block navigation
+  } else {
+    setIsAnimating(true); // Non-looping animation is playing
+  }
+};
 
   // Handler to open the primary drawer
   const handleVoteButtonClick = () => {
@@ -275,9 +294,12 @@ export default function Page() {
           {animationData && (
             <Lottie
               animationData={animationData}
-              loop={false}
+              loop={animationLoopSettings[currentAnimationIndex]}
               onComplete={() => {
-                setIsAnimating(false); // Animation finished
+                // Only set isAnimating to false if the animation does not loop
+                if (!animationLoopSettings[currentAnimationIndex]) {
+                  setIsAnimating(false);
+                }
               }}
               style={{
                 width: '100%',
@@ -393,9 +415,12 @@ export default function Page() {
           {animationData && (
             <Lottie
               animationData={animationData}
-              loop={false}
+              loop={animationLoopSettings[currentAnimationIndex]}
               onComplete={() => {
-                setIsAnimating(false); // Animation finished
+                // Only set isAnimating to false if the animation does not loop
+                if (!animationLoopSettings[currentAnimationIndex]) {
+                  setIsAnimating(false);
+                }
               }}
               style={{
                 width: '100%',

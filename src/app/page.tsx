@@ -21,6 +21,7 @@ import Animation5 from './animations/animation5.json';
 import Animation6 from './animations/animation6.json';
 import Animation7 from './animations/animation7.json';
 import Animation8 from './animations/animation8.json';
+import Animation9 from './animations/animation9.json';
 
 
 import DashboardAnimation from './animations/dashboard.json';
@@ -34,10 +35,10 @@ export default function Page() {
   const { address } = useAccount();
 
   // Array of animations in order
-  const animations = [Animation1, Animation2, Animation3, Animation4, Animation5, Animation6, Animation7, Animation8];
+  const animations = [Animation1, Animation2, Animation3, Animation4, Animation5, Animation6, Animation7, Animation8, Animation9];
 
   // Array indicating whether each animation should loop
-  const animationLoopSettings = [true, false, true, false, true, false, true, false];
+  const animationLoopSettings = [true, false, true, false, true, false, true, false, true];
 
   // State to manage current animation index
   const [currentAnimationIndex, setCurrentAnimationIndex] = useState<number>(0);
@@ -53,9 +54,6 @@ export default function Page() {
 
   // State to manage visibility of the vote_button
   const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(true);
-
-  // State to prevent button clicks during animation
-  const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
   // State to manage drawer states
   const [drawerState, setDrawerState] = useState<'closed' | 'primary-open' | 'secondary-open'>('closed');
@@ -141,13 +139,7 @@ export default function Page() {
       setAnimationPlayed(true);
       setShowButtons(true);
       setLoading(true);
-  
-      // Set isAnimating based on whether the initial animation loops
-      if (animationLoopSettings[currentAnimationIndex]) {
-        setIsAnimating(false); // Looped animations don't block navigation
-      } else {
-        setIsAnimating(true); // Non-looping animation is playing
-      }
+      // No need to set isAnimating
 
       // Fetch data from smart contract
       const fetchData = async () => {
@@ -216,7 +208,7 @@ export default function Page() {
 
       fetchData();
     }
-  }, [address, animationPlayed, currentAnimationIndex, animations]);
+  }, [address, animationPlayed, currentAnimationIndex, animations, animationLoopSettings]);
 
   // Function to get ordinal suffix
   const getOrdinalSuffix = (i: number) => {
@@ -235,34 +227,22 @@ export default function Page() {
   };
 
   // Handler for Next button
-const handleNext = () => {
-  if (isAnimating) return; // Prevent action if animating
-  const nextIndex = (currentAnimationIndex + 1) % animations.length;
-  setCurrentAnimationIndex(nextIndex);
-  setAnimationData(animations[nextIndex]);
+  const handleNext = () => {
+    const nextIndex = (currentAnimationIndex + 1) % animations.length;
+    setCurrentAnimationIndex(nextIndex);
+    setAnimationData(animations[nextIndex]);
 
-  // Set isAnimating based on whether the next animation loops
-  if (animationLoopSettings[nextIndex]) {
-    setIsAnimating(false); // Looped animations don't block navigation
-  } else {
-    setIsAnimating(true); // Non-looping animation is playing
-  }
-};
+    // No isAnimating logic
+  };
 
-// Handler for Prev button
-const handlePrev = () => {
-  if (isAnimating) return; // Prevent action if animating
-  const prevIndex = currentAnimationIndex === 0 ? 0 : currentAnimationIndex - 1;
-  setCurrentAnimationIndex(prevIndex);
-  setAnimationData(animations[prevIndex]);
+  // Handler for Prev button
+  const handlePrev = () => {
+    const prevIndex = currentAnimationIndex === 0 ? animations.length - 2 : currentAnimationIndex - 2;
+    setCurrentAnimationIndex(prevIndex);
+    setAnimationData(animations[prevIndex]);
 
-  // Set isAnimating based on whether the previous animation loops
-  if (animationLoopSettings[prevIndex]) {
-    setIsAnimating(false); // Looped animations don't block navigation
-  } else {
-    setIsAnimating(true); // Non-looping animation is playing
-  }
-};
+    // No isAnimating logic
+  };
 
   // Handler to open the primary drawer
   const handleVoteButtonClick = () => {
@@ -297,13 +277,8 @@ const handlePrev = () => {
           {animationData && (
             <Lottie
               animationData={animationData}
-              loop={animationLoopSettings[currentAnimationIndex]}
-              onComplete={() => {
-                // Only set isAnimating to false if the animation does not loop
-                if (!animationLoopSettings[currentAnimationIndex]) {
-                  setIsAnimating(false);
-                }
-              }}
+              loop={animationLoopSettings[currentAnimationIndex]} // true or false
+              onComplete={handleNext} // Automatically calls handleNext when animation completes
               style={{
                 width: '100%',
                 height: '100%',
@@ -321,7 +296,6 @@ const handlePrev = () => {
               <button
                 className={`prev-button`}
                 onClick={handlePrev}
-                disabled={currentAnimationIndex === 0 || isAnimating}
                 aria-label="Previous Animation"
               >
                 Prev
@@ -329,7 +303,6 @@ const handlePrev = () => {
               <button
                 className="next-button ml-4"
                 onClick={handleNext}
-                disabled={isAnimating}
                 aria-label="Next Animation"
               >
                 Next
@@ -418,13 +391,8 @@ const handlePrev = () => {
           {animationData && (
             <Lottie
               animationData={animationData}
-              loop={animationLoopSettings[currentAnimationIndex]}
-              onComplete={() => {
-                // Only set isAnimating to false if the animation does not loop
-                if (!animationLoopSettings[currentAnimationIndex]) {
-                  setIsAnimating(false);
-                }
-              }}
+              loop={animationLoopSettings[currentAnimationIndex]} // true or false
+              onComplete={handleNext} // Automatically calls handleNext when animation completes
               style={{
                 width: '100%',
                 height: '100%',
@@ -446,11 +414,8 @@ const handlePrev = () => {
               style={{ paddingTop: '5px', paddingRight: '5px' }}
             >
               <button
-                className={`prev-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ${
-                  currentAnimationIndex === 0 ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                className={`prev-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition`}
                 onClick={handlePrev}
-                disabled={currentAnimationIndex === 0 || isAnimating}
                 aria-label="Previous Animation"
               >
                 Prev
@@ -458,7 +423,6 @@ const handlePrev = () => {
               <button
                 className="next-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ml-2"
                 onClick={handleNext}
-                disabled={isAnimating}
                 aria-label="Next Animation"
               >
                 Next
@@ -518,7 +482,7 @@ const handlePrev = () => {
             {/* Lottie Animation */}
             <Lottie
               animationData={DashboardAnimation}
-              loop={true}
+              loop={true} // This animation loops indefinitely
               className="w-full h-full"
             />
 
@@ -659,7 +623,7 @@ const handlePrev = () => {
             {/* Leaderboard Lottie Animation */}
             <Lottie
               animationData={LeaderboardAnimation}
-              loop={true}
+              loop={true} // This animation loops indefinitely
               className="w-full h-full"
             />
 
@@ -698,9 +662,8 @@ const handlePrev = () => {
               </div>
             )}
 
-
-            {/* Display the 2st place user */}
-            {top10UserInfos.length > 0 && (
+            {/* Display the 2nd place user */}
+            {top10UserInfos.length > 1 && (
               <div
                 className="absolute left-[42%] bottom-[76%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -718,7 +681,7 @@ const handlePrev = () => {
             )}
 
             {/* Display the 3rd place user */}
-            {top10UserInfos.length > 0 && (
+            {top10UserInfos.length > 2 && (
               <div
                 className="absolute left-[47%] bottom-[68%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -736,7 +699,7 @@ const handlePrev = () => {
             )}
 
             {/* Display the 4th place user */}
-            {top10UserInfos.length > 0 && (
+            {top10UserInfos.length > 3 && (
               <div
                 className="absolute left-[50%] bottom-[61%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -744,7 +707,7 @@ const handlePrev = () => {
               </div>
             )}
 
-            {/* Display the 4rd place balance */}
+            {/* Display the 4th place balance */}
             {top10UserInfos.length > 3 && (
               <div
                 className="absolute left-[34%] bottom-[59%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -754,7 +717,7 @@ const handlePrev = () => {
             )}
 
             {/* Display the 5th place user */}
-            {top10UserInfos.length > 0 && (
+            {top10UserInfos.length > 4 && (
               <div
                 className="absolute left-[54%] bottom-[54%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -772,7 +735,7 @@ const handlePrev = () => {
             )}
 
             {/* Display the 6th place user */}
-            {top10UserInfos.length > 0 && (
+            {top10UserInfos.length > 5 && (
               <div
                 className="absolute left-[57%] bottom-[46%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -790,7 +753,7 @@ const handlePrev = () => {
             )}
 
             {/* Display the 7th place user */}
-            {top10UserInfos.length > 0 && (
+            {top10UserInfos.length > 6 && (
               <div
                 className="absolute left-[62%] bottom-[37%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -808,7 +771,7 @@ const handlePrev = () => {
             )}
 
             {/* Display the 8th place user */}
-            {top10UserInfos.length > 0 && (
+            {top10UserInfos.length > 7 && (
               <div
                 className="absolute left-[66%] bottom-[27%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >

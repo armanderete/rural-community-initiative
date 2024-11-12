@@ -310,28 +310,6 @@ export default function Page() {
             />
           )}
 
-          {/* Prev and Next Buttons */}
-          {showButtons && address && (
-            <div className="prev-next-buttons z-20">
-              <button
-                className="prev-button"
-                onClick={handlePrev}
-                aria-label="Previous Animation"
-                style={{ visibility: currentAnimationIndex > 0 ? 'visible' : 'hidden' }}
-              >
-                Prev
-              </button>
-              <button
-                className="next-button ml-4"
-                onClick={handleNext}
-                aria-label="Next Animation"
-                style={{ visibility: currentAnimationIndex < config.animations - 1 ? 'visible' : 'hidden' }}
-              >
-                Next
-              </button>
-            </div>
-          )}
-
           {/* Vote Button */}
           {address && voteButtonVisible && (
             <button
@@ -390,6 +368,28 @@ export default function Page() {
             <SignupButton />
             {!address && <LoginButton />}
           </div>
+
+          {/* **Moved Prev and Next Buttons Here** */}
+          {showButtons && address && (
+            <div className="prev-next-buttons z-20">
+              <button
+                className="prev-button"
+                onClick={handlePrev}
+                aria-label="Previous Animation"
+                style={{ visibility: currentAnimationIndex > 0 ? 'visible' : 'hidden' }}
+              >
+                Prev
+              </button>
+              <button
+                className="next-button ml-4"
+                onClick={handleNext}
+                aria-label="Next Animation"
+                style={{ visibility: currentAnimationIndex < config.animations - 1 ? 'visible' : 'hidden' }}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

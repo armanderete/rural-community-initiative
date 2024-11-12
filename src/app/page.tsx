@@ -295,9 +295,10 @@ export default function Page() {
           {showButtons && address && (
             <div className="prev-next-buttons z-20">
               <button
-                className={`prev-button`}
+                className="prev-button"
                 onClick={handlePrev}
                 aria-label="Previous Animation"
+                style={{ visibility: currentAnimationIndex > 0 ? 'visible' : 'hidden' }}
               >
                 Prev
               </button>
@@ -305,11 +306,13 @@ export default function Page() {
                 className="next-button ml-4"
                 onClick={handleNext}
                 aria-label="Next Animation"
+                style={{ visibility: currentAnimationIndex < animations.length - 1 ? 'visible' : 'hidden' }}
               >
                 Next
               </button>
             </div>
           )}
+
 
           {/* Vote Button */}
           {address && voteButtonVisible && (

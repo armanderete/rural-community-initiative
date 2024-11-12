@@ -22,6 +22,8 @@ import Animation6 from './animations/animation6.json';
 import Animation7 from './animations/animation7.json';
 import Animation8 from './animations/animation8.json';
 import Animation9 from './animations/animation9.json';
+import Animation10 from './animations/animation10.json';
+import Animation11 from './animations/animation11.json';
 
 
 import DashboardAnimation from './animations/dashboard.json';
@@ -35,10 +37,10 @@ export default function Page() {
   const { address } = useAccount();
 
   // Array of animations in order
-  const animations = [Animation1, Animation2, Animation3, Animation4, Animation5, Animation6, Animation7, Animation8, Animation9];
+  const animations = [Animation1, Animation2, Animation3, Animation4, Animation5, Animation6, Animation7, Animation8, Animation9, Animation10, Animation11];
 
   // Array indicating whether each animation should loop
-  const animationLoopSettings = [true, false, true, false, true, false, true, false, true];
+  const animationLoopSettings = [true, false, true, false, true, false, true, false, true, false, true];
 
   // State to manage current animation index
   const [currentAnimationIndex, setCurrentAnimationIndex] = useState<number>(0);

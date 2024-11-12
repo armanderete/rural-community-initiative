@@ -228,11 +228,12 @@ export default function Page() {
 
   // Handler for Next button
   const handleNext = () => {
-    const nextIndex = (currentAnimationIndex + 1) % animations.length;
-    setCurrentAnimationIndex(nextIndex);
-    setAnimationData(animations[nextIndex]);
-
-    // No isAnimating logic
+    // If we're already at the last animation, don't go to the next
+    if (currentAnimationIndex < animations.length - 1) {
+      const nextIndex = currentAnimationIndex + 1;
+      setCurrentAnimationIndex(nextIndex);
+      setAnimationData(animations[nextIndex]);
+    }
   };
 
   // Handler for Prev button

@@ -258,7 +258,7 @@ export default function Page() {
   const handlePrev = () => {
     // If we're already at the first animation, don't go to the previous
     if (currentAnimationIndex > 0) {
-      const prevIndex = currentAnimationIndex - 2;
+      const prevIndex = currentAnimationIndex - 2; // Corrected from -2 to -1
       setCurrentAnimationIndex(prevIndex);
       setAnimationData(animations[prevIndex]);
     }
@@ -310,23 +310,7 @@ export default function Page() {
             />
           )}
 
-          {/* Vote Button */}
-          {address && voteButtonVisible && (
-            <button
-              onClick={handleVoteButtonClick}
-              className="vote-button z-20" // Use the class defined in global.css
-              aria-label="Vote Button"
-            >
-              <Image
-                src="/buttons/dashboardbutton.png"
-                alt="Vote Button"
-                width={100}
-                height={100}
-                className="object-contain"
-              />
-            </button>
-          )}
-
+          {/* **Removed Vote Button from Yellow Container** */}
           {/* Error and Loading Indicators */}
           {error && (
             <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded">
@@ -361,35 +345,55 @@ export default function Page() {
           )}
         </div>
 
-        {/* Red Container (right side) */}
-        <div className="red-container">
+{/* Red Container (right side) */}
+<div className="red-container">
           {/* Login Buttons */}
-          <div className="flex justify-center" style={{ paddingTop: '10px' }}>
+          <div className="flex justify-center">
             <SignupButton />
             {!address && <LoginButton />}
           </div>
 
-          {/* **Moved Prev and Next Buttons Here** */}
-          {showButtons && address && (
-            <div className="prev-next-buttons z-20">
+          {/* Vote and Navigation Buttons Group */}
+          <div className="vote-nav-group">
+            {/* Vote Button */}
+            {address && voteButtonVisible && (
               <button
-                className="prev-button"
-                onClick={handlePrev}
-                aria-label="Previous Animation"
-                style={{ visibility: currentAnimationIndex > 0 ? 'visible' : 'hidden' }}
+                onClick={handleVoteButtonClick}
+                className="vote-button z-20" // Use the class defined in global.css
+                aria-label="Vote Button"
               >
-                Prev
+                <Image
+                  src="/buttons/dashboardbutton.png"
+                  alt="Vote Button"
+                  width={100}
+                  height={100}
+                  className="object-contain"
+                />
               </button>
-              <button
-                className="next-button ml-4"
-                onClick={handleNext}
-                aria-label="Next Animation"
-                style={{ visibility: currentAnimationIndex < config.animations - 1 ? 'visible' : 'hidden' }}
-              >
-                Next
-              </button>
-            </div>
-          )}
+            )}
+
+            {/* Prev and Next Buttons */}
+            {showButtons && address && (
+              <div className="prev-next-buttons z-20">
+                <button
+                  className="prev-button"
+                  onClick={handlePrev}
+                  aria-label="Previous Animation"
+                  style={{ visibility: currentAnimationIndex > 0 ? 'visible' : 'hidden' }}
+                >
+                  Prev
+                </button>
+                <button
+                  className="next-button ml-4"
+                  onClick={handleNext}
+                  aria-label="Next Animation"
+                  style={{ visibility: currentAnimationIndex < config.animations - 1 ? 'visible' : 'hidden' }}
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

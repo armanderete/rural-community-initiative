@@ -30,14 +30,18 @@ import LeaderboardAnimation from '../animations/leaderboard.json';
 // Import the configuration
 import config from './page-config.json';
 
-// Define constants
-const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
-const CONTRACT_ADDRESS = config.contractAddress; // fetched from config file
-
 // Define types for better type safety
 type Balance = { address: string; balance: number | string };
 type Top10Balance = { address: string; balance: number };
 type UserInfo = { place: string; userInfo: string; balanceInfo: string };
+
+// Define the type for the config to ensure type safety
+interface PageConfig {
+  animations: number;
+  animationLoopSettings: boolean[];
+  contractAddress: string;
+  contractDeploymentBlock: number;
+}
 
 export default function Page() {
   const { address } = useAccount();
@@ -104,7 +108,13 @@ export default function Page() {
   // State variable for top 10 users' information
   const [top10UserInfos, setTop10UserInfos] = useState<UserInfo[]>([]);
 
-  // Initialize ethers provider and contract
+  // State variables for batch tracking
+  const [totalBatches, setTotalBatches] = useState<number>(0);
+  const [processedBatches, setProcessedBatches] = useState<number>(0);
+
+  // Initialize ethers provider and contract using config values
+  const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
+  const CONTRACT_ADDRESS = config.contractAddress; // fetched from config file
   const provider = new ethers.providers.JsonRpcProvider(ALCHEMY_API_URL);
   const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
 
@@ -118,7 +128,7 @@ export default function Page() {
       const latestBlock = await provider.getBlockNumber();
       const maxBlockRange = 100000; // Alchemy's maximum block range per query
 
-      const contractDeploymentBlock = config.contractDeploymentBlock; // *** Fetching from config file
+      const contractDeploymentBlock = config.contractDeploymentBlock; // Fetching from config file
       if (!contractDeploymentBlock || typeof contractDeploymentBlock !== 'number') {
         throw new Error('Contract deployment block number is not set or invalid.');
       }
@@ -128,6 +138,12 @@ export default function Page() {
       let allAddressesSet = new Set<string>();
 
       console.log(`Starting to fetch events from block ${startBlock} to block ${latestBlock}`);
+
+      // Calculate total number of batches
+      const remainingBlocks = latestBlock - contractDeploymentBlock + 1;
+      const calculatedTotalBatches = Math.ceil(remainingBlocks / maxBlockRange);
+      setTotalBatches(calculatedTotalBatches);
+      console.log(`Total batches to fetch: ${calculatedTotalBatches}`);
 
       while (startBlock <= latestBlock) {
         // Adjust endBlock if it exceeds latestBlock
@@ -148,6 +164,9 @@ export default function Page() {
             }
           }
         });
+
+        // Update batch progress
+        setProcessedBatches((prev) => prev + 1);
 
         // Update the startBlock for the next batch
         startBlock = endBlock + 1;
@@ -350,6 +369,16 @@ export default function Page() {
     setDrawerState('primary-open');
   };
 
+  /**
+   * Calculate the percentage completion based on batches processed.
+   * @returns Percentage string
+   */
+  const calculateCompletionPercentage = (): string => {
+    if (totalBatches === 0) return '0%';
+    const percentage = (processedBatches / totalBatches) * 100;
+    return `${percentage.toFixed(2)}%`;
+  };
+
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
       {/* Desktop View */}
@@ -376,10 +405,10 @@ export default function Page() {
             />
           )}
 
-          {/* **Added "Please connect your wallet" message** */}
+          {/* Added "Please connect your wallet" message */}
           {!address && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-black text-xl font-semibold">Please connect your wallet</p>
+              <p className="text-white text-xl font-semibold">Please connect your wallet</p>
             </div>
           )}
 
@@ -501,7 +530,7 @@ export default function Page() {
               }}
             />
           )}
-          {/* **Added "Please connect your wallet" message** */}
+          {/* Added "Please connect your wallet" message */}
           {!address && (
             <div className="absolute inset-0 flex items-center justify-center">
               <p className="text-white text-xl font-semibold">Please connect your wallet</p>
@@ -557,7 +586,7 @@ export default function Page() {
 
       {/* Primary Drawer */}
       <div
-        className={`fixed inset-0 z-40 flex items-start justify-center transition-transform duration-300 ease-in-out transform ${
+        className={`fixed inset-0 z-40 flex items-center justify-center transition-transform duration-300 ease-in-out transform ${
           drawerState === 'primary-open' ? 'translate-y-0' : 'translate-y-[100vh]'
         }`}
       >
@@ -584,7 +613,7 @@ export default function Page() {
           </button>
 
           {/* Drawer Container */}
-          <div className="drawer-container w-full h-full relative">
+          <div className="drawer-container w-full h-full relative flex items-center justify-center">
             {/* Lottie Animation */}
             <Lottie
               animationData={DashboardAnimation}
@@ -592,8 +621,16 @@ export default function Page() {
               className="w-full h-full"
             />
 
-            {/* Only render the pool balance if it has been populated */}
-            {communityPoolBalance && communityPoolBalance !== '--' && (
+            {/* Loading Progress Message */}
+            {loading && (
+              <div className="absolute bg-yellow-300 text-black px-6 py-4 rounded flex flex-col items-center">
+                <p className="text-lg font-semibold">Loading community pool data from the blockchain</p>
+                <p className="mt-2 text-md">{calculateCompletionPercentage()} completed</p>
+              </div>
+            )}
+
+            {/* Only render the pool balance if it has been populated and not loading */}
+            {communityPoolBalance && communityPoolBalance !== '--' && !loading && (
               <div
                 className="absolute"
                 style={{
@@ -609,8 +646,8 @@ export default function Page() {
               </div>
             )}
 
-            {/* Render the user's balance */}
-            {userBalance !== null && (
+            {/* Render the user's balance if not loading */}
+            {userBalance !== null && !loading && (
               <div
                 className="absolute"
                 style={{
@@ -626,55 +663,53 @@ export default function Page() {
               </div>
             )}
 
-            {/* Only render the balances if top10 has been populated */}
-            {top10.length > 0 && (
-              <>
-                {top10[0].balance && (
-                  <div
-                    className="absolute"
-                    style={{
-                      bottom: '5%',
-                      left: '35%',
-                      fontSize: '30px',
-                      fontWeight: 'bold',
-                      color: 'black',
-                      backgroundColor: 'transparent',
-                    }}
-                  >
-                    {top10[0].balance}
-                  </div>
-                )}
-                {top10[1]?.balance && (
-                  <div
-                    className="absolute"
-                    style={{
-                      bottom: '5%',
-                      left: '51%',
-                      fontSize: '30px',
-                      fontWeight: 'bold',
-                      color: 'black',
-                      backgroundColor: 'transparent',
-                    }}
-                  >
-                    {top10[1].balance}
-                  </div>
-                )}
-                {top10[2]?.balance && (
-                  <div
-                    className="absolute"
-                    style={{
-                      bottom: '5%',
-                      left: '68%',
-                      fontSize: '30px',
-                      fontWeight: 'bold',
-                      color: 'black',
-                      backgroundColor: 'transparent',
-                    }}
-                  >
-                    {top10[2].balance}
-                  </div>
-                )}
-              </>
+            {/* Only render the balances if top10 has been populated and not loading */}
+            {top10.length > 0 && typeof top10[0].balance === 'number' && !loading && (
+              <div
+                className="absolute"
+                style={{
+                  bottom: '5%',
+                  left: '35%',
+                  fontSize: '30px',
+                  fontWeight: 'bold',
+                  color: 'black',
+                  backgroundColor: 'transparent',
+                }}
+              >
+                {top10[0].balance}
+              </div>
+            )}
+
+            {top10.length > 1 && typeof top10[1].balance === 'number' && !loading && (
+              <div
+                className="absolute"
+                style={{
+                  bottom: '5%',
+                  left: '51%',
+                  fontSize: '30px',
+                  fontWeight: 'bold',
+                  color: 'black',
+                  backgroundColor: 'transparent',
+                }}
+              >
+                {top10[1].balance}
+              </div>
+            )}
+
+            {top10.length > 2 && typeof top10[2].balance === 'number' && !loading && (
+              <div
+                className="absolute"
+                style={{
+                  bottom: '5%',
+                  left: '68%',
+                  fontSize: '30px',
+                  fontWeight: 'bold',
+                  color: 'black',
+                  backgroundColor: 'transparent',
+                }}
+              >
+                {top10[2].balance}
+              </div>
             )}
 
             {/* Button to Open Secondary Drawer */}
@@ -735,8 +770,8 @@ export default function Page() {
               className="w-full h-full"
             />
 
-            {/* Render the user's balance */}
-            {userBalance !== null && (
+            {/* Render the user's balance if not loading */}
+            {userBalance !== null && !loading && (
               <div
                 className="absolute"
                 style={{
@@ -754,7 +789,7 @@ export default function Page() {
 
             {/* Display the top 8 users */}
             {/* Display the 1st place user */}
-            {top10UserInfos.length > 0 && (
+            {top10UserInfos.length > 0 && !loading && (
               <div
                 className="absolute left-[35%] bottom-[90%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -763,7 +798,7 @@ export default function Page() {
             )}
 
             {/* Display the 1st place balance */}
-            {top10UserInfos.length > 0 && (
+            {top10UserInfos.length > 0 && !loading && (
               <div
                 className="absolute left-[9%] bottom-[89%] text-[18px] md:text-[23px] font-bold text-pink-500 bg-transparent whitespace-nowrap"
               >
@@ -772,7 +807,7 @@ export default function Page() {
             )}
 
             {/* Display the 2nd place user */}
-            {top10UserInfos.length > 1 && (
+            {top10UserInfos.length > 1 && !loading && (
               <div
                 className="absolute left-[42%] bottom-[76%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -781,7 +816,7 @@ export default function Page() {
             )}
 
             {/* Display the 2nd place balance */}
-            {top10UserInfos.length > 1 && (
+            {top10UserInfos.length > 1 && !loading && (
               <div
                 className="absolute left-[30%] bottom-[75%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -790,7 +825,7 @@ export default function Page() {
             )}
 
             {/* Display the 3rd place user */}
-            {top10UserInfos.length > 2 && (
+            {top10UserInfos.length > 2 && !loading && (
               <div
                 className="absolute left-[47%] bottom-[68%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -799,7 +834,7 @@ export default function Page() {
             )}
 
             {/* Display the 3rd place balance */}
-            {top10UserInfos.length > 2 && (
+            {top10UserInfos.length > 2 && !loading && (
               <div
                 className="absolute left-[33%] bottom-[67%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -808,7 +843,7 @@ export default function Page() {
             )}
 
             {/* Display the 4th place user */}
-            {top10UserInfos.length > 3 && (
+            {top10UserInfos.length > 3 && !loading && (
               <div
                 className="absolute left-[50%] bottom-[61%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -817,7 +852,7 @@ export default function Page() {
             )}
 
             {/* Display the 4th place balance */}
-            {top10UserInfos.length > 3 && (
+            {top10UserInfos.length > 3 && !loading && (
               <div
                 className="absolute left-[34%] bottom-[59%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -826,7 +861,7 @@ export default function Page() {
             )}
 
             {/* Display the 5th place user */}
-            {top10UserInfos.length > 4 && (
+            {top10UserInfos.length > 4 && !loading && (
               <div
                 className="absolute left-[54%] bottom-[54%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -835,7 +870,7 @@ export default function Page() {
             )}
 
             {/* Display the 5th place balance */}
-            {top10UserInfos.length > 4 && (
+            {top10UserInfos.length > 4 && !loading && (
               <div
                 className="absolute left-[36%] bottom-[51%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -844,7 +879,7 @@ export default function Page() {
             )}
 
             {/* Display the 6th place user */}
-            {top10UserInfos.length > 5 && (
+            {top10UserInfos.length > 5 && !loading && (
               <div
                 className="absolute left-[57%] bottom-[46%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -853,7 +888,7 @@ export default function Page() {
             )}
 
             {/* Display the 6th place balance */}
-            {top10UserInfos.length > 5 && (
+            {top10UserInfos.length > 5 && !loading && (
               <div
                 className="absolute left-[37%] bottom-[43%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -862,7 +897,7 @@ export default function Page() {
             )}
 
             {/* Display the 7th place user */}
-            {top10UserInfos.length > 6 && (
+            {top10UserInfos.length > 6 && !loading && (
               <div
                 className="absolute left-[62%] bottom-[37%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -871,7 +906,7 @@ export default function Page() {
             )}
 
             {/* Display the 7th place balance */}
-            {top10UserInfos.length > 6 && (
+            {top10UserInfos.length > 6 && !loading && (
               <div
                 className="absolute left-[36%] bottom-[35%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -880,7 +915,7 @@ export default function Page() {
             )}
 
             {/* Display the 8th place user */}
-            {top10UserInfos.length > 7 && (
+            {top10UserInfos.length > 7 && !loading && (
               <div
                 className="absolute left-[66%] bottom-[27%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
@@ -889,7 +924,7 @@ export default function Page() {
             )}
 
             {/* Display the 8th place balance */}
-            {top10UserInfos.length > 7 && (
+            {top10UserInfos.length > 7 && !loading && (
               <div
                 className="absolute left-[32%] bottom-[22%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >

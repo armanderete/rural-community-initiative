@@ -310,7 +310,13 @@ export default function Page() {
             />
           )}
 
-          {/* **Removed Vote Button from Yellow Container** */}
+          {/* **Added "Please connect your wallet" message** */}
+          {!address && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <p className="text-black text-xl font-semibold">Please connect your wallet</p>
+            </div>
+          )}
+
           {/* Error and Loading Indicators */}
           {error && (
             <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded">
@@ -411,7 +417,7 @@ export default function Page() {
           </div>
         </div>
 
-        {/* Yellow Container */}
+        {/* Yellow Container MOBILE*/}
         <div className="yellow-container relative">
           {/* Main Animations */}
           {animationData && (
@@ -428,6 +434,12 @@ export default function Page() {
                 zIndex: 10,
               }}
             />
+          )}
+          {/* **Added "Please connect your wallet" message** */}
+          {!address && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <p className="text-white text-xl font-semibold">Please connect your wallet</p>
+            </div>
           )}
         </div>
 

@@ -32,7 +32,7 @@ import config from './page-config.json';
 
 // Define constants
 const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
-const CONTRACT_ADDRESS = '0xfe3Fc6cb04bA5958b0577a0c6528269964e7C8bF'; // Your contract address
+const CONTRACT_ADDRESS = config.contractAddress; // fetched from config file
 
 // Define types for better type safety
 type Balance = { address: string; balance: number | string };
@@ -118,7 +118,7 @@ export default function Page() {
       const latestBlock = await provider.getBlockNumber();
       const maxBlockRange = 100000; // Alchemy's maximum block range per query
 
-      const contractDeploymentBlock = 20207949; // *** Replace with your contract's deployment block number ***
+      const contractDeploymentBlock = config.contractDeploymentBlock; // *** Fetching from config file
       if (!contractDeploymentBlock || typeof contractDeploymentBlock !== 'number') {
         throw new Error('Contract deployment block number is not set or invalid.');
       }

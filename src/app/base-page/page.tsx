@@ -624,7 +624,7 @@ export default function Page() {
             {/* Loading Progress Message */}
             {loading && (
               <div className="absolute bg-yellow-300 text-black px-6 py-4 rounded flex flex-col items-center">
-                <p className="text-lg font-semibold">Loading community pool data from the blockchain</p>
+                <p className="text-lg font-semibold">Fetching "community pool" data from the blockchain</p>
                 <p className="mt-2 text-md">{calculateCompletionPercentage()} completed</p>
               </div>
             )}

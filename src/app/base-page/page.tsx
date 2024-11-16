@@ -34,6 +34,11 @@ import config from './page-config.json';
 const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
 const CONTRACT_ADDRESS = '0xfe3Fc6cb04bA5958b0577a0c6528269964e7C8bF'; // Your contract address
 
+// Define types for better type safety
+type Balance = { address: string; balance: number | string };
+type Top10Balance = { address: string; balance: number };
+type UserInfo = { place: string; userInfo: string; balanceInfo: string };
+
 export default function Page() {
   const { address } = useAccount();
 
@@ -49,7 +54,7 @@ export default function Page() {
     Animation8,
     Animation9,
     Animation10,
-    Animation11
+    Animation11,
   ];
 
   // Limit animations array based on config.animations
@@ -76,8 +81,8 @@ export default function Page() {
   // State to manage drawer states
   const [drawerState, setDrawerState] = useState<'closed' | 'primary-open' | 'secondary-open'>('closed');
 
-  // State to store balances
-  const [balances, setBalances] = useState<{ address: string; balance: number }[]>([]);
+  // State to store balances (allows balance to be number or string)
+  const [balances, setBalances] = useState<Balance[]>([]);
 
   const [userBalance, setUserBalance] = useState<number | null>(null);
 
@@ -93,42 +98,76 @@ export default function Page() {
   // New state variable to store the top basename
   const [topBasename, setTopBasename] = useState<Basename | null>(null);
 
-  const [top10, setTop10] = useState<{ address: string; balance: number }[]>([]);
+  // State to store top 10 balances (only numbers)
+  const [top10, setTop10] = useState<Top10Balance[]>([]);
 
-  // New state variable for top 10 users' information
-  const [top10UserInfos, setTop10UserInfos] = useState<
-    { place: string; userInfo: string; balanceInfo: string }[]
-  >([]);
+  // State variable for top 10 users' information
+  const [top10UserInfos, setTop10UserInfos] = useState<UserInfo[]>([]);
 
   // Initialize ethers provider and contract
   const provider = new ethers.providers.JsonRpcProvider(ALCHEMY_API_URL);
   const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
 
-  // Fetch all Assigned events to get unique user addresses
-  const fetchAllAddresses = async () => {
+  /**
+   * Fetch all Assigned events to get unique user addresses.
+   * Implements batching to comply with Alchemy's max block range limitation.
+   */
+  const fetchAllAddresses = async (): Promise<string[]> => {
     try {
       const filter = contract.filters.Assigned();
-      const events = await contract.queryFilter(filter, 0, 'latest');
+      const latestBlock = await provider.getBlockNumber();
+      const maxBlockRange = 100000; // Alchemy's maximum block range per query
 
-      const addressesSet = new Set<string>();
-      events.forEach((event) => {
-        if (event.args) {
-          const userAddress = event.args.user;
-          if (userAddress.toLowerCase() !== CONTRACT_ADDRESS.toLowerCase()) {
-            addressesSet.add(userAddress);
+      const contractDeploymentBlock = 20207949; // *** Replace with your contract's deployment block number ***
+      if (!contractDeploymentBlock || typeof contractDeploymentBlock !== 'number') {
+        throw new Error('Contract deployment block number is not set or invalid.');
+      }
+
+      let startBlock = contractDeploymentBlock;
+      let endBlock = startBlock + maxBlockRange - 1;
+      let allAddressesSet = new Set<string>();
+
+      console.log(`Starting to fetch events from block ${startBlock} to block ${latestBlock}`);
+
+      while (startBlock <= latestBlock) {
+        // Adjust endBlock if it exceeds latestBlock
+        endBlock = Math.min(startBlock + maxBlockRange - 1, latestBlock);
+        console.log(`Fetching events from block ${startBlock} to block ${endBlock}`);
+
+        // Fetch events in the current block range
+        const batchEvents = await contract.queryFilter(filter, startBlock, endBlock);
+
+        console.log(`Fetched ${batchEvents.length} events in this batch.`);
+
+        // Process each event to extract unique addresses
+        batchEvents.forEach((event) => {
+          if (event.args) {
+            const userAddress: string = event.args.user;
+            if (userAddress.toLowerCase() !== CONTRACT_ADDRESS.toLowerCase()) {
+              allAddressesSet.add(userAddress.toLowerCase());
+            }
           }
-        }
-      });
+        });
 
-      return Array.from(addressesSet);
+        // Update the startBlock for the next batch
+        startBlock = endBlock + 1;
+      }
+
+      console.log(`Total unique addresses fetched: ${allAddressesSet.size}`);
+
+      return Array.from(allAddressesSet);
     } catch (err) {
       console.error('Error fetching Assigned events:', err);
       throw err;
     }
   };
 
-  // Fetch balance for a single address
-  const fetchBalance = async (userAddress: string) => {
+  /**
+   * Fetch balance for a single address.
+   * @param userAddress - Ethereum address of the user
+   * @returns Balance in USD (number) or '--' if an error occurs
+   */
+  const fetchBalance = async (userAddress: string): Promise<number | string> => {
     try {
       const balance = await contract.getCommunityUSDC(userAddress);
       const balanceInCents = balance.div(ethers.BigNumber.from(10000));
@@ -139,8 +178,11 @@ export default function Page() {
     }
   };
 
-  // Fetch Community Pool Balance
-  const fetchCommunityPoolBalance = async () => {
+  /**
+   * Fetch the total community pool balance.
+   * @returns Formatted pool balance string or '--' if an error occurs
+   */
+  const fetchCommunityPoolBalance = async (): Promise<string> => {
     try {
       const poolBalance = await contract.unassignedPoolBalance();
       const formattedBalance = (poolBalance.toNumber() / 1000000).toFixed(0);
@@ -151,13 +193,15 @@ export default function Page() {
     }
   };
 
+  /**
+   * Effect hook to initialize animations and fetch data when a wallet is connected.
+   */
   useEffect(() => {
     if (address && !animationPlayed) {
       setAnimationData(animations[currentAnimationIndex]);
       setAnimationPlayed(true);
       setShowButtons(true);
       setLoading(true);
-      // No need to set isAnimating
 
       // Fetch data from smart contract
       const fetchData = async () => {
@@ -170,37 +214,44 @@ export default function Page() {
             return;
           }
 
+          // Fetch balances for all addresses
           const balancePromises = addresses.map(async (addr: string) => {
             const balance = await fetchBalance(addr);
             return { address: addr, balance };
           });
 
-          const results = await Promise.all(balancePromises);
+          const results: Balance[] = await Promise.all(balancePromises);
 
           setBalances(results);
           console.log('Fetched Balances:', results);
 
+          // Fetch community pool balance
           const poolBalance = await fetchCommunityPoolBalance();
           setCommunityPoolBalance(poolBalance);
           console.log('Community Pool Balance:', poolBalance);
 
-          const top10Results = results
-            .filter((item) => typeof item.balance === 'number')
-            .sort((a, b) => (b.balance as number) - (a.balance as number))
+          // Determine top 10 balances (only numbers)
+          const top10Results: Top10Balance[] = results
+            .filter((item): item is Top10Balance => typeof item.balance === 'number')
+            .sort((a, b) => b.balance - a.balance)
             .slice(0, 10);
 
           setTop10(top10Results);
           console.log('Top 10 Balances:', top10Results);
 
+          // Fetch user's balance
           const userBalanceObj = results.find(
-            (item) => item.address.toLowerCase() === address?.toLowerCase()
+            (item) => item.address.toLowerCase() === address.toLowerCase()
           );
-          const fetchedUserBalance = userBalanceObj ? userBalanceObj.balance : null;
+          const fetchedUserBalance =
+            userBalanceObj && typeof userBalanceObj.balance === 'number'
+              ? userBalanceObj.balance
+              : null;
           setUserBalance(fetchedUserBalance);
           console.log('User Balance:', fetchedUserBalance);
 
           // Compute and set the top 10 users' information
-          let top10UserInfosArray: { place: string; userInfo: string; balanceInfo: string }[] = [];
+          const top10UserInfosArray: UserInfo[] = [];
 
           for (let i = 0; i < top10Results.length; i++) {
             const place = `${i + 1}${getOrdinalSuffix(i + 1)} place`;
@@ -208,8 +259,7 @@ export default function Page() {
             const baseName = await getBasename(top10Results[i].address as `0x${string}`);
             const truncatedAddress = truncateWalletAddress(top10Results[i]?.address);
             const userInfo = ensName || baseName || truncatedAddress;
-            const balanceInfo =
-              typeof top10Results[i]?.balance === 'number' ? top10Results[i].balance.toString() : 'N/A';
+            const balanceInfo = top10Results[i].balance.toString();
 
             // Populate the top10UserInfosArray
             top10UserInfosArray.push({ place, userInfo, balanceInfo });
@@ -228,8 +278,12 @@ export default function Page() {
     }
   }, [address, animationPlayed, currentAnimationIndex, animations]);
 
-  // Function to get ordinal suffix
-  const getOrdinalSuffix = (i: number) => {
+  /**
+   * Function to get the ordinal suffix for a given number.
+   * @param i - The number to get the ordinal suffix for
+   * @returns Ordinal suffix string
+   */
+  const getOrdinalSuffix = (i: number): string => {
     const j = i % 10,
       k = i % 100;
     if (j === 1 && k !== 11) {
@@ -244,7 +298,9 @@ export default function Page() {
     return 'th';
   };
 
-  // Handler for Next button
+  /**
+   * Handler for the Next button to navigate to the next animation.
+   */
   const handleNext = () => {
     // If we're already at the last animation, don't go to the next
     if (currentAnimationIndex < animations.length - 1) {
@@ -254,32 +310,42 @@ export default function Page() {
     }
   };
 
-  // Handler for Prev button
+  /**
+   * Handler for the Prev button to navigate to the previous animation.
+   */
   const handlePrev = () => {
     // If we're already at the first animation, don't go to the previous
     if (currentAnimationIndex > 0) {
-      const prevIndex = currentAnimationIndex - 2; // Corrected from -2 to -1
+      const prevIndex = currentAnimationIndex - 1;
       setCurrentAnimationIndex(prevIndex);
       setAnimationData(animations[prevIndex]);
     }
   };
 
-  // Handler to open the primary drawer
+  /**
+   * Handler to open the primary drawer.
+   */
   const handleVoteButtonClick = () => {
     setDrawerState('primary-open');
   };
 
-  // Handler to close the primary drawer
+  /**
+   * Handler to close the primary drawer.
+   */
   const handleClosePrimaryDrawer = () => {
     setDrawerState('closed');
   };
 
-  // Handler to open the secondary drawer
+  /**
+   * Handler to open the secondary drawer.
+   */
   const handleOpenSecondaryDrawer = () => {
     setDrawerState('secondary-open');
   };
 
-  // Handler to close the secondary drawer and reopen the primary drawer
+  /**
+   * Handler to close the secondary drawer and reopen the primary drawer.
+   */
   const handleCloseSecondaryDrawer = () => {
     setDrawerState('primary-open');
   };
@@ -351,8 +417,8 @@ export default function Page() {
           )}
         </div>
 
-{/* Red Container (right side) */}
-<div className="red-container">
+        {/* Red Container (right side) */}
+        <div className="red-container">
           {/* Login Buttons */}
           <div className="flex justify-center">
             <SignupButton />
@@ -417,7 +483,7 @@ export default function Page() {
           </div>
         </div>
 
-        {/* Yellow Container MOBILE*/}
+        {/* Yellow Container */}
         <div className="yellow-container relative">
           {/* Main Animations */}
           {animationData && (
@@ -539,7 +605,7 @@ export default function Page() {
                   backgroundColor: 'transparent',
                 }}
               >
-                {communityPoolBalance} usd
+                {communityPoolBalance} USD
               </div>
             )}
 
@@ -561,52 +627,54 @@ export default function Page() {
             )}
 
             {/* Only render the balances if top10 has been populated */}
-            {top10.length > 0 && typeof top10[0].balance === 'number' && (
-              <div
-                className="absolute"
-                style={{
-                  bottom: '5%',
-                  left: '35%',
-                  fontSize: '30px',
-                  fontWeight: 'bold',
-                  color: 'black',
-                  backgroundColor: 'transparent',
-                }}
-              >
-                {top10[0].balance}
-              </div>
-            )}
-
-            {top10.length > 1 && typeof top10[1].balance === 'number' && (
-              <div
-                className="absolute"
-                style={{
-                  bottom: '5%',
-                  left: '51%',
-                  fontSize: '30px',
-                  fontWeight: 'bold',
-                  color: 'black',
-                  backgroundColor: 'transparent',
-                }}
-              >
-                {top10[1].balance}
-              </div>
-            )}
-
-            {top10.length > 2 && typeof top10[2].balance === 'number' && (
-              <div
-                className="absolute"
-                style={{
-                  bottom: '5%',
-                  left: '68%',
-                  fontSize: '30px',
-                  fontWeight: 'bold',
-                  color: 'black',
-                  backgroundColor: 'transparent',
-                }}
-              >
-                {top10[2].balance}
-              </div>
+            {top10.length > 0 && (
+              <>
+                {top10[0].balance && (
+                  <div
+                    className="absolute"
+                    style={{
+                      bottom: '5%',
+                      left: '35%',
+                      fontSize: '30px',
+                      fontWeight: 'bold',
+                      color: 'black',
+                      backgroundColor: 'transparent',
+                    }}
+                  >
+                    {top10[0].balance}
+                  </div>
+                )}
+                {top10[1]?.balance && (
+                  <div
+                    className="absolute"
+                    style={{
+                      bottom: '5%',
+                      left: '51%',
+                      fontSize: '30px',
+                      fontWeight: 'bold',
+                      color: 'black',
+                      backgroundColor: 'transparent',
+                    }}
+                  >
+                    {top10[1].balance}
+                  </div>
+                )}
+                {top10[2]?.balance && (
+                  <div
+                    className="absolute"
+                    style={{
+                      bottom: '5%',
+                      left: '68%',
+                      fontSize: '30px',
+                      fontWeight: 'bold',
+                      color: 'black',
+                      backgroundColor: 'transparent',
+                    }}
+                  >
+                    {top10[2].balance}
+                  </div>
+                )}
+              </>
             )}
 
             {/* Button to Open Secondary Drawer */}
@@ -684,6 +752,7 @@ export default function Page() {
               </div>
             )}
 
+            {/* Display the top 8 users */}
             {/* Display the 1st place user */}
             {top10UserInfos.length > 0 && (
               <div

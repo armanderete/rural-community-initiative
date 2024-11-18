@@ -27,8 +27,9 @@ import Animation11 from './animations/animation11.json';
 import DashboardAnimation from '../animations/dashboard.json';
 import LeaderboardAnimation from '../animations/leaderboard.json';
 
-// **Import the Vote Animation**
+// **Import the Vote Animations**
 import VoteAnimation from '../animations/abcvote.json';
+import VoteAnimation1_5_10 from '../animations/vote-1-5-10.json'; // Newly added
 
 // **Import Voting Configurations**
 import VotingConfigAnimation1 from './configs/VotingConfigAnimation1.json';
@@ -50,6 +51,28 @@ import config from './page-config.json';
 type Balance = { address: string; balance: number | string };
 type Top10Balance = { address: string; balance: number };
 type UserInfo = { place: string; userInfo: string; balanceInfo: string };
+
+// **Define the VotingConfig interface**
+interface VotingOption {
+  Active: boolean;
+  positionXaxis: string;
+  positionYaxis: string;
+  Function: string;
+  To: string;
+  Amount: number;
+  Tag: string;
+  Concept: string;
+}
+
+interface VotingConfig {
+  votingButtonVisible: boolean;
+  votingType: 'abc' | '1-5-10';
+  VoteOption1: VotingOption;
+  VoteOption2: VotingOption;
+  VoteOption3: VotingOption;
+  VoteOption4: VotingOption;
+  VoteOption5: VotingOption;
+}
 
 // Define the type for the config to ensure type safety
 interface PageConfig {
@@ -84,18 +107,18 @@ export default function Page() {
   const animationLoopSettings = config.animationLoopSettings;
 
   // **Array of Voting Configurations**
-  const votingConfigs = [
-    VotingConfigAnimation1,
-    VotingConfigAnimation2,
-    VotingConfigAnimation3,
-    VotingConfigAnimation4,
-    VotingConfigAnimation5,
-    VotingConfigAnimation6,
-    VotingConfigAnimation7,
-    VotingConfigAnimation8,
-    VotingConfigAnimation9,
-    VotingConfigAnimation10,
-    VotingConfigAnimation11,
+  const votingConfigs: VotingConfig[] = [
+    VotingConfigAnimation1 as VotingConfig,
+    VotingConfigAnimation2 as VotingConfig,
+    VotingConfigAnimation3 as VotingConfig,
+    VotingConfigAnimation4 as VotingConfig,
+    VotingConfigAnimation5 as VotingConfig,
+    VotingConfigAnimation6 as VotingConfig,
+    VotingConfigAnimation7 as VotingConfig,
+    VotingConfigAnimation8 as VotingConfig,
+    VotingConfigAnimation9 as VotingConfig,
+    VotingConfigAnimation10 as VotingConfig,
+    VotingConfigAnimation11 as VotingConfig,
   ];
 
   // State to manage current animation index
@@ -368,7 +391,7 @@ export default function Page() {
   const handlePrev = () => {
     // If we're already at the first animation, don't go to the previous
     if (currentAnimationIndex > 0) {
-      const prevIndex = currentAnimationIndex - 2;
+      const prevIndex = currentAnimationIndex - 1; // Corrected from -2 to -1
       setCurrentAnimationIndex(prevIndex);
       setAnimationData(animations[prevIndex]);
     }
@@ -430,7 +453,64 @@ export default function Page() {
   const currentVotingConfig =
     currentAnimationIndex < votingConfigs.length
       ? votingConfigs[currentAnimationIndex]
-      : { votingButtonVisible: false };
+      : {
+          votingButtonVisible: false,
+          votingType: 'abc',
+          VoteOption1: {
+            Active: false,
+            positionXaxis: '',
+            positionYaxis: '',
+            Function: '',
+            To: '',
+            Amount: 0,
+            Tag: '',
+            Concept: '',
+          },
+          VoteOption2: {
+            Active: false,
+            positionXaxis: '',
+            positionYaxis: '',
+            Function: '',
+            To: '',
+            Amount: 0,
+            Tag: '',
+            Concept: '',
+          },
+          VoteOption3: {
+            Active: false,
+            positionXaxis: '',
+            positionYaxis: '',
+            Function: '',
+            To: '',
+            Amount: 0,
+            Tag: '',
+            Concept: '',
+          },
+          VoteOption4: {
+            Active: false,
+            positionXaxis: '',
+            positionYaxis: '',
+            Function: '',
+            To: '',
+            Amount: 0,
+            Tag: '',
+            Concept: '',
+          },
+          VoteOption5: {
+            Active: false,
+            positionXaxis: '',
+            positionYaxis: '',
+            Function: '',
+            To: '',
+            Amount: 0,
+            Tag: '',
+            Concept: '',
+          },
+        };
+
+  // **Determine the current Vote Animation based on votingType**
+  const currentVoteAnimation =
+    currentVotingConfig.votingType === '1-5-10' ? VoteAnimation1_5_10 : VoteAnimation;
 
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
@@ -1062,7 +1142,7 @@ export default function Page() {
           <div className="drawer-container w-full h-full relative flex items-center justify-center">
             {/* Vote Lottie Animation */}
             <Lottie
-              animationData={VoteAnimation}
+              animationData={currentVoteAnimation} // Modified to use dynamic animation
               loop={true} // This animation loops indefinitely
               className="w-full h-full"
             />

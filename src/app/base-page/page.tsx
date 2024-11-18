@@ -30,6 +30,19 @@ import LeaderboardAnimation from '../animations/leaderboard.json';
 // **Import the Vote Animation**
 import VoteAnimation from '../animations/abcvote.json';
 
+// **Import Voting Configurations**
+import VotingConfigAnimation1 from './configs/VotingConfigAnimation1.json';
+import VotingConfigAnimation2 from './configs/VotingConfigAnimation2.json';
+import VotingConfigAnimation3 from './configs/VotingConfigAnimation3.json';
+import VotingConfigAnimation4 from './configs/VotingConfigAnimation4.json';
+import VotingConfigAnimation5 from './configs/VotingConfigAnimation5.json';
+import VotingConfigAnimation6 from './configs/VotingConfigAnimation6.json';
+import VotingConfigAnimation7 from './configs/VotingConfigAnimation7.json';
+import VotingConfigAnimation8 from './configs/VotingConfigAnimation8.json';
+import VotingConfigAnimation9 from './configs/VotingConfigAnimation9.json';
+import VotingConfigAnimation10 from './configs/VotingConfigAnimation10.json';
+import VotingConfigAnimation11 from './configs/VotingConfigAnimation11.json';
+
 // Import the configuration
 import config from './page-config.json';
 
@@ -69,6 +82,21 @@ export default function Page() {
 
   // Array indicating whether each animation should loop, from config
   const animationLoopSettings = config.animationLoopSettings;
+
+  // **Array of Voting Configurations**
+  const votingConfigs = [
+    VotingConfigAnimation1,
+    VotingConfigAnimation2,
+    VotingConfigAnimation3,
+    VotingConfigAnimation4,
+    VotingConfigAnimation5,
+    VotingConfigAnimation6,
+    VotingConfigAnimation7,
+    VotingConfigAnimation8,
+    VotingConfigAnimation9,
+    VotingConfigAnimation10,
+    VotingConfigAnimation11,
+  ];
 
   // State to manage current animation index
   const [currentAnimationIndex, setCurrentAnimationIndex] = useState<number>(0);
@@ -398,6 +426,12 @@ export default function Page() {
     return `${percentage.toFixed(2)}%`;
   };
 
+  // **Determine the current voting configuration**
+  const currentVotingConfig =
+    currentAnimationIndex < votingConfigs.length
+      ? votingConfigs[currentAnimationIndex]
+      : { votingButtonVisible: false };
+
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
       {/* Desktop View */}
@@ -476,7 +510,7 @@ export default function Page() {
           {/* Dashboard and Navigation Buttons Group */}
           <div className="vote-nav-group">
             {/* Vote Button */}
-            {address && (
+            {address && currentVotingConfig.votingButtonVisible && (
               <button
                 onClick={handleVoteButtonClick}
                 className="vote-button z-20" // Use the class defined in global.css
@@ -524,7 +558,10 @@ export default function Page() {
                   className="next-button ml-4"
                   onClick={handleNext}
                   aria-label="Next Animation"
-                  style={{ visibility: currentAnimationIndex < config.animations - 1 ? 'visible' : 'hidden' }}
+                  style={{
+                    visibility:
+                      currentAnimationIndex < config.animations - 1 ? 'visible' : 'hidden',
+                  }}
                 >
                   Next
                 </button>
@@ -594,7 +631,10 @@ export default function Page() {
                 className="next-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ml-2"
                 onClick={handleNext}
                 aria-label="Next Animation"
-                style={{ visibility: currentAnimationIndex < config.animations - 1 ? 'visible' : 'hidden' }}
+                style={{
+                  visibility:
+                    currentAnimationIndex < config.animations - 1 ? 'visible' : 'hidden',
+                }}
               >
                 Next
               </button>
@@ -619,7 +659,7 @@ export default function Page() {
           )}
 
           {/* Vote Button */}
-          {address && (
+          {address && currentVotingConfig.votingButtonVisible && (
             <button
               onClick={handleVoteButtonClick}
               className="vote-button z-20" // Use the class defined in global.css
@@ -677,7 +717,9 @@ export default function Page() {
             {/* Loading Progress Message */}
             {loading && (
               <div className="absolute bg-yellow-300 text-black px-6 py-4 rounded flex flex-col items-center">
-                <p className="text-lg font-semibold">Fetching "community pool" data from the blockchain</p>
+                <p className="text-lg font-semibold">
+                  Fetching "community pool" data from the blockchain
+                </p>
                 <p className="mt-2 text-md">{calculateCompletionPercentage()} completed</p>
               </div>
             )}
@@ -785,7 +827,6 @@ export default function Page() {
           </div>
         </div>
       </div>
-
 
       {/* Secondary Drawer */}
       <div

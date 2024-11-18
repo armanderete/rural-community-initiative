@@ -1,5 +1,6 @@
 {
     "votingButtonVisible": true,
+    "votingType": "abc",
     "VoteOption1": {
       "Active": true,
       "positionXaxis": "20%",

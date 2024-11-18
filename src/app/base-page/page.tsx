@@ -27,6 +27,9 @@ import Animation11 from './animations/animation11.json';
 import DashboardAnimation from '../animations/dashboard.json';
 import LeaderboardAnimation from '../animations/leaderboard.json';
 
+// **Import the Vote Animation**
+import VoteAnimation from '../animations/abcvote.json';
+
 // Import the configuration
 import config from './page-config.json';
 
@@ -82,8 +85,10 @@ export default function Page() {
   // State to manage visibility of the dashboard_button
   const [dashboardButtonVisible, setDashboardButtonVisible] = useState<boolean>(true);
 
-  // State to manage drawer states
-  const [drawerState, setDrawerState] = useState<'closed' | 'primary-open' | 'secondary-open'>('closed');
+  // **Extend drawerState to include 'vote-open'**
+  const [drawerState, setDrawerState] = useState<
+    'closed' | 'primary-open' | 'secondary-open' | 'vote-open'
+  >('closed');
 
   // State to store balances (allows balance to be number or string)
   const [balances, setBalances] = useState<Balance[]>([]);
@@ -370,6 +375,20 @@ export default function Page() {
   };
 
   /**
+   * **Handler to open the vote drawer.**
+   */
+  const handleVoteButtonClick = () => {
+    setDrawerState('vote-open');
+  };
+
+  /**
+   * **Handler to close the vote drawer.**
+   */
+  const handleCloseVoteDrawer = () => {
+    setDrawerState('closed');
+  };
+
+  /**
    * Calculate the percentage completion based on batches processed.
    * @returns Percentage string
    */
@@ -456,6 +475,23 @@ export default function Page() {
 
           {/* Dashboard and Navigation Buttons Group */}
           <div className="vote-nav-group">
+            {/* Vote Button */}
+            {address && (
+              <button
+                onClick={handleVoteButtonClick}
+                className="vote-button z-20" // Use the class defined in global.css
+                aria-label="Vote Button"
+              >
+                <Image
+                  src="/buttons/votebutton.png"
+                  alt="Vote Button"
+                  width={100}
+                  height={100}
+                  className="object-contain"
+                />
+              </button>
+            )}
+
             {/* Dashboard Button */}
             {address && dashboardButtonVisible && (
               <button
@@ -575,6 +611,23 @@ export default function Page() {
               <Image
                 src="/buttons/dashboardbutton.png"
                 alt="Dashboard Button"
+                width={100}
+                height={100}
+                className="object-contain"
+              />
+            </button>
+          )}
+
+          {/* Vote Button */}
+          {address && (
+            <button
+              onClick={handleVoteButtonClick}
+              className="vote-button z-20" // Use the class defined in global.css
+              aria-label="Vote Button"
+            >
+              <Image
+                src="/buttons/votebutton.png"
+                alt="Vote Button"
                 width={100}
                 height={100}
                 className="object-contain"
@@ -732,6 +785,7 @@ export default function Page() {
           </div>
         </div>
       </div>
+
 
       {/* Secondary Drawer */}
       <div
@@ -931,6 +985,46 @@ export default function Page() {
                 {`${top10UserInfos[7].balanceInfo}`}
               </div>
             )}
+          </div>
+        </div>
+      </div>
+
+      {/* **Vote Drawer** */}
+      <div
+        className={`fixed inset-0 z-40 flex items-center justify-center transition-transform duration-300 ease-in-out transform ${
+          drawerState === 'vote-open' ? 'translate-y-0' : 'translate-y-[100vh]'
+        }`}
+      >
+        {/* Overlay */}
+        <div
+          className={`absolute inset-0 bg-black opacity-50 transition-opacity duration-300 ease-in-out ${
+            drawerState === 'vote-open' ? 'opacity-50' : 'opacity-0 pointer-events-none'
+          }`}
+          onClick={drawerState === 'vote-open' ? handleCloseVoteDrawer : undefined}
+        ></div>
+
+        {/* Drawer Content */}
+        <div
+          className="relative bg-black rounded-t-lg overflow-hidden transform transition-transform duration-300 ease-in-out w-11/12 md:w-auto md:h-4/5 aspect-square md:aspect-square"
+          onClick={(e) => e.stopPropagation()} // Prevent click from closing drawer
+        >
+          {/* Close Button */}
+          <button
+            className="absolute top-2 right-2 text-white text-xl focus:outline-none focus:ring-2 focus:ring-white rounded"
+            onClick={handleCloseVoteDrawer}
+            aria-label="Close Vote Drawer"
+          >
+            &times;
+          </button>
+
+          {/* Drawer Container */}
+          <div className="drawer-container w-full h-full relative flex items-center justify-center">
+            {/* Vote Lottie Animation */}
+            <Lottie
+              animationData={VoteAnimation}
+              loop={true} // This animation loops indefinitely
+              className="w-full h-full"
+            />
           </div>
         </div>
       </div>

@@ -67,7 +67,7 @@ a {
     width: calc(50vw - 50vh); /* Adjust width to use remaining space */
     background-color: black; /* Visualization */
 
-    /* **Updated Flexbox Layout for Red Container** */
+    /* Updated Flexbox Layout for Red Container */
     display: flex;
     flex-direction: column;
     justify-content: space-between; /* Distribute space between top and bottom */
@@ -85,17 +85,23 @@ a {
     z-index: 20; /* Ensure it stays above other elements */
   }
 
-  /* **Dashboard and Navigation Buttons Group** */
+  /* Dashboard and Navigation Buttons Group */
   .red-container .vote-nav-group {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px; /* 10px spacing between Dashboard Button and Prev/Next Buttons */
+    gap: 10px; /* 10px spacing between buttons */
+  }
+
+  /* Adjust Vote Button Positioning */
+  .red-container .vote-button {
+    position: relative;
+    margin-bottom: 10px; /* 10px on top of the dashboard button */
   }
 
   /* Remove Absolute Positioning from Dashboard Button */
   .red-container .dashboard-button {
-    position: static; /* Allow it to flow within the Flexbox */
+    position: relative;
   }
 
   /* Updated .prev-next-buttons within .vote-nav-group */
@@ -106,6 +112,13 @@ a {
   }
 
   /* Button Styling */
+  .prev-button,
+  .next-button,
+  .dashboard-button,
+  .vote-button {
+    /* Shared button styles can be added here if needed */
+  }
+
   .prev-button,
   .next-button {
     padding: 10px 20px;
@@ -120,6 +133,7 @@ a {
   .next-button:hover {
     background-color: LightSkyBlue;
   }
+
 }
 
 /* Mobile View */
@@ -161,6 +175,15 @@ a {
     z-index: 50;
   }
 
+  .vote-button {
+    background-color: transparent;
+    position: absolute;
+    bottom: 15px; /* 10px below the dashboard button */
+    left: calc(15% + 110px); /* 10px to the right of dashboard button (assuming button width ~100px) */
+    transform: translateX(-50%);
+    z-index: 50;
+  }
+
   .prev-next-buttons {
     position: absolute;
     top: 5px; /* Padding from top */
@@ -169,13 +192,22 @@ a {
     justify-content: flex-end;
     z-index: 20; /* Ensure it stays above other elements */
   }
+
+  /* **Adjust Vote Button Positioning for Mobile**
+  .blue-container .vote-button {
+    /* Position 10px to the right of the dashboard button */
+    /* position: absolute;
+    top: 10px;
+    left: 120px; /* Adjust based on dashboard button width */
+  /*} */
 }
 
 /* Button Styling */
 .dashboard-button,
+.vote-button,
 .prev-button,
 .next-button {
-  /* Note: .dashboard-button styles are defined below */
+  /* Common button styles can be added here if needed */
 }
 
 .prev-button,
@@ -191,6 +223,16 @@ a {
 .prev-button:hover,
 .next-button:hover {
   background-color: LightSkyBlue;
+}
+
+/* Ensure Vote Button has no background */
+.vote-button {
+  background-color: transparent; /* No background color */
+  border: none; /* Remove borders if any */
+  cursor: pointer; /* Ensure it's clickable */
+  padding: 0; /* Remove padding if present */
+  margin: 0; /* Remove any margins */
+  display: inline-block; /* Ensure proper alignment */
 }
 
 /* Drawer Overlay */

@@ -79,8 +79,8 @@ export default function Page() {
   // State to manage visibility of Prev and Next buttons
   const [showButtons, setShowButtons] = useState<boolean>(false);
 
-  // State to manage visibility of the vote_button
-  const [voteButtonVisible, setVoteButtonVisible] = useState<boolean>(true);
+  // State to manage visibility of the dashboard_button
+  const [dashboardButtonVisible, setDashboardButtonVisible] = useState<boolean>(true);
 
   // State to manage drawer states
   const [drawerState, setDrawerState] = useState<'closed' | 'primary-open' | 'secondary-open'>('closed');
@@ -344,7 +344,7 @@ export default function Page() {
   /**
    * Handler to open the primary drawer.
    */
-  const handleVoteButtonClick = () => {
+  const handleDashboardButtonClick = () => {
     setDrawerState('primary-open');
   };
 
@@ -454,18 +454,18 @@ export default function Page() {
             {!address && <LoginButton />}
           </div>
 
-          {/* Vote and Navigation Buttons Group */}
+          {/* Dashboard and Navigation Buttons Group */}
           <div className="vote-nav-group">
-            {/* Vote Button */}
-            {address && voteButtonVisible && (
+            {/* Dashboard Button */}
+            {address && dashboardButtonVisible && (
               <button
-                onClick={handleVoteButtonClick}
-                className="vote-button z-20" // Use the class defined in global.css
-                aria-label="Vote Button"
+                onClick={handleDashboardButtonClick}
+                className="dashboard-button z-20" // Use the class defined in global.css
+                aria-label="Dashboard Button"
               >
                 <Image
                   src="/buttons/dashboardbutton.png"
-                  alt="Vote Button"
+                  alt="Dashboard Button"
                   width={100}
                   height={100}
                   className="object-contain"
@@ -565,16 +565,16 @@ export default function Page() {
             </div>
           )}
 
-          {/* Vote Button */}
-          {address && voteButtonVisible && (
+          {/* Dashboard Button */}
+          {address && dashboardButtonVisible && (
             <button
-              onClick={handleVoteButtonClick}
-              className="vote-button z-20" // Use the class defined in global.css
-              aria-label="Vote Button"
+              onClick={handleDashboardButtonClick}
+              className="dashboard-button z-20" // Use the class defined in global.css
+              aria-label="Dashboard Button"
             >
               <Image
                 src="/buttons/dashboardbutton.png"
-                alt="Vote Button"
+                alt="Dashboard Button"
                 width={100}
                 height={100}
                 className="object-contain"

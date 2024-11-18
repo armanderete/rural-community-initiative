@@ -85,16 +85,16 @@ a {
     z-index: 20; /* Ensure it stays above other elements */
   }
 
-  /* **Vote and Navigation Buttons Group** */
+  /* **Dashboard and Navigation Buttons Group** */
   .red-container .vote-nav-group {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px; /* 10px spacing between Vote Button and Prev/Next Buttons */
+    gap: 10px; /* 10px spacing between Dashboard Button and Prev/Next Buttons */
   }
 
-  /* Remove Absolute Positioning from Vote Button */
-  .red-container .vote-button {
+  /* Remove Absolute Positioning from Dashboard Button */
+  .red-container .dashboard-button {
     position: static; /* Allow it to flow within the Flexbox */
   }
 
@@ -103,11 +103,6 @@ a {
     display: flex;
     gap: 10px; /* Space between Prev and Next buttons */
     z-index: 20; /* Ensure it stays above other elements */
-  }
-
-  /* Remove previous desktop-specific styles to prevent conflicts */
-  .prev-next-buttons {
-    /* No styles needed here since it's now scoped within .vote-nav-group */
   }
 
   /* Button Styling */
@@ -131,7 +126,7 @@ a {
 @media (max-width: 767px) {
   .green-container {
     width: 100vw; /* Full width */
-    height: 10vh; /* 20% height */
+    height: 10vh; /* 10% height */
     background-color: black; /* Visualization */
   }
 
@@ -157,7 +152,8 @@ a {
     z-index: 20; /* Ensure it stays above other elements */
   }
 
-  .vote-button {
+  .dashboard-button {
+    background-color: transparent;
     position: absolute;
     bottom: 5px; /* Padding from bottom */
     left: 15%;
@@ -176,6 +172,12 @@ a {
 }
 
 /* Button Styling */
+.dashboard-button,
+.prev-button,
+.next-button {
+  /* Note: .dashboard-button styles are defined below */
+}
+
 .prev-button,
 .next-button {
   padding: 10px 20px;

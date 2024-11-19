@@ -10,6 +10,7 @@ import {
   useEstimateGas, 
   useEstimateMaxPriorityFeePerGas, 
   useGasPrice 
+  useWalletClient 
 } from 'wagmi';
 import { useCapabilities } from 'wagmi/experimental';
 import { CSSProperties, ReactNode } from 'react';
@@ -99,10 +100,31 @@ interface PageConfig {
   contractDeploymentBlock: number;
 }
 
+/**
+ * Custom hook to convert Wagmi's WalletClient to ethers.js Signer
+ */
+function useEthersSigner() {
+  const { data: walletClient } = useWalletClient();
+  const { address } = useAccount();
+
+  const signer = useMemo(() => {
+    if (!walletClient || !address) return null;
+
+    const { transport } = walletClient;
+    // Construct ethers.js provider from transport
+    const provider = new ethers.providers.Web3Provider(transport, 'any');
+
+    return provider.getSigner(address);
+  }, [walletClient, address]);
+
+  return signer;
+}
+
 export default function Page() {
   const { address } = useAccount();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
+  const signer = useEthersSigner();
 
   // Array of animations in order, limited by config.animations
   const allAnimations = [
@@ -191,17 +213,6 @@ export default function Page() {
   const [transactionError, setTransactionError] = useState<Error | null>(null);
 
   // Initialize ethers providers and contracts
-  const provider = useMemo(() => {
-    if (typeof window !== 'undefined' && (window as any).ethereum) {
-      return new ethers.providers.Web3Provider((window as any).ethereum);
-    }
-    return null;
-  }, []);
-
-  const signer = useMemo(() => {
-    return provider ? provider.getSigner() : null;
-  }, [provider]);
-
   const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
   const alchemyProvider = useMemo(() => {
     if (ALCHEMY_API_URL) {

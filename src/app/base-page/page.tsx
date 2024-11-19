@@ -472,11 +472,14 @@ export default function Page() {
    * Handler for the Prev button to navigate to the previous animation.
    */
   const handlePrev = () => {
-    // If we're already at the first animation, don't go to the previous
-    if (currentAnimationIndex > 0) {
+    // Change to decrement by 2 instead of 1
+    if (currentAnimationIndex > 1) { // Ensure we don't go below 0
       const prevIndex = currentAnimationIndex - 2;
       setCurrentAnimationIndex(prevIndex);
       setAnimationData(animations[prevIndex]);
+    } else if (currentAnimationIndex === 1) { // Edge case to prevent negative index
+      setCurrentAnimationIndex(0);
+      setAnimationData(animations[0]);
     }
   };
 
@@ -595,6 +598,60 @@ export default function Page() {
   const currentVoteAnimation =
     currentVotingConfig.votingType === '1-5-10' ? VoteAnimation1_5_10 : VoteAnimation;
 
+  /**
+   * **Detect if Paymaster is Supported**
+   */
+  const { data: availableCapabilities } = useCapabilities({
+    account: address
+  });
+
+  const isPaymasterSupported = useMemo(() => {
+    if (!availableCapabilities || !chainId) return false;
+    const capabilitiesForChain = availableCapabilities[chainId];
+    return (
+      capabilitiesForChain?.['paymasterService'] &&
+      capabilitiesForChain['paymasterService'].supported
+    );
+  }, [availableCapabilities, chainId]);
+
+  /**
+   * **Handler for Regular Transaction (Fallback)**
+   */
+  const handleRegularTransaction = async () => {
+    if (!writeContract) {
+      alert('Contract is not initialized.');
+      return;
+    }
+
+    try {
+      setIsTransactionLoading(true);
+      setTransactionError(null);
+      setIsTransactionSuccess(false);
+
+      // Initiate the transaction
+      const tx = await writeContract.transferCommunityUSDC(
+        '0xA7C6a8782632733d48246bF516475341Dac6d65B', // _to
+        10000, // _amount
+        'Test', // _tag
+        'Test' // _concept
+      );
+
+      setIsTransactionPending(true);
+
+      // Wait for the transaction to be mined
+      await tx.wait();
+
+      setIsTransactionPending(false);
+      setIsTransactionSuccess(true);
+    } catch (err) {
+      console.error('Regular Transaction Error:', err);
+      setTransactionError(err as Error);
+      setIsTransactionPending(false);
+    } finally {
+      setIsTransactionLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
       {/* Desktop View */}
@@ -670,8 +727,8 @@ export default function Page() {
             {!address && <LoginButton />}
           </div>
 
-          {/* **Add the TransactWithPaymaster Component Here** */}
-          {address && (
+          {/* **Conditional Rendering of TransactWithPaymaster or Fallback Button** */}
+          {address && isPaymasterSupported ? (
             <TransactWithPaymaster
               functionName="transferCommunityUSDC"
               args={[
@@ -687,6 +744,15 @@ export default function Page() {
               className="transaction-button z-20 mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
               label="Send Community USDC"
             />
+          ) : (
+            address && (
+              <button
+                onClick={handleRegularTransaction}
+                className="transaction-button z-20 mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              >
+                Send Community USDC
+              </button>
+            )
           )}
 
           {/* Transaction Status Messages */}

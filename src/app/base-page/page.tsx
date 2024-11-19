@@ -1,17 +1,29 @@
 // pages/Page.tsx
 
 'use client';
-import { useState, useEffect } from 'react';
-import { useAccount } from 'wagmi';
-import { ethers } from 'ethers'; // Import ethers
+import { useState, useEffect, useMemo } from 'react';
+import { 
+  useAccount, 
+  useChainId, 
+  useSwitchChain, 
+  useEstimateFeesPerGas, 
+  useEstimateGas, 
+  useEstimateMaxPriorityFeePerGas, 
+  useGasPrice 
+} from 'wagmi';
+import { useCapabilities } from 'wagmi/experimental';
+import { CSSProperties, ReactNode } from 'react';
+import { base } from 'wagmi/chains';
+import { parseGwei } from 'viem';
+import { BigNumber, ethers } from 'ethers';
 import Lottie from 'lottie-react';
 import Image from 'next/image';
 import LoginButton from '../../components/LoginButton';
 import SignupButton from '../../components/SignupButton';
 import abi from '../abi.json'; // Import ABI from the JSON file
-import { getBasename, type Basename } from '../../basenames';
+import { getBasename } from '../../basenames';
 import { getEnsName } from '../../ensnames';
-import { truncateWalletAddress } from '../../utils'; // Assuming you have this utility function
+import { truncateWalletAddress } from '../../utils';
 
 // Import your animations
 import Animation1 from './animations/animation1.json';
@@ -89,6 +101,8 @@ interface PageConfig {
 
 export default function Page() {
   const { address } = useAccount();
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
 
   // Array of animations in order, limited by config.animations
   const allAnimations = [
@@ -170,20 +184,62 @@ export default function Page() {
   const [totalBatches, setTotalBatches] = useState<number>(0);
   const [processedBatches, setProcessedBatches] = useState<number>(0);
 
-  // Initialize ethers provider and contract using config values
+  // **Additional State Variables for Transaction**
+  const [isTransactionLoading, setIsTransactionLoading] = useState<boolean>(false);
+  const [isTransactionPending, setIsTransactionPending] = useState<boolean>(false);
+  const [isTransactionSuccess, setIsTransactionSuccess] = useState<boolean>(false);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
+
+  // Initialize ethers providers and contracts
+  const provider = useMemo(() => {
+    if (typeof window !== 'undefined' && (window as any).ethereum) {
+      return new ethers.providers.Web3Provider((window as any).ethereum);
+    }
+    return null;
+  }, []);
+
+  const signer = useMemo(() => {
+    return provider ? provider.getSigner() : null;
+  }, [provider]);
+
   const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
+  const alchemyProvider = useMemo(() => {
+    if (ALCHEMY_API_URL) {
+      return new ethers.providers.JsonRpcProvider(ALCHEMY_API_URL);
+    }
+    return null;
+  }, [ALCHEMY_API_URL]);
+
   const CONTRACT_ADDRESS = config.contractAddress; // fetched from config file
-  const provider = new ethers.providers.JsonRpcProvider(ALCHEMY_API_URL);
-  const contract = new ethers.Contract(CONTRACT_ADDRESS, abi, provider);
+
+  // **Contracts**
+  const readContract = useMemo(() => {
+    if (alchemyProvider) {
+      return new ethers.Contract(CONTRACT_ADDRESS, abi, alchemyProvider);
+    }
+    return null;
+  }, [alchemyProvider, CONTRACT_ADDRESS]);
+
+  const writeContract = useMemo(() => {
+    if (signer) {
+      return new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
+    }
+    return null;
+  }, [signer, CONTRACT_ADDRESS]);
 
   /**
    * Fetch all Assigned events to get unique user addresses.
    * Implements batching to comply with Alchemy's max block range limitation.
    */
   const fetchAllAddresses = async (): Promise<string[]> => {
+    if (!readContract) {
+      console.error('Read Contract is not initialized.');
+      return [];
+    }
+
     try {
-      const filter = contract.filters.Assigned();
-      const latestBlock = await provider.getBlockNumber();
+      const filter = readContract.filters.Assigned();
+      const latestBlock = await alchemyProvider!.getBlockNumber();
       const maxBlockRange = 100000; // Alchemy's maximum block range per query
 
       const contractDeploymentBlock = config.contractDeploymentBlock; // Fetching from config file
@@ -209,7 +265,7 @@ export default function Page() {
         console.log(`Fetching events from block ${startBlock} to block ${endBlock}`);
 
         // Fetch events in the current block range
-        const batchEvents = await contract.queryFilter(filter, startBlock, endBlock);
+        const batchEvents = await readContract.queryFilter(filter, startBlock, endBlock);
 
         console.log(`Fetched ${batchEvents.length} events in this batch.`);
 
@@ -245,8 +301,13 @@ export default function Page() {
    * @returns Balance in USD (number) or '--' if an error occurs
    */
   const fetchBalance = async (userAddress: string): Promise<number | string> => {
+    if (!readContract) {
+      console.error('Read Contract is not initialized.');
+      return '--';
+    }
+
     try {
-      const balance = await contract.getCommunityUSDC(userAddress);
+      const balance = await readContract.getCommunityUSDC(userAddress);
       const balanceInCents = balance.div(ethers.BigNumber.from(10000));
       return balanceInCents.toNumber();
     } catch (err) {
@@ -260,8 +321,13 @@ export default function Page() {
    * @returns Formatted pool balance string or '--' if an error occurs
    */
   const fetchCommunityPoolBalance = async (): Promise<string> => {
+    if (!readContract) {
+      console.error('Read Contract is not initialized.');
+      return '--';
+    }
+
     try {
-      const poolBalance = await contract.unassignedPoolBalance();
+      const poolBalance = await readContract.unassignedPoolBalance();
       const formattedBalance = (poolBalance.toNumber() / 1000000).toFixed(0);
       return `$${formattedBalance}`;
     } catch (err) {
@@ -394,7 +460,7 @@ export default function Page() {
   const handlePrev = () => {
     // If we're already at the first animation, don't go to the previous
     if (currentAnimationIndex > 0) {
-      const prevIndex = currentAnimationIndex - 2; // Corrected from -2 to -1
+      const prevIndex = currentAnimationIndex - 1; // Corrected from -2 to -1
       setCurrentAnimationIndex(prevIndex);
       setAnimationData(animations[prevIndex]);
     }
@@ -515,6 +581,74 @@ export default function Page() {
   const currentVoteAnimation =
     currentVotingConfig.votingType === '1-5-10' ? VoteAnimation1_5_10 : VoteAnimation;
 
+  /**
+   * Function to handle the blockchain transaction.
+   */
+  const handleTransaction = async () => {
+    if (!address) {
+      alert('Please connect your wallet.');
+      return;
+    }
+
+    // Check if the user is connected to the correct network (Base)
+    if (chainId !== base.id) {
+      if (switchChain) {
+        try {
+          await switchChain({ chainId: base.id });
+          // After switching, the useEffect will trigger to fetch data again
+          return;
+        } catch (switchError) {
+          console.error('Error switching chain:', switchError);
+          alert('Failed to switch network. Please do it manually.');
+          return;
+        }
+      } else {
+        alert('Cannot switch network. Please do it manually.');
+        return;
+      }
+    }
+
+    if (!writeContract) {
+      console.error('Write Contract is not initialized.');
+      alert('Write Contract is not initialized.');
+      return;
+    }
+
+    setIsTransactionLoading(true);
+    setTransactionError(null);
+    setIsTransactionSuccess(false);
+
+    try {
+      // Define the transaction parameters
+      const tx = await writeContract.transferCommunityUSDC(
+        '0xA7C6a8782632733d48246bF516475341Dac6d65B', // _to
+        BigNumber.from(10000), // _amount
+        'Test', // _tag
+        'Test' // _concept
+      );
+
+      setIsTransactionPending(true);
+      console.log('Transaction sent:', tx.hash);
+
+      // Wait for the transaction to be mined
+      await tx.wait();
+      console.log('Transaction mined:', tx.hash);
+
+      setIsTransactionSuccess(true);
+
+      // Optionally, you can refetch data after a successful transaction
+      // For example:
+      // setAnimationPlayed(false); // To allow refetching data
+      // setProcessedBatches(0);
+    } catch (error: any) {
+      console.error('Transaction failed:', error);
+      setTransactionError(error);
+    } finally {
+      setIsTransactionLoading(false);
+      setIsTransactionPending(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
       {/* Desktop View */}
@@ -588,6 +722,29 @@ export default function Page() {
           <div className="flex justify-center">
             <SignupButton />
             {!address && <LoginButton />}
+          </div>
+
+          {/* New Button for Triggering the Transaction */}
+          {address && (
+            <button
+              onClick={handleTransaction}
+              className="transaction-button z-20 mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+              aria-label="Send Community USDC"
+            >
+              Send Community USDC
+            </button>
+          )}
+
+          {/* Transaction Status Messages */}
+          <div className="mt-2 text-center">
+            {isTransactionLoading && <p>Preparing transaction...</p>}
+            {isTransactionPending && <p>Transaction is pending...</p>}
+            {isTransactionSuccess && <p className="text-green-500">Transaction successful!</p>}
+            {transactionError && (
+              <p className="text-red-500">
+                Error: {transactionError.message || 'An error occurred.'}
+              </p>
+            )}
           </div>
 
           {/* Dashboard and Navigation Buttons Group */}

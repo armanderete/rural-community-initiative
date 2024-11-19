@@ -109,8 +109,8 @@ const VoteDrawer: React.FC<VoteDrawerProps> = ({
           style={{
             left: option.positionXaxis,
             bottom: option.positionYaxis,
-            width: '20%',
-            height: '10%',
+            width: '40%',
+            height: '25%',
             transform: 'translate(-50%, 50%)', // Ensures alignment relative to the container
           }}
         >

@@ -3,8 +3,8 @@
     "votingType": "abc",
     "VoteOption1": {
       "Active": true,
-      "positionXaxis": "20%",
-      "positionYaxis": "70%",
+      "positionXaxis": "27%",
+      "positionYaxis": "65%",
       "Function": "transferCommunityUSDC",
       "To": "0xRecipientAddress1",
       "Amount": 100,
@@ -13,8 +13,8 @@
     },
     "VoteOption2": {
       "Active": true,
-      "positionXaxis": "50%",
-      "positionYaxis": "50%",
+      "positionXaxis": "74%",
+      "positionYaxis": "48%",
       "Function": "transferCommunityUSDC",
       "To": "0xRecipientAddress2",
       "Amount": 200,
@@ -23,8 +23,8 @@
     },
     "VoteOption3": {
       "Active": true,
-      "positionXaxis": "70%",
-      "positionYaxis": "20%",
+      "positionXaxis": "32%",
+      "positionYaxis": "24%",
       "Function": "transferCommunityUSDC",
       "To": "0xRecipientAddress3",
       "Amount": 300,

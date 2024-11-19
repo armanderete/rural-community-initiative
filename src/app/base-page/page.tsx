@@ -1,3 +1,5 @@
+// pages/Page.tsx
+
 'use client';
 import { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
@@ -43,6 +45,9 @@ import VotingConfigAnimation8 from './configs/VotingConfigAnimation8.json';
 import VotingConfigAnimation9 from './configs/VotingConfigAnimation9.json';
 import VotingConfigAnimation10 from './configs/VotingConfigAnimation10.json';
 import VotingConfigAnimation11 from './configs/VotingConfigAnimation11.json';
+
+// **Import the VoteDrawer Component**
+import VoteDrawer from './components/drawers/VoteDrawer';
 
 // Import the configuration
 import config from './page-config.json';
@@ -154,9 +159,6 @@ export default function Page() {
 
   // State to handle loading
   const [loading, setLoading] = useState<boolean>(false);
-
-  // New state variable to store the top basename
-  const [topBasename, setTopBasename] = useState<Basename | null>(null);
 
   // State to store top 10 balances (only numbers)
   const [top10, setTop10] = useState<Top10Balance[]>([]);
@@ -277,6 +279,7 @@ export default function Page() {
       setAnimationPlayed(true);
       setShowButtons(true);
       setLoading(true);
+      // No need to set isAnimating
 
       // Fetch data from smart contract
       const fetchData = async () => {
@@ -1111,44 +1114,11 @@ export default function Page() {
       </div>
 
       {/* **Vote Drawer** */}
-      <div
-        className={`fixed inset-0 z-40 flex items-center justify-center transition-transform duration-300 ease-in-out transform ${
-          drawerState === 'vote-open' ? 'translate-y-0' : 'translate-y-[100vh]'
-        }`}
-      >
-        {/* Overlay */}
-        <div
-          className={`absolute inset-0 bg-black opacity-50 transition-opacity duration-300 ease-in-out ${
-            drawerState === 'vote-open' ? 'opacity-50' : 'opacity-0 pointer-events-none'
-          }`}
-          onClick={drawerState === 'vote-open' ? handleCloseVoteDrawer : undefined}
-        ></div>
-
-        {/* Drawer Content */}
-        <div
-          className="relative bg-black rounded-t-lg overflow-hidden transform transition-transform duration-300 ease-in-out w-11/12 md:w-auto md:h-4/5 aspect-square md:aspect-square"
-          onClick={(e) => e.stopPropagation()} // Prevent click from closing drawer
-        >
-          {/* Close Button */}
-          <button
-            className="absolute top-2 right-2 text-white text-xl focus:outline-none focus:ring-2 focus:ring-white rounded"
-            onClick={handleCloseVoteDrawer}
-            aria-label="Close Vote Drawer"
-          >
-            &times;
-          </button>
-
-          {/* Drawer Container */}
-          <div className="drawer-container w-full h-full relative flex items-center justify-center">
-            {/* Vote Lottie Animation */}
-            <Lottie
-              animationData={currentVoteAnimation} // Modified to use dynamic animation
-              loop={true} // This animation loops indefinitely
-              className="w-full h-full"
-            />
-          </div>
-        </div>
-      </div>
+      <VoteDrawer
+        drawerState={drawerState as 'closed' | 'vote-open'}
+        handleCloseVoteDrawer={handleCloseVoteDrawer}
+        currentAnimationIndex={currentAnimationIndex}
+      />
     </div>
   );
 }

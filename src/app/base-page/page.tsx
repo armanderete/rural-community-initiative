@@ -26,9 +26,6 @@ import Animation9 from './animations/animation9.json';
 import Animation10 from './animations/animation10.json';
 import Animation11 from './animations/animation11.json';
 
-import DashboardAnimation from '../animations/dashboard.json';
-import LeaderboardAnimation from '../animations/leaderboard.json';
-
 // **Import the Vote Animations**
 import VoteAnimation from '../animations/abcvote.json';
 import VoteAnimation1_5_10 from '../animations/vote-1-5-10.json'; // Newly added

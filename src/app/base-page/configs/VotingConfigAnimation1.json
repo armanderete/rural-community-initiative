@@ -6,8 +6,8 @@
       "positionXaxis": "27%",
       "positionYaxis": "65%",
       "Function": "transferCommunityUSDC",
-      "To": "0xRecipientAddress1",
-      "Amount": 100,
+      "To": "0xA7C6a8782632733d48246bF516475341Dac6d65B",
+      "Amount": 10000,
       "Tag": "vote transfer",
       "Concept": "anim 1 vote 1"
     },
@@ -16,8 +16,8 @@
       "positionXaxis": "74%",
       "positionYaxis": "48%",
       "Function": "transferCommunityUSDC",
-      "To": "0xRecipientAddress2",
-      "Amount": 200,
+      "To": "0xDB87FA75652342aaC07414d249d723C1B93f7670",
+      "Amount": 10000,
       "Tag": "vote transfer",
       "Concept": "anim 1 vote 2"
     },
@@ -26,8 +26,8 @@
       "positionXaxis": "32%",
       "positionYaxis": "24%",
       "Function": "transferCommunityUSDC",
-      "To": "0xRecipientAddress3",
-      "Amount": 300,
+      "To": "0xa53E8E2EeE3E8c7CD71388526fFc5B3E6768DF2d",
+      "Amount": 10000,
       "Tag": "vote transfer",
       "Concept": "anim 1 vote 3"
     },

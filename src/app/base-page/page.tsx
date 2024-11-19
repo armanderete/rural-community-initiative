@@ -5,17 +5,17 @@ import { useState, useEffect, useMemo } from 'react';
 import { 
   useAccount, 
   useChainId, 
-  useSwitchChain, 
+  useSwitchChain,
   useEstimateFeesPerGas, 
   useEstimateGas, 
   useEstimateMaxPriorityFeePerGas, 
-  useGasPrice 
+  useGasPrice, 
   useWalletClient 
 } from 'wagmi';
-import { useCapabilities } from 'wagmi/experimental';
 import { CSSProperties, ReactNode } from 'react';
-import { base } from 'wagmi/chains';
+import { useCapabilities } from 'wagmi/experimental';
 import { parseGwei } from 'viem';
+import { base } from 'wagmi/chains';
 import { BigNumber, ethers } from 'ethers';
 import Lottie from 'lottie-react';
 import Image from 'next/image';

@@ -2,15 +2,15 @@
 
 'use client';
 import { useState, useEffect, useMemo } from 'react';
-import { 
-  useAccount, 
-  useChainId, 
+import {
+  useAccount,
+  useChainId,
   useSwitchChain,
-  useEstimateFeesPerGas, 
-  useEstimateGas, 
-  useEstimateMaxPriorityFeePerGas, 
-  useGasPrice, 
-  useWalletClient 
+  useEstimateFeesPerGas,
+  useEstimateGas,
+  useEstimateMaxPriorityFeePerGas,
+  useGasPrice,
+  useWalletClient
 } from 'wagmi';
 import { CSSProperties, ReactNode } from 'react';
 import { useCapabilities } from 'wagmi/experimental';
@@ -61,6 +61,9 @@ import VoteDrawer from './components/drawers/VoteDrawer';
 
 // **Import the PrimarySecondaryDrawer Component**
 import PrimarySecondaryDrawer from './components/drawers/PrimarySecondaryDrawer';
+
+// **Import the TransactWithPaymaster Component**
+import { TransactWithPaymaster } from '../../components/TransactWithPaymaster'; // Adjusted to named import
 
 // Import the configuration
 import config from './page-config.json';
@@ -471,7 +474,7 @@ export default function Page() {
   const handlePrev = () => {
     // If we're already at the first animation, don't go to the previous
     if (currentAnimationIndex > 0) {
-      const prevIndex = currentAnimationIndex - 1; // Corrected from -2 to -1
+      const prevIndex = currentAnimationIndex - 1;
       setCurrentAnimationIndex(prevIndex);
       setAnimationData(animations[prevIndex]);
     }
@@ -592,74 +595,6 @@ export default function Page() {
   const currentVoteAnimation =
     currentVotingConfig.votingType === '1-5-10' ? VoteAnimation1_5_10 : VoteAnimation;
 
-  /**
-   * Function to handle the blockchain transaction.
-   */
-  const handleTransaction = async () => {
-    if (!address) {
-      alert('Please connect your wallet.');
-      return;
-    }
-
-    // Check if the user is connected to the correct network (Base)
-    if (chainId !== base.id) {
-      if (switchChain) {
-        try {
-          await switchChain({ chainId: base.id });
-          // After switching, the useEffect will trigger to fetch data again
-          return;
-        } catch (switchError) {
-          console.error('Error switching chain:', switchError);
-          alert('Failed to switch network. Please do it manually.');
-          return;
-        }
-      } else {
-        alert('Cannot switch network. Please do it manually.');
-        return;
-      }
-    }
-
-    if (!writeContract) {
-      console.error('Write Contract is not initialized.');
-      alert('Write Contract is not initialized.');
-      return;
-    }
-
-    setIsTransactionLoading(true);
-    setTransactionError(null);
-    setIsTransactionSuccess(false);
-
-    try {
-      // Define the transaction parameters
-      const tx = await writeContract.transferCommunityUSDC(
-        '0xA7C6a8782632733d48246bF516475341Dac6d65B', // _to
-        BigNumber.from(10000), // _amount
-        'Test', // _tag
-        'Test' // _concept
-      );
-
-      setIsTransactionPending(true);
-      console.log('Transaction sent:', tx.hash);
-
-      // Wait for the transaction to be mined
-      await tx.wait();
-      console.log('Transaction mined:', tx.hash);
-
-      setIsTransactionSuccess(true);
-
-      // Optionally, you can refetch data after a successful transaction
-      // For example:
-      // setAnimationPlayed(false); // To allow refetching data
-      // setProcessedBatches(0);
-    } catch (error: any) {
-      console.error('Transaction failed:', error);
-      setTransactionError(error);
-    } finally {
-      setIsTransactionLoading(false);
-      setIsTransactionPending(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
       {/* Desktop View */}
@@ -735,15 +670,23 @@ export default function Page() {
             {!address && <LoginButton />}
           </div>
 
-          {/* New Button for Triggering the Transaction */}
+          {/* **Add the TransactWithPaymaster Component Here** */}
           {address && (
-            <button
-              onClick={handleTransaction}
+            <TransactWithPaymaster
+              functionName="transferCommunityUSDC"
+              args={[
+                '0xA7C6a8782632733d48246bF516475341Dac6d65B', // _to
+                10000, // _amount
+                'Test', // _tag
+                'Test' // _concept
+              ]}
+              poolAddress={CONTRACT_ADDRESS}
+              poolAbi={abi}
+              chainId={base.id}
+              style={{}} // Add any custom styles if needed
               className="transaction-button z-20 mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-              aria-label="Send Community USDC"
-            >
-              Send Community USDC
-            </button>
+              label="Send Community USDC"
+            />
           )}
 
           {/* Transaction Status Messages */}

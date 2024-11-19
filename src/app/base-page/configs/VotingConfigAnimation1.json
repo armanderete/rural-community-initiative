@@ -1,15 +1,15 @@
 {
-    "votingButtonVisible": false,
+    "votingButtonVisible": true,
     "votingType": "abc",
     "VoteOption1": {
       "Active": true,
       "positionXaxis": "20%",
-      "positionYaxis": "80%",
+      "positionYaxis": "70%",
       "Function": "transferCommunityUSDC",
       "To": "0xRecipientAddress1",
       "Amount": 100,
       "Tag": "vote transfer",
-      "Concept": "vote transfer test1"
+      "Concept": "anim 1 vote 1"
     },
     "VoteOption2": {
       "Active": true,
@@ -19,17 +19,17 @@
       "To": "0xRecipientAddress2",
       "Amount": 200,
       "Tag": "vote transfer",
-      "Concept": "vote transfer test1"
+      "Concept": "anim 1 vote 2"
     },
     "VoteOption3": {
       "Active": true,
-      "positionXaxis": "50%",
-      "positionYaxis": "50%",
+      "positionXaxis": "70%",
+      "positionYaxis": "20%",
       "Function": "transferCommunityUSDC",
       "To": "0xRecipientAddress3",
       "Amount": 300,
       "Tag": "vote transfer",
-      "Concept": "vote transfer test1"
+      "Concept": "anim 1 vote 3"
     },
     "VoteOption4": {
       "Active": false,
@@ -39,7 +39,7 @@
       "To": "0xRecipientAddress4",
       "Amount": 400,
       "Tag": "vote transfer",
-      "Concept": "vote transfer test1"
+      "Concept": "anim 1 vote 4"
     },
     "VoteOption5": {
       "Active": false,
@@ -49,7 +49,7 @@
       "To": "0xRecipientAddress5",
       "Amount": 500,
       "Tag": "vote transfer",
-      "Concept": "vote transfer test1"
+      "Concept": "anim 1 vote 5"
     }
   }
   

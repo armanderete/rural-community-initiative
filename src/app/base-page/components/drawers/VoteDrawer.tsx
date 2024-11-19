@@ -1,8 +1,5 @@
-// components/drawers/VoteDrawer.tsx
-
 import React from 'react';
 import Lottie from 'lottie-react';
-import Image from 'next/image';
 import VoteAnimation from '../../animations/abcvote.json';
 import VoteAnimation1_5_10 from '../../animations/vote-1-5-10.json';
 
@@ -22,8 +19,8 @@ import VotingConfigAnimation11 from '../../configs/VotingConfigAnimation11.json'
 // **Define the VotingConfig interface**
 interface VotingOption {
   Active: boolean;
-  positionXaxis: string;
-  positionYaxis: string;
+  positionXaxis: string; // e.g., "50%"
+  positionYaxis: string; // e.g., "80%"
   Function: string;
   To: string;
   Amount: number;
@@ -75,61 +72,53 @@ const VoteDrawer: React.FC<VoteDrawerProps> = ({
       : {
           votingButtonVisible: false,
           votingType: 'abc',
-          VoteOption1: {
-            Active: false,
-            positionXaxis: '',
-            positionYaxis: '',
-            Function: '',
-            To: '',
-            Amount: 0,
-            Tag: '',
-            Concept: '',
-          },
-          VoteOption2: {
-            Active: false,
-            positionXaxis: '',
-            positionYaxis: '',
-            Function: '',
-            To: '',
-            Amount: 0,
-            Tag: '',
-            Concept: '',
-          },
-          VoteOption3: {
-            Active: false,
-            positionXaxis: '',
-            positionYaxis: '',
-            Function: '',
-            To: '',
-            Amount: 0,
-            Tag: '',
-            Concept: '',
-          },
-          VoteOption4: {
-            Active: false,
-            positionXaxis: '',
-            positionYaxis: '',
-            Function: '',
-            To: '',
-            Amount: 0,
-            Tag: '',
-            Concept: '',
-          },
-          VoteOption5: {
-            Active: false,
-            positionXaxis: '',
-            positionYaxis: '',
-            Function: '',
-            To: '',
-            Amount: 0,
-            Tag: '',
-            Concept: '',
-          },
+          VoteOption1: { Active: false, positionXaxis: '', positionYaxis: '', Function: '', To: '', Amount: 0, Tag: '', Concept: '' },
+          VoteOption2: { Active: false, positionXaxis: '', positionYaxis: '', Function: '', To: '', Amount: 0, Tag: '', Concept: '' },
+          VoteOption3: { Active: false, positionXaxis: '', positionYaxis: '', Function: '', To: '', Amount: 0, Tag: '', Concept: '' },
+          VoteOption4: { Active: false, positionXaxis: '', positionYaxis: '', Function: '', To: '', Amount: 0, Tag: '', Concept: '' },
+          VoteOption5: { Active: false, positionXaxis: '', positionYaxis: '', Function: '', To: '', Amount: 0, Tag: '', Concept: '' },
         };
 
   // **Determine the current Vote Animation based on votingType**
   const currentVoteAnimation =
     currentVotingConfig.votingType === '1-5-10' ? VoteAnimation1_5_10 : VoteAnimation;
+
+  // **Handle button clicks**
+  const handleButtonClick = (concept: string) => {
+    alert(concept);
+  };
+
+  // **Render Vote Buttons**
+  const renderVoteButtons = () => {
+    const voteOptions = [
+      currentVotingConfig.VoteOption1,
+      currentVotingConfig.VoteOption2,
+      currentVotingConfig.VoteOption3,
+      currentVotingConfig.VoteOption4,
+      currentVotingConfig.VoteOption5,
+    ];
+
+    return voteOptions.map((option, index) => {
+      if (!option.Active) return null;
+
+      return (
+        <button
+          key={index}
+          onClick={() => handleButtonClick(option.Concept)}
+          className="absolute bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+          style={{
+            left: option.positionXaxis,
+            bottom: option.positionYaxis,
+            width: '20%',
+            height: '10%',
+            transform: 'translate(-50%, 50%)', // Ensures alignment relative to the container
+          }}
+        >
+          Button {index + 1}
+        </button>
+      );
+    });
+  };
 
   return (
     <div
@@ -147,7 +136,7 @@ const VoteDrawer: React.FC<VoteDrawerProps> = ({
 
       {/* Drawer Content */}
       <div
-        className="relative bg-black rounded-t-lg overflow-hidden transform transition-transform duration-300 ease-in-out w-11/12 md:w-auto md:h-4/5 aspect-square md:aspect-square"
+        className="relative bg-black rounded-t-lg overflow-hidden transform transition-transform duration-300 ease-in-out w-11/12 md:w-auto md:h-4/5 aspect-square"
         onClick={(e) => e.stopPropagation()} // Prevent click from closing drawer
       >
         {/* Close Button */}
@@ -163,10 +152,13 @@ const VoteDrawer: React.FC<VoteDrawerProps> = ({
         <div className="drawer-container w-full h-full relative flex items-center justify-center">
           {/* Vote Lottie Animation */}
           <Lottie
-            animationData={currentVoteAnimation} // Uses dynamic animation based on votingType
-            loop={true} // This animation loops indefinitely
+            animationData={currentVoteAnimation}
+            loop={true}
             className="w-full h-full"
           />
+
+          {/* Render Buttons */}
+          {currentVotingConfig.votingButtonVisible && renderVoteButtons()}
         </div>
       </div>
     </div>

@@ -21,7 +21,7 @@ import Lottie from 'lottie-react';
 import Image from 'next/image';
 import LoginButton from '../../components/LoginButton';
 import SignupButton from '../../components/SignupButton';
-import abi from '../abi.json'; // Import ABI from the JSON file
+import abi from './abi.json'; // Import ABI from the JSON file
 import { getBasename } from '../../basenames';
 import { getEnsName } from '../../ensnames';
 import { truncateWalletAddress } from '../../utils';

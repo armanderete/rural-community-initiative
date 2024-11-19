@@ -474,7 +474,7 @@ export default function Page() {
   const handlePrev = () => {
     // If we're already at the first animation, don't go to the previous
     if (currentAnimationIndex > 0) {
-      const prevIndex = currentAnimationIndex - 1;
+      const prevIndex = currentAnimationIndex - 2;
       setCurrentAnimationIndex(prevIndex);
       setAnimationData(animations[prevIndex]);
     }

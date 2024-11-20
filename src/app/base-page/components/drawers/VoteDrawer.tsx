@@ -1,6 +1,6 @@
 // src/components/drawers/VoteDrawer.tsx
 
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Lottie from 'lottie-react';
 import VoteAnimation from '../../animations/abcvote.json';
 import VoteAnimation1_5_10 from '../../animations/vote-1-5-10.json';
@@ -20,6 +20,15 @@ import VotingConfigAnimation11 from '../../configs/VotingConfigAnimation11.json'
 
 // **Import the TransactWithPaymaster Component**
 import { TransactWithPaymaster } from '../../../../components/TransactWithPaymaster';
+
+// **Import ABI and configuration**
+import abi from '../../abi.json'; // Adjust the path as necessary
+import config from '../../page-config.json'; // Adjust the path as necessary
+
+// **Import necessary hooks and libraries**
+import { useAccount, useChainId, useSwitchChain, useWalletClient } from 'wagmi';
+import { useCapabilities } from 'wagmi/experimental';
+import { ethers } from 'ethers';
 
 // **Define the VotingConfig interface**
 interface VotingOption {
@@ -50,15 +59,41 @@ interface VoteDrawerProps {
   currentAnimationIndex: number;
 }
 
-// **Import ABI and configuration**
-import abi from '../../abi.json'; // Adjust the path as necessary
-import config from '../../page-config.json'; // Adjust the path as necessary
+/**
+ * Custom hook to convert Wagmi's WalletClient to ethers.js Signer
+ */
+function useEthersSigner() {
+  const { data: walletClient } = useWalletClient();
+  const { address } = useAccount();
+
+  const signer = useMemo(() => {
+    if (!walletClient || !address) return null;
+
+    const { transport } = walletClient;
+    // Construct ethers.js provider from transport
+    const provider = new ethers.providers.Web3Provider(transport, 'any');
+
+    return provider.getSigner(address);
+  }, [walletClient, address]);
+
+  return signer;
+}
 
 const VoteDrawer: React.FC<VoteDrawerProps> = ({
   drawerState,
   handleCloseVoteDrawer,
   currentAnimationIndex,
 }) => {
+  const { address } = useAccount();
+  const chainId = useChainId();
+  const signer = useEthersSigner();
+
+  // **State Variables for Transaction**
+  const [isTransactionLoading, setIsTransactionLoading] = useState<boolean>(false);
+  const [isTransactionPending, setIsTransactionPending] = useState<boolean>(false);
+  const [isTransactionSuccess, setIsTransactionSuccess] = useState<boolean>(false);
+  const [transactionError, setTransactionError] = useState<Error | null>(null);
+
   // **Array of Voting Configurations**
   const votingConfigs: VotingConfig[] = [
     VotingConfigAnimation1 as VotingConfig,
@@ -92,6 +127,68 @@ const VoteDrawer: React.FC<VoteDrawerProps> = ({
   const currentVoteAnimation =
     currentVotingConfig.votingType === '1-5-10' ? VoteAnimation1_5_10 : VoteAnimation;
 
+  /**
+   * **Detect if Paymaster is Supported**
+   */
+  const { data: availableCapabilities } = useCapabilities({
+    account: address
+  });
+
+  const isPaymasterSupported = useMemo(() => {
+    if (!availableCapabilities || !chainId) return false;
+    const capabilitiesForChain = availableCapabilities[chainId];
+    return (
+      capabilitiesForChain?.['paymasterService'] &&
+      capabilitiesForChain['paymasterService'].supported
+    );
+  }, [availableCapabilities, chainId]);
+
+  // **Contracts**
+  const writeContract = useMemo(() => {
+    if (signer) {
+      return new ethers.Contract(config.contractAddress, abi, signer);
+    }
+    return null;
+  }, [signer, config.contractAddress]);
+
+  /**
+   * **Handler for Regular Transaction (Fallback)**
+   */
+  const handleRegularTransaction = async (option: VotingOption) => {
+    if (!writeContract) {
+      alert('Contract is not initialized.');
+      return;
+    }
+
+    try {
+      setIsTransactionLoading(true);
+      setTransactionError(null);
+      setIsTransactionSuccess(false);
+
+      // Initiate the transaction using the function and arguments from the option
+      const tx = await writeContract[option.Function](
+        option.To,
+        option.Amount,
+        option.Tag,
+        option.Concept
+      );
+
+      setIsTransactionPending(true);
+
+      // Wait for the transaction to be mined
+      await tx.wait();
+
+      setIsTransactionPending(false);
+      setIsTransactionSuccess(true);
+    } catch (err) {
+      console.error('Regular Transaction Error:', err);
+      setTransactionError(err as Error);
+      setIsTransactionPending(false);
+    } finally {
+      setIsTransactionLoading(false);
+    }
+  };
+
   // **Render Vote Buttons**
   const renderVoteButtons = () => {
     const voteOptions = [
@@ -105,7 +202,7 @@ const VoteDrawer: React.FC<VoteDrawerProps> = ({
     return voteOptions.map((option, index) => {
       if (!option.Active) return null;
 
-      return (
+      return isPaymasterSupported ? (
         <TransactWithPaymaster
           key={index + 1}
           functionName={option.Function}
@@ -129,6 +226,28 @@ const VoteDrawer: React.FC<VoteDrawerProps> = ({
           }}
           className="focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
         />
+      ) : (
+        <button
+          key={index + 1}
+          onClick={() => handleRegularTransaction(option)}
+          className="absolute bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+          style={{
+            left: option.positionXaxis,
+            bottom: option.positionYaxis,
+            width: '38%',
+            height: '25%',
+            transform: 'translate(-50%, 50%)', // Ensures alignment relative to the container
+            position: 'absolute',
+            zIndex: 20,
+            backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent for visibility
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          Vote {index + 1}
+        </button>
       );
     });
   };
@@ -172,6 +291,18 @@ const VoteDrawer: React.FC<VoteDrawerProps> = ({
 
           {/* Render Buttons */}
           {currentVotingConfig.votingButtonVisible && renderVoteButtons()}
+        </div>
+
+        {/* Transaction Status Messages */}
+        <div className="mt-2 text-center">
+          {isTransactionLoading && <p>Preparing transaction...</p>}
+          {isTransactionPending && <p>Transaction is pending...</p>}
+          {isTransactionSuccess && <p className="text-green-500">Transaction successful!</p>}
+          {transactionError && (
+            <p className="text-red-500">
+              Error: {transactionError.message || 'An error occurred.'}
+            </p>
+          )}
         </div>
       </div>
     </div>

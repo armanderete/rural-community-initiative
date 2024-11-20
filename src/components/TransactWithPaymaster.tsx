@@ -72,7 +72,7 @@ export function TransactWithPaymaster({
   return (
     <div>
       <TransactButton
-        text={label ?? 'Transact'}
+        text={label ?? ''} // deleted the text to not show any
         style={style ?? {}}
         targetChainId={chainId}
         className={className}

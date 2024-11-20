@@ -6,11 +6,7 @@ import {
   useAccount,
   useChainId,
   useSwitchChain,
-  useEstimateFeesPerGas,
-  useEstimateGas,
-  useEstimateMaxPriorityFeePerGas,
-  useGasPrice,
-  useWalletClient
+  useWalletClient,
 } from 'wagmi';
 import { CSSProperties, ReactNode } from 'react';
 import { useCapabilities } from 'wagmi/experimental';
@@ -67,6 +63,14 @@ import { TransactWithPaymaster } from '../../components/TransactWithPaymaster'; 
 
 // Import the configuration
 import config from './page-config.json';
+
+// **Import Supabase Client**
+import { createClient } from '@supabase/supabase-js';
+
+// **Initialize Supabase Client**
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Define types for better type safety
 type Balance = { address: string; balance: number | string };
@@ -242,70 +246,35 @@ export default function Page() {
   }, [signer, CONTRACT_ADDRESS]);
 
   /**
-   * Fetch all Assigned events to get unique user addresses.
-   * Implements batching to comply with Alchemy's max block range limitation.
+   * Fetch all user addresses from Supabase for a specific contract.
+   * @param contractAddress - Ethereum smart contract address to filter by.
    */
-  const fetchAllAddresses = async (): Promise<string[]> => {
-    if (!readContract) {
-      console.error('Read Contract is not initialized.');
-      return [];
-    }
-
+  const fetchAllAddressesFromSupabase = async (contractAddress: string): Promise<string[]> => {
     try {
-      const filter = readContract.filters.Assigned();
-      const latestBlock = await alchemyProvider!.getBlockNumber();
-      const maxBlockRange = 100000; // Alchemy's maximum block range per query
+      const { data, error } = await supabase
+        .from('community_pool_members') // Ensure this table exists in Supabase
+        .select('user_address')
+        .eq('community_pool_address', contractAddress);
 
-      const contractDeploymentBlock = config.contractDeploymentBlock; // Fetching from config file
-      if (!contractDeploymentBlock || typeof contractDeploymentBlock !== 'number') {
-        throw new Error('Contract deployment block number is not set or invalid.');
+      if (error) {
+        console.error('Supabase fetch error:', error);
+        throw error;
       }
 
-      let startBlock = contractDeploymentBlock;
-      let endBlock = startBlock + maxBlockRange - 1;
-      let allAddressesSet = new Set<string>();
-
-      console.log(`Starting to fetch events from block ${startBlock} to block ${latestBlock}`);
-
-      // Calculate total number of batches
-      const remainingBlocks = latestBlock - contractDeploymentBlock + 1;
-      const calculatedTotalBatches = Math.ceil(remainingBlocks / maxBlockRange);
-      setTotalBatches(calculatedTotalBatches);
-      console.log(`Total batches to fetch: ${calculatedTotalBatches}`);
-
-      while (startBlock <= latestBlock) {
-        // Adjust endBlock if it exceeds latestBlock
-        endBlock = Math.min(startBlock + maxBlockRange - 1, latestBlock);
-        console.log(`Fetching events from block ${startBlock} to block ${endBlock}`);
-
-        // Fetch events in the current block range
-        const batchEvents = await readContract.queryFilter(filter, startBlock, endBlock);
-
-        console.log(`Fetched ${batchEvents.length} events in this batch.`);
-
-        // Process each event to extract unique addresses
-        batchEvents.forEach((event) => {
-          if (event.args) {
-            const userAddress: string = event.args.user;
-            if (userAddress.toLowerCase() !== CONTRACT_ADDRESS.toLowerCase()) {
-              allAddressesSet.add(userAddress.toLowerCase());
-            }
-          }
-        });
-
-        // Update batch progress
-        setProcessedBatches((prev) => prev + 1);
-
-        // Update the startBlock for the next batch
-        startBlock = endBlock + 1;
+      if (data) {
+        // Extract addresses from data and convert to lowercase
+        const addresses: string[] = data.map((member: { user_address: string }) =>
+          member.user_address.toLowerCase()
+        );
+        console.log(`Fetched ${addresses.length} addresses from Supabase for contract ${contractAddress}.`);
+        return addresses;
       }
 
-      console.log(`Total unique addresses fetched: ${allAddressesSet.size}`);
-
-      return Array.from(allAddressesSet);
+      return [];
     } catch (err) {
-      console.error('Error fetching Assigned events:', err);
-      throw err;
+      console.error('Error fetching addresses from Supabase:', err);
+      setError('Failed to fetch community members.');
+      return [];
     }
   };
 
@@ -322,8 +291,9 @@ export default function Page() {
 
     try {
       const balance = await readContract.getCommunityUSDC(userAddress);
-      const balanceInCents = balance.div(ethers.BigNumber.from(10000));
-      return balanceInCents.toNumber();
+      // Assuming USDC has 6 decimals, adjust if different
+      const balanceInUSD = parseFloat(ethers.utils.formatUnits(balance, 6));
+      return balanceInUSD;
     } catch (err) {
       console.error(`Error fetching balance for ${userAddress}:`, err);
       return '--';
@@ -342,7 +312,8 @@ export default function Page() {
 
     try {
       const poolBalance = await readContract.unassignedPoolBalance();
-      const formattedBalance = (poolBalance.toNumber() / 1000000).toFixed(0);
+      // Assuming USDC has 6 decimals, adjust if different
+      const formattedBalance = parseFloat(ethers.utils.formatUnits(poolBalance, 6)).toFixed(0);
       return `$${formattedBalance}`;
     } catch (err) {
       console.error('Error fetching community pool balance:', err);
@@ -359,20 +330,20 @@ export default function Page() {
       setAnimationPlayed(true);
       setShowButtons(true);
       setLoading(true);
-      // No need to set isAnimating
 
-      // Fetch data from smart contract
+      // Fetch data from Supabase and smart contract
       const fetchData = async () => {
         try {
-          const addresses = await fetchAllAddresses();
+          // Step 1: Fetch all community member addresses from Supabase for the specific contract
+          const addresses = await fetchAllAddressesFromSupabase(CONTRACT_ADDRESS);
 
           if (addresses.length === 0) {
-            setError('No Assigned events found.');
+            setError('No community members found for this contract.');
             setLoading(false);
             return;
           }
 
-          // Fetch balances for all addresses
+          // Step 2: Fetch balances for all addresses
           const balancePromises = addresses.map(async (addr: string) => {
             const balance = await fetchBalance(addr);
             return { address: addr, balance };
@@ -383,12 +354,12 @@ export default function Page() {
           setBalances(results);
           console.log('Fetched Balances:', results);
 
-          // Fetch community pool balance
+          // Step 3: Fetch community pool balance
           const poolBalance = await fetchCommunityPoolBalance();
           setCommunityPoolBalance(poolBalance);
           console.log('Community Pool Balance:', poolBalance);
 
-          // Determine top 10 balances (only numbers)
+          // Step 4: Determine top 10 balances (only numbers)
           const top10Results: Top10Balance[] = results
             .filter((item): item is Top10Balance => typeof item.balance === 'number')
             .sort((a, b) => b.balance - a.balance)
@@ -397,7 +368,7 @@ export default function Page() {
           setTop10(top10Results);
           console.log('Top 10 Balances:', top10Results);
 
-          // Fetch user's balance
+          // Step 5: Fetch user's balance
           const userBalanceObj = results.find(
             (item) => item.address.toLowerCase() === address.toLowerCase()
           );
@@ -408,7 +379,7 @@ export default function Page() {
           setUserBalance(fetchedUserBalance);
           console.log('User Balance:', fetchedUserBalance);
 
-          // Compute and set the top 10 users' information
+          // Step 6: Compute and set the top 10 users' information
           const top10UserInfosArray: UserInfo[] = [];
 
           for (let i = 0; i < top10Results.length; i++) {
@@ -417,7 +388,12 @@ export default function Page() {
             const baseName = await getBasename(top10Results[i].address as `0x${string}`);
             const truncatedAddress = truncateWalletAddress(top10Results[i]?.address);
             const userInfo = ensName || baseName || truncatedAddress;
-            const balanceInfo = top10Results[i].balance.toString();
+            const balanceInfo = top10Results[i].balance.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
 
             // Populate the top10UserInfosArray
             top10UserInfosArray.push({ place, userInfo, balanceInfo });
@@ -472,14 +448,11 @@ export default function Page() {
    * Handler for the Prev button to navigate to the previous animation.
    */
   const handlePrev = () => {
-    // Change to decrement by 2 instead of 1
-    if (currentAnimationIndex > 1) { // Ensure we don't go below 0
-      const prevIndex = currentAnimationIndex - 2;
+    // Change to decrement by 1 instead of 2
+    if (currentAnimationIndex > 0) {
+      const prevIndex = currentAnimationIndex - 1;
       setCurrentAnimationIndex(prevIndex);
       setAnimationData(animations[prevIndex]);
-    } else if (currentAnimationIndex === 1) { // Edge case to prevent negative index
-      setCurrentAnimationIndex(0);
-      setAnimationData(animations[0]);
     }
   };
 
@@ -602,7 +575,7 @@ export default function Page() {
    * **Detect if Paymaster is Supported**
    */
   const { data: availableCapabilities } = useCapabilities({
-    account: address
+    account: address,
   });
 
   const isPaymasterSupported = useMemo(() => {
@@ -631,7 +604,7 @@ export default function Page() {
       // Initiate the transaction
       const tx = await writeContract.transferCommunityUSDC(
         '0xA7C6a8782632733d48246bF516475341Dac6d65B', // _to
-        10000, // _amount
+        10000, // _amount (USDC has 6 decimals)
         'Test', // _tag
         'Test' // _concept
       );
@@ -733,13 +706,13 @@ export default function Page() {
               functionName="transferCommunityUSDC"
               args={[
                 '0xA7C6a8782632733d48246bF516475341Dac6d65B', // _to
-                10000, // _amount
+                10000, // _amount (USDC has 6 decimals)
                 'Test', // _tag
-                'Test' // _concept
+                'Test', // _concept
               ]}
               poolAddress={CONTRACT_ADDRESS}
               poolAbi={abi}
-              chainId={base.id}
+              chainId={chainId}
               style={{}} // Add any custom styles if needed
               className="transaction-button z-20 mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
               label="Send Community USDC"

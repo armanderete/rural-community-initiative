@@ -103,14 +103,14 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
                 className="absolute"
                 style={{
                   bottom: '7%',
-                  left: '8%',
+                  left: '3%',
                   fontSize: '30px',
                   fontWeight: 'bold',
                   color: 'DarkViolet',
                   backgroundColor: 'transparent',
                 }}
               >
-                {userBalance}
+                ${userBalance}
               </div>
             )}
 
@@ -120,14 +120,14 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
                 className="absolute"
                 style={{
                   bottom: '5%',
-                  left: '35%',
-                  fontSize: '30px',
+                  left: '32%',
+                  fontSize: '25px',
                   fontWeight: 'bold',
                   color: 'black',
                   backgroundColor: 'transparent',
                 }}
               >
-                {top10[0].balance}
+                ${top10[0].balance}
               </div>
             )}
 
@@ -136,14 +136,14 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
                 className="absolute"
                 style={{
                   bottom: '5%',
-                  left: '51%',
-                  fontSize: '30px',
+                  left: '48%',
+                  fontSize: '25px',
                   fontWeight: 'bold',
                   color: 'black',
                   backgroundColor: 'transparent',
                 }}
               >
-                {top10[1].balance}
+                ${top10[1].balance}
               </div>
             )}
 
@@ -152,14 +152,14 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
                 className="absolute"
                 style={{
                   bottom: '5%',
-                  left: '68%',
-                  fontSize: '30px',
+                  left: '65%',
+                  fontSize: '25px',
                   fontWeight: 'bold',
                   color: 'black',
                   backgroundColor: 'transparent',
                 }}
               >
-                {top10[2].balance}
+                ${top10[2].balance}
               </div>
             )}
 
@@ -227,14 +227,14 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
                 className="absolute"
                 style={{
                   bottom: '4%',
-                  left: '63%',
-                  fontSize: '25px',
+                  left: '59%',
+                  fontSize: '22px',
                   fontWeight: 'bold',
                   color: 'MediumPurple',
                   backgroundColor: 'transparent',
                 }}
               >
-                {userBalance}
+                ${userBalance}
               </div>
             )}
 
@@ -251,7 +251,7 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
             {/* Display the 1st place balance */}
             {top10UserInfos.length > 0 && !loading && (
               <div
-                className="absolute left-[9%] bottom-[89%] text-[18px] md:text-[23px] font-bold text-pink-500 bg-transparent whitespace-nowrap"
+                className="absolute left-[5%] bottom-[90%] text-[18px] md:text-[23px] font-bold text-pink-500 bg-transparent whitespace-nowrap"
               >
                 {`${top10UserInfos[0].balanceInfo}`}
               </div>
@@ -269,7 +269,7 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
             {/* Display the 2nd place balance */}
             {top10UserInfos.length > 1 && !loading && (
               <div
-                className="absolute left-[30%] bottom-[75%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+                className="absolute left-[27%] bottom-[75%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
                 {`${top10UserInfos[1].balanceInfo}`}
               </div>
@@ -287,7 +287,7 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
             {/* Display the 3rd place balance */}
             {top10UserInfos.length > 2 && !loading && (
               <div
-                className="absolute left-[33%] bottom-[67%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+                className="absolute left-[30%] bottom-[67%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
                 {`${top10UserInfos[2].balanceInfo}`}
               </div>
@@ -305,7 +305,7 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
             {/* Display the 4th place balance */}
             {top10UserInfos.length > 3 && !loading && (
               <div
-                className="absolute left-[34%] bottom-[59%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+                className="absolute left-[32%] bottom-[59%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
                 {`${top10UserInfos[3].balanceInfo}`}
               </div>
@@ -323,7 +323,7 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
             {/* Display the 5th place balance */}
             {top10UserInfos.length > 4 && !loading && (
               <div
-                className="absolute left-[36%] bottom-[51%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+                className="absolute left-[33%] bottom-[51%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
                 {`${top10UserInfos[4].balanceInfo}`}
               </div>
@@ -341,7 +341,7 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
             {/* Display the 6th place balance */}
             {top10UserInfos.length > 5 && !loading && (
               <div
-                className="absolute left-[37%] bottom-[43%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+                className="absolute left-[35%] bottom-[43%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
                 {`${top10UserInfos[5].balanceInfo}`}
               </div>
@@ -359,7 +359,7 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
             {/* Display the 7th place balance */}
             {top10UserInfos.length > 6 && !loading && (
               <div
-                className="absolute left-[36%] bottom-[35%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+                className="absolute left-[33%] bottom-[34%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
                 {`${top10UserInfos[6].balanceInfo}`}
               </div>
@@ -377,7 +377,7 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
             {/* Display the 8th place balance */}
             {top10UserInfos.length > 7 && !loading && (
               <div
-                className="absolute left-[32%] bottom-[22%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
+                className="absolute left-[30%] bottom-[22%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
               >
                 {`${top10UserInfos[7].balanceInfo}`}
               </div>

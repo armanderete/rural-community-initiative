@@ -35,9 +35,6 @@ import Animation9 from './animations/animation9.json';
 import Animation10 from './animations/animation10.json';
 import Animation11 from './animations/animation11.json';
 
-// **Import the Vote Animations**
-import VoteAnimation from '../animations/abcvote.json';
-import VoteAnimation1_5_10 from '../animations/vote-1-5-10.json'; // Newly added
 
 // **Import Voting Configurations**
 import VotingConfigAnimation1 from './configs/VotingConfigAnimation1.json';
@@ -439,7 +436,7 @@ export default function Page() {
    * Handler for the Prev button to navigate to the previous animation.
    */
   const handlePrev = () => {
-    // always use -2 for prev
+    // Change to decrement by 1 instead of 2
     if (currentAnimationIndex > 0) {
       const prevIndex = currentAnimationIndex - 2;
       setCurrentAnimationIndex(prevIndex);
@@ -499,72 +496,6 @@ export default function Page() {
     return `${percentage.toFixed(2)}%`;
   };
 
-  // **Determine the current voting configuration**
-  const currentVotingConfig =
-    currentAnimationIndex < votingConfigs.length
-      ? votingConfigs[currentAnimationIndex]
-      : {
-          votingButtonVisible: false,
-          votingType: 'abc',
-          VoteOption1: {
-            Active: false,
-            positionXaxis: '',
-            positionYaxis: '',
-            Function: '',
-            To: '',
-            Amount: 0,
-            Tag: '',
-            Concept: '',
-          },
-          VoteOption2: {
-            Active: false,
-            positionXaxis: '',
-            positionYaxis: '',
-            Function: '',
-            To: '',
-            Amount: 0,
-            Tag: '',
-            Concept: '',
-          },
-          VoteOption3: {
-            Active: false,
-            positionXaxis: '',
-            positionYaxis: '',
-            Function: '',
-            To: '',
-            Amount: 0,
-            Tag: '',
-            Concept: '',
-          },
-          VoteOption4: {
-            Active: false,
-            positionXaxis: '',
-            positionYaxis: '',
-            Function: '',
-            To: '',
-            Amount: 0,
-            Tag: '',
-            Concept: '',
-          },
-          VoteOption5: {
-            Active: false,
-            positionXaxis: '',
-            positionYaxis: '',
-            Function: '',
-            To: '',
-            Amount: 0,
-            Tag: '',
-            Concept: '',
-          },
-        };
-
-  // **Determine the current Vote Animation based on votingType**
-  const currentVoteAnimation =
-    currentVotingConfig.votingType === '1-5-10' ? VoteAnimation1_5_10 : VoteAnimation;
-
-  /**
-   * **Detect if Paymaster is Supported**
-   */
   const { data: availableCapabilities } = useCapabilities({
     account: address,
   });
@@ -577,7 +508,6 @@ export default function Page() {
       capabilitiesForChain['paymasterService'].supported
     );
   }, [availableCapabilities, chainId]);
-
 
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
@@ -654,11 +584,10 @@ export default function Page() {
             {!address && <LoginButton />}
           </div>
 
-
           {/* Dashboard and Navigation Buttons Group */}
           <div className="vote-nav-group">
             {/* Vote Button */}
-            {address && currentVotingConfig.votingButtonVisible && (
+            {address && votingConfigs[currentAnimationIndex]?.votingButtonVisible && (
               <button
                 onClick={handleVoteButtonClick}
                 className="vote-button z-20" // Use the class defined in global.css
@@ -807,7 +736,7 @@ export default function Page() {
           )}
 
           {/* Vote Button */}
-          {address && currentVotingConfig.votingButtonVisible && (
+          {address && votingConfigs[currentAnimationIndex]?.votingButtonVisible && (
             <button
               onClick={handleVoteButtonClick}
               className="vote-button z-20" // Use the class defined in global.css

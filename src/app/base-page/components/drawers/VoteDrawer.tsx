@@ -1,3 +1,5 @@
+// src/components/drawers/VoteDrawer.tsx
+
 import React from 'react';
 import Lottie from 'lottie-react';
 import VoteAnimation from '../../animations/abcvote.json';
@@ -15,6 +17,9 @@ import VotingConfigAnimation8 from '../../configs/VotingConfigAnimation8.json';
 import VotingConfigAnimation9 from '../../configs/VotingConfigAnimation9.json';
 import VotingConfigAnimation10 from '../../configs/VotingConfigAnimation10.json';
 import VotingConfigAnimation11 from '../../configs/VotingConfigAnimation11.json';
+
+// **Import the TransactWithPaymaster Component**
+import { TransactWithPaymaster } from '../../../../components/TransactWithPaymaster';
 
 // **Define the VotingConfig interface**
 interface VotingOption {
@@ -44,6 +49,10 @@ interface VoteDrawerProps {
   handleCloseVoteDrawer: () => void;
   currentAnimationIndex: number;
 }
+
+// **Import ABI and configuration**
+import abi from '../../abi.json'; // Adjust the path as necessary
+import config from '../../page-config.json'; // Adjust the path as necessary
 
 const VoteDrawer: React.FC<VoteDrawerProps> = ({
   drawerState,
@@ -83,11 +92,6 @@ const VoteDrawer: React.FC<VoteDrawerProps> = ({
   const currentVoteAnimation =
     currentVotingConfig.votingType === '1-5-10' ? VoteAnimation1_5_10 : VoteAnimation;
 
-  // **Handle button clicks**
-  const handleButtonClick = (concept: string) => {
-    alert(concept);
-  };
-
   // **Render Vote Buttons**
   const renderVoteButtons = () => {
     const voteOptions = [
@@ -102,20 +106,30 @@ const VoteDrawer: React.FC<VoteDrawerProps> = ({
       if (!option.Active) return null;
 
       return (
-        <button
-          key={index}
-          onClick={() => handleButtonClick(option.Concept)}
-          className="absolute bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+        <TransactWithPaymaster
+          key={index + 1}
+          functionName={option.Function}
+          args={[option.To, option.Amount, option.Tag, option.Concept]}
+          poolAddress={config.contractAddress}
+          poolAbi={abi}
+          chainId={Number(config.chainId)} // Ensure 'chainId' is a number
           style={{
             left: option.positionXaxis,
             bottom: option.positionYaxis,
-            width: '40%',
-            height: '25%',
+            width: '20%',
+            height: '10%',
             transform: 'translate(-50%, 50%)', // Ensures alignment relative to the container
+            position: 'absolute',
+            zIndex: 20,
+            backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent for visibility
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
-        >
-          Button {index + 1}
-        </button>
+          className="focus:outline-none focus:ring-2 focus:ring-blue-500 rounded"
+          label={`Vote ${index + 1}`}
+        />
       );
     });
   };
@@ -128,7 +142,7 @@ const VoteDrawer: React.FC<VoteDrawerProps> = ({
     >
       {/* Overlay */}
       <div
-        className={`absolute inset-0 bg-black opacity-50 transition-opacity duration-300 ease-in-out ${
+        className={`absolute inset-0 bg-black transition-opacity duration-300 ease-in-out ${
           drawerState === 'vote-open' ? 'opacity-50' : 'opacity-0 pointer-events-none'
         }`}
         onClick={drawerState === 'vote-open' ? handleCloseVoteDrawer : undefined}

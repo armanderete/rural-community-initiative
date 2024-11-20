@@ -58,9 +58,6 @@ import VoteDrawer from './components/drawers/VoteDrawer';
 // **Import the PrimarySecondaryDrawer Component**
 import PrimarySecondaryDrawer from './components/drawers/PrimarySecondaryDrawer';
 
-// **Import the TransactWithPaymaster Component**
-// Removed: import { TransactWithPaymaster } from '../../components/TransactWithPaymaster'; // Adjusted to named import
-
 // Import the configuration
 import config from './page-config.json';
 

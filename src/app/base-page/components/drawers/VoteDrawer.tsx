@@ -219,6 +219,7 @@ const VoteDrawer: React.FC<VoteDrawerProps> = ({
             position: 'absolute',
             zIndex: 20,
             backgroundColor: 'transparent', // Semi-transparent for visibility
+            color: 'transparent', // Make font transparent
             borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
@@ -239,7 +240,8 @@ const VoteDrawer: React.FC<VoteDrawerProps> = ({
             transform: 'translate(-50%, 50%)', // Ensures alignment relative to the container
             position: 'absolute',
             zIndex: 20,
-            backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent for visibility
+            backgroundColor: 'transparent', // Semi-transparent for visibility
+            color: 'transparent', // Make font transparent
             borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',

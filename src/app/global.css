@@ -47,7 +47,7 @@ a {
     position: absolute;
     left: 50%;
     transform: translateX(-50%); /* Center horizontally */
-    background-color: yellow; /* Visualization */
+    background-color: black; /* Visualization */
   }
 
   .brown-container {

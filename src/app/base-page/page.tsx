@@ -59,7 +59,7 @@ import VoteDrawer from './components/drawers/VoteDrawer';
 import PrimarySecondaryDrawer from './components/drawers/PrimarySecondaryDrawer';
 
 // **Import the TransactWithPaymaster Component**
-import { TransactWithPaymaster } from '../../components/TransactWithPaymaster'; // Adjusted to named import
+// Removed: import { TransactWithPaymaster } from '../../components/TransactWithPaymaster'; // Adjusted to named import
 
 // Import the configuration
 import config from './page-config.json';
@@ -212,12 +212,6 @@ export default function Page() {
   // State variables for batch tracking
   const [totalBatches, setTotalBatches] = useState<number>(0);
   const [processedBatches, setProcessedBatches] = useState<number>(0);
-
-  // **Additional State Variables for Transaction**
-  const [isTransactionLoading, setIsTransactionLoading] = useState<boolean>(false);
-  const [isTransactionPending, setIsTransactionPending] = useState<boolean>(false);
-  const [isTransactionSuccess, setIsTransactionSuccess] = useState<boolean>(false);
-  const [transactionError, setTransactionError] = useState<Error | null>(null);
 
   // Initialize ethers providers and contracts
   const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
@@ -448,9 +442,9 @@ export default function Page() {
    * Handler for the Prev button to navigate to the previous animation.
    */
   const handlePrev = () => {
-    // Change to decrement by 1 instead of 2
+    // always use -2 for prev
     if (currentAnimationIndex > 0) {
-      const prevIndex = currentAnimationIndex - 1;
+      const prevIndex = currentAnimationIndex - 2;
       setCurrentAnimationIndex(prevIndex);
       setAnimationData(animations[prevIndex]);
     }
@@ -587,43 +581,6 @@ export default function Page() {
     );
   }, [availableCapabilities, chainId]);
 
-  /**
-   * **Handler for Regular Transaction (Fallback)**
-   */
-  const handleRegularTransaction = async () => {
-    if (!writeContract) {
-      alert('Contract is not initialized.');
-      return;
-    }
-
-    try {
-      setIsTransactionLoading(true);
-      setTransactionError(null);
-      setIsTransactionSuccess(false);
-
-      // Initiate the transaction
-      const tx = await writeContract.transferCommunityUSDC(
-        '0xA7C6a8782632733d48246bF516475341Dac6d65B', // _to
-        10000, // _amount (USDC has 6 decimals)
-        'Test', // _tag
-        'Test' // _concept
-      );
-
-      setIsTransactionPending(true);
-
-      // Wait for the transaction to be mined
-      await tx.wait();
-
-      setIsTransactionPending(false);
-      setIsTransactionSuccess(true);
-    } catch (err) {
-      console.error('Regular Transaction Error:', err);
-      setTransactionError(err as Error);
-      setIsTransactionPending(false);
-    } finally {
-      setIsTransactionLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
@@ -700,45 +657,6 @@ export default function Page() {
             {!address && <LoginButton />}
           </div>
 
-          {/* **Conditional Rendering of TransactWithPaymaster or Fallback Button** */}
-          {address && isPaymasterSupported ? (
-            <TransactWithPaymaster
-              functionName="transferCommunityUSDC"
-              args={[
-                '0xA7C6a8782632733d48246bF516475341Dac6d65B', // _to
-                10000, // _amount (USDC has 6 decimals)
-                'Test', // _tag
-                'Test', // _concept
-              ]}
-              poolAddress={CONTRACT_ADDRESS}
-              poolAbi={abi}
-              chainId={chainId}
-              style={{}} // Add any custom styles if needed
-              className="transaction-button z-20 mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-              label="Send Community USDC"
-            />
-          ) : (
-            address && (
-              <button
-                onClick={handleRegularTransaction}
-                className="transaction-button z-20 mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-              >
-                Send Community USDC
-              </button>
-            )
-          )}
-
-          {/* Transaction Status Messages */}
-          <div className="mt-2 text-center">
-            {isTransactionLoading && <p>Preparing transaction...</p>}
-            {isTransactionPending && <p>Transaction is pending...</p>}
-            {isTransactionSuccess && <p className="text-green-500">Transaction successful!</p>}
-            {transactionError && (
-              <p className="text-red-500">
-                Error: {transactionError.message || 'An error occurred.'}
-              </p>
-            )}
-          </div>
 
           {/* Dashboard and Navigation Buttons Group */}
           <div className="vote-nav-group">

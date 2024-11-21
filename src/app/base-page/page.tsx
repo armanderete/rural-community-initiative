@@ -22,20 +22,6 @@ import { getBasename } from '../../basenames';
 import { getEnsName } from '../../ensnames';
 import { truncateWalletAddress } from '../../utils';
 
-// Import your animations
-import Animation1 from './animations/animation1.json';
-import Animation2 from './animations/animation2.json';
-import Animation3 from './animations/animation3.json';
-import Animation4 from './animations/animation4.json';
-import Animation5 from './animations/animation5.json';
-import Animation6 from './animations/animation6.json';
-import Animation7 from './animations/animation7.json';
-import Animation8 from './animations/animation8.json';
-import Animation9 from './animations/animation9.json';
-import Animation10 from './animations/animation10.json';
-import Animation11 from './animations/animation11.json';
-
-
 // **Import Voting Configurations**
 import VotingConfigAnimation1 from './configs/VotingConfigAnimation1.json';
 import VotingConfigAnimation2 from './configs/VotingConfigAnimation2.json';
@@ -127,27 +113,6 @@ export default function Page() {
   const { switchChain } = useSwitchChain();
   const signer = useEthersSigner();
 
-  // Array of animations in order, limited by config.animations
-  const allAnimations = [
-    Animation1,
-    Animation2,
-    Animation3,
-    Animation4,
-    Animation5,
-    Animation6,
-    Animation7,
-    Animation8,
-    Animation9,
-    Animation10,
-    Animation11,
-  ];
-
-  // Limit animations array based on config.animations
-  const animations = allAnimations.slice(0, config.animations);
-
-  // Array indicating whether each animation should loop, from config
-  const animationLoopSettings = config.animationLoopSettings;
-
   // **Array of Voting Configurations**
   const votingConfigs: VotingConfig[] = [
     VotingConfigAnimation1 as VotingConfig,
@@ -166,10 +131,13 @@ export default function Page() {
   // State to manage current animation index
   const [currentAnimationIndex, setCurrentAnimationIndex] = useState<number>(0);
 
-  // State to trigger animation playback
-  const [animationData, setAnimationData] = useState<any>(null);
+  // State to hold loaded animations
+  const [loadedAnimations, setLoadedAnimations] = useState<any[]>([]);
 
-  // State to track if animation has played
+  // State to hold the currently displayed animation
+  const [currentAnimation, setCurrentAnimation] = useState<any>(null);
+
+  // State to track if animations have started loading
   const [animationPlayed, setAnimationPlayed] = useState<boolean>(false);
 
   // State to manage visibility of Prev and Next buttons
@@ -206,6 +174,13 @@ export default function Page() {
   // State variables for batch tracking
   const [totalBatches, setTotalBatches] = useState<number>(0);
   const [processedBatches, setProcessedBatches] = useState<number>(0);
+
+  // **Additional State Variables for Transaction**
+  // Removed:
+  // const [isTransactionLoading, setIsTransactionLoading] = useState<boolean>(false);
+  // const [isTransactionPending, setIsTransactionPending] = useState<boolean>(false);
+  // const [isTransactionSuccess, setIsTransactionSuccess] = useState<boolean>(false);
+  // const [transactionError, setTransactionError] = useState<Error | null>(null);
 
   // Initialize ethers providers and contracts
   const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
@@ -310,13 +285,77 @@ export default function Page() {
   };
 
   /**
-   * Effect hook to initialize animations and fetch data when a wallet is connected.
+   * **Dynamic Import of Animations**
+   * Define an array of functions that dynamically import each animation.
+   */
+  const animationImports = useMemo(
+    () => [
+      () => import('./animations/animation1.json'),
+      () => import('./animations/animation2.json'),
+      () => import('./animations/animation3.json'),
+      () => import('./animations/animation4.json'),
+      () => import('./animations/animation5.json'),
+      () => import('./animations/animation6.json'),
+      () => import('./animations/animation7.json'),
+      () => import('./animations/animation8.json'),
+      () => import('./animations/animation9.json'),
+      () => import('./animations/animation10.json'),
+      () => import('./animations/animation11.json'),
+    ],
+    []
+  );
+
+  /**
+   * **Effect Hook to Load Animations Sequentially**
+   * - Load animations one by one in the order defined.
+   * - Display the first animation as soon as it's loaded.
+   * - Continue loading the rest in the background.
    */
   useEffect(() => {
     if (address && !animationPlayed) {
-      setAnimationData(animations[currentAnimationIndex]);
       setAnimationPlayed(true);
       setShowButtons(true);
+      setLoading(true);
+      setLoadingIndex(0);
+    }
+  }, [address, animationPlayed]);
+
+  // State to track which animation is being loaded
+  const [loadingIndex, setLoadingIndex] = useState<number>(0);
+
+  useEffect(() => {
+    if (loadingIndex >= animationImports.length) {
+      setLoading(false);
+      return;
+    }
+
+    const loadAnimation = async () => {
+      try {
+        const animation = await animationImports[loadingIndex]();
+        setLoadedAnimations((prev) => [...prev, animation.default]);
+
+        if (loadingIndex === 0) {
+          setCurrentAnimation(animation.default);
+        }
+      } catch (error) {
+        console.error(`Failed to load animation ${loadingIndex + 1}:`, error);
+      } finally {
+        setLoadingIndex((prev) => prev + 1);
+      }
+    };
+
+    if (loadingIndex < animationImports.length) {
+      loadAnimation();
+    }
+  }, [loadingIndex, animationImports]);
+
+  /**
+   * Effect hook to initialize animations and fetch data when a wallet is connected.
+   * This ensures that data fetching and animation loading occur simultaneously.
+   */
+  useEffect(() => {
+    if (address && !animationPlayed) {
+      // Animation loading is already handled by the above effect
       setLoading(true);
 
       // Fetch data from Supabase and smart contract
@@ -398,7 +437,7 @@ export default function Page() {
 
       fetchData();
     }
-  }, [address, animationPlayed, currentAnimationIndex, animations]);
+  }, [address, animationPlayed]);
 
   /**
    * Function to get the ordinal suffix for a given number.
@@ -425,10 +464,10 @@ export default function Page() {
    */
   const handleNext = () => {
     // If we're already at the last animation, don't go to the next
-    if (currentAnimationIndex < animations.length - 1) {
+    if (currentAnimationIndex < loadedAnimations.length) {
       const nextIndex = currentAnimationIndex + 1;
       setCurrentAnimationIndex(nextIndex);
-      setAnimationData(animations[nextIndex]);
+      setCurrentAnimation(loadedAnimations[nextIndex]);
     }
   };
 
@@ -436,11 +475,10 @@ export default function Page() {
    * Handler for the Prev button to navigate to the previous animation.
    */
   const handlePrev = () => {
-    // Change to decrement by 1 instead of 2
     if (currentAnimationIndex > 0) {
       const prevIndex = currentAnimationIndex - 2;
       setCurrentAnimationIndex(prevIndex);
-      setAnimationData(animations[prevIndex]);
+      setCurrentAnimation(loadedAnimations[prevIndex]);
     }
   };
 
@@ -496,6 +534,9 @@ export default function Page() {
     return `${percentage.toFixed(2)}%`;
   };
 
+  /**
+   * **Detect if Paymaster is Supported**
+   */
   const { data: availableCapabilities } = useCapabilities({
     account: address,
   });
@@ -519,10 +560,10 @@ export default function Page() {
         {/* Yellow Container (center) */}
         <div className="yellow-container relative">
           {/* Main Animations */}
-          {animationData && (
+          {currentAnimation && (
             <Lottie
-              animationData={animationData}
-              loop={animationLoopSettings[currentAnimationIndex]} // true or false
+              animationData={currentAnimation}
+              loop={config.animationLoopSettings[currentAnimationIndex]} // true or false
               onComplete={handleNext} // Automatically calls handleNext when animation completes
               style={{
                 width: '100%',
@@ -637,7 +678,7 @@ export default function Page() {
                   aria-label="Next Animation"
                   style={{
                     visibility:
-                      currentAnimationIndex < config.animations - 1 ? 'visible' : 'hidden',
+                      currentAnimationIndex < loadedAnimations.length - 1 ? 'visible' : 'hidden',
                   }}
                 >
                   Next
@@ -665,10 +706,10 @@ export default function Page() {
         {/* Yellow Container */}
         <div className="yellow-container relative">
           {/* Main Animations */}
-          {animationData && (
+          {currentAnimation && (
             <Lottie
-              animationData={animationData}
-              loop={animationLoopSettings[currentAnimationIndex]} // true or false
+              animationData={currentAnimation}
+              loop={config.animationLoopSettings[currentAnimationIndex]} // true or false
               onComplete={handleNext} // Automatically calls handleNext when animation completes
               style={{
                 width: '100%',
@@ -710,7 +751,7 @@ export default function Page() {
                 aria-label="Next Animation"
                 style={{
                   visibility:
-                    currentAnimationIndex < config.animations - 1 ? 'visible' : 'hidden',
+                    currentAnimationIndex < loadedAnimations.length - 1 ? 'visible' : 'hidden',
                 }}
               >
                 Next

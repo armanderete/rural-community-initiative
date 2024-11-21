@@ -22,7 +22,7 @@ import { getBasename } from '../../basenames';
 import { getEnsName } from '../../ensnames';
 import { truncateWalletAddress } from '../../utils';
 
-// **Import Voting Configurations**
+// **Import Voting Configurations** Needed for the VoteButton to appear
 import VotingConfigAnimation1 from './configs/VotingConfigAnimation1.json';
 import VotingConfigAnimation2 from './configs/VotingConfigAnimation2.json';
 import VotingConfigAnimation3 from './configs/VotingConfigAnimation3.json';
@@ -113,7 +113,7 @@ export default function Page() {
   const { switchChain } = useSwitchChain();
   const signer = useEthersSigner();
 
-  // **Array of Voting Configurations**
+  // **Array of Voting Configurations** Needed for the Vote button to appear
   const votingConfigs: VotingConfig[] = [
     VotingConfigAnimation1 as VotingConfig,
     VotingConfigAnimation2 as VotingConfig,
@@ -175,13 +175,6 @@ export default function Page() {
   const [totalBatches, setTotalBatches] = useState<number>(0);
   const [processedBatches, setProcessedBatches] = useState<number>(0);
 
-  // **Additional State Variables for Transaction**
-  // Removed:
-  // const [isTransactionLoading, setIsTransactionLoading] = useState<boolean>(false);
-  // const [isTransactionPending, setIsTransactionPending] = useState<boolean>(false);
-  // const [isTransactionSuccess, setIsTransactionSuccess] = useState<boolean>(false);
-  // const [transactionError, setTransactionError] = useState<Error | null>(null);
-
   // Initialize ethers providers and contracts
   const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
   const alchemyProvider = useMemo(() => {
@@ -193,7 +186,7 @@ export default function Page() {
 
   const CONTRACT_ADDRESS = config.contractAddress; // fetched from config file
 
-  // **Contracts**
+  // **Contracts** Using Alchemy provider for the queries, signer for wallet transactions
   const readContract = useMemo(() => {
     if (alchemyProvider) {
       return new ethers.Contract(CONTRACT_ADDRESS, abi, alchemyProvider);

@@ -9,7 +9,6 @@ import {
   useWalletClient,
 } from 'wagmi';
 import { CSSProperties, ReactNode } from 'react';
-import { useCapabilities } from 'wagmi/experimental';
 import { parseGwei } from 'viem';
 import { base } from 'wagmi/chains';
 import { BigNumber, ethers } from 'ethers';
@@ -523,22 +522,6 @@ export default function Page() {
     const percentage = (processedBatches / totalBatches) * 100;
     return `${percentage.toFixed(2)}%`;
   };
-
-  /**
-   * **Detect if Paymaster is Supported**
-   */
-  const { data: availableCapabilities } = useCapabilities({
-    account: address,
-  });
-
-  const isPaymasterSupported = useMemo(() => {
-    if (!availableCapabilities || !chainId) return false;
-    const capabilitiesForChain = availableCapabilities[chainId];
-    return (
-      capabilitiesForChain?.['paymasterService'] &&
-      capabilitiesForChain['paymasterService'].supported
-    );
-  }, [availableCapabilities, chainId]);
 
   return (
     <div className="min-h-screen bg-black flex flex-col relative">

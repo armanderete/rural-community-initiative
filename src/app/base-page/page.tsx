@@ -306,10 +306,7 @@ export default function Page() {
   );
 
   /**
-   * **Effect Hook to Load Animations Sequentially**
-   * - Load animations one by one in the order defined.
-   * - Display the first animation as soon as it's loaded.
-   * - Continue loading the rest in the background.
+   * **Effect Hook to Start Loading Animations Sequentially**
    */
   useEffect(() => {
     if (address && !animationPlayed) {

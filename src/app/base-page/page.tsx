@@ -526,30 +526,36 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
       {/* Desktop View */}
-      <div className="hidden md:block">
+      <div className="hidden md:flex flex-row">
         {/* Brown Container (left side) */}
         <div className="brown-container"></div>
 
         {/* Yellow Container (center) */}
         <div className="yellow-container relative">
-          {/* Main Animations */}
-          {currentAnimation && (
-            <Lottie
-              animationData={currentAnimation}
-              loop={config.animationLoopSettings[currentAnimationIndex]} // true or false
-              onComplete={handleNext} // Automatically calls handleNext when animation completes
-              style={{
-                width: '100%',
-                height: '100%',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                zIndex: 10,
-              }}
-            />
-          )}
+          {/* Main Animations with Controlled Visibility */}
+          <div
+            className={`w-full h-full transition-opacity duration-500 ${
+              address ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+          >
+            {currentAnimation && (
+              <Lottie
+                animationData={currentAnimation}
+                loop={config.animationLoopSettings[currentAnimationIndex]} // true or false
+                onComplete={handleNext} // Automatically calls handleNext when animation completes
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  zIndex: 10,
+                }}
+              />
+            )}
+          </div>
 
-          {/* Added "Please connect your wallet" message */}
+          {/* "Please connect your wallet" message */}
           {!address && (
             <div className="absolute inset-0 flex items-center justify-center">
               <p className="text-white text-xl font-semibold">Please connect your wallet</p>
@@ -651,7 +657,7 @@ export default function Page() {
                   aria-label="Next Animation"
                   style={{
                     visibility:
-                      currentAnimationIndex < loadedAnimations.length - 1 ? 'visible' : 'hidden',
+                      currentAnimationIndex < loadedAnimations.length ? 'visible' : 'hidden',
                   }}
                 >
                   Next
@@ -678,26 +684,66 @@ export default function Page() {
 
         {/* Yellow Container */}
         <div className="yellow-container relative">
-          {/* Main Animations */}
-          {currentAnimation && (
-            <Lottie
-              animationData={currentAnimation}
-              loop={config.animationLoopSettings[currentAnimationIndex]} // true or false
-              onComplete={handleNext} // Automatically calls handleNext when animation completes
-              style={{
-                width: '100%',
-                height: '100%',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                zIndex: 10,
-              }}
-            />
-          )}
-          {/* Added "Please connect your wallet" message */}
+          {/* Main Animations with Controlled Visibility */}
+          <div
+            className={`w-full h-full transition-opacity duration-500 ${
+              address ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+          >
+            {currentAnimation && (
+              <Lottie
+                animationData={currentAnimation}
+                loop={config.animationLoopSettings[currentAnimationIndex]} // true or false
+                onComplete={handleNext} // Automatically calls handleNext when animation completes
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  zIndex: 10,
+                }}
+              />
+            )}
+          </div>
+
+          {/* "Please connect your wallet" message */}
           {!address && (
             <div className="absolute inset-0 flex items-center justify-center">
               <p className="text-white text-xl font-semibold">Please connect your wallet</p>
+            </div>
+          )}
+
+          {/* Error and Loading Indicators */}
+          {error && (
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded">
+              {error}
+            </div>
+          )}
+
+          {loading && (
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-gray-700 text-white px-4 py-2 rounded flex items-center">
+              <svg
+                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
+              </svg>
+              Loading...
             </div>
           )}
         </div>
@@ -707,7 +753,7 @@ export default function Page() {
           {/* Prev and Next Buttons */}
           {showButtons && address && (
             <div
-              className="absolute top-0 right-0 z-20"
+              className="absolute top-0 right-0 z-20 flex space-x-2"
               style={{ paddingTop: '5px', paddingRight: '5px' }}
             >
               <button
@@ -724,7 +770,7 @@ export default function Page() {
                 aria-label="Next Animation"
                 style={{
                   visibility:
-                    currentAnimationIndex < loadedAnimations.length - 1 ? 'visible' : 'hidden',
+                    currentAnimationIndex < loadedAnimations.length ? 'visible' : 'hidden',
                 }}
               >
                 Next

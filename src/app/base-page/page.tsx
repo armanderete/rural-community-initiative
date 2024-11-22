@@ -453,7 +453,7 @@ export default function Page() {
    */
   const handleNext = () => {
     // If we're already at the last animation, don't go to the next
-    if (currentAnimationIndex < loadedAnimations.length) {
+    if (currentAnimationIndex < loadedAnimations.length - 1 ) {
       const nextIndex = currentAnimationIndex + 1;
       setCurrentAnimationIndex(nextIndex);
       setCurrentAnimation(loadedAnimations[nextIndex]);
@@ -657,7 +657,8 @@ export default function Page() {
                   aria-label="Next Animation"
                   style={{
                     visibility:
-                      currentAnimationIndex < loadedAnimations.length ? 'visible' : 'hidden',
+                      currentAnimationIndex === loadedAnimations.length - 1 ? 'hidden' : 'visible',
+
                   }}
                 >
                   Next
@@ -770,7 +771,7 @@ export default function Page() {
                 aria-label="Next Animation"
                 style={{
                   visibility:
-                    currentAnimationIndex < loadedAnimations.length ? 'visible' : 'hidden',
+                    currentAnimationIndex === loadedAnimations.length - 1 ? 'hidden' : 'visible',
                 }}
               >
                 Next

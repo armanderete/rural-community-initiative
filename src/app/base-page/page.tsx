@@ -83,6 +83,7 @@ interface PageConfig {
   animations: number;
   animationLoopSettings: boolean[];
   contractAddress: string;
+  chainId: number;
   contractDeploymentBlock: number;
 }
 
@@ -452,8 +453,8 @@ export default function Page() {
    * Handler for the Next button to navigate to the next animation.
    */
   const handleNext = () => {
-    // If we're already at the last animation, don't go to the next
-    if (currentAnimationIndex < loadedAnimations.length - 1 ) {
+    // Use config.animations to determine the last animation index
+    if (currentAnimationIndex < config.animations - 1) {
       const nextIndex = currentAnimationIndex + 1;
       setCurrentAnimationIndex(nextIndex);
       setCurrentAnimation(loadedAnimations[nextIndex]);
@@ -464,8 +465,13 @@ export default function Page() {
    * Handler for the Prev button to navigate to the previous animation.
    */
   const handlePrev = () => {
-    if (currentAnimationIndex > 0) {
+    if (currentAnimationIndex > 1) {
       const prevIndex = currentAnimationIndex - 2;
+      setCurrentAnimationIndex(prevIndex);
+      setCurrentAnimation(loadedAnimations[prevIndex]);
+    } else if (currentAnimationIndex === 1) {
+      // Prevent negative index
+      const prevIndex = 0;
       setCurrentAnimationIndex(prevIndex);
       setCurrentAnimation(loadedAnimations[prevIndex]);
     }
@@ -657,8 +663,7 @@ export default function Page() {
                   aria-label="Next Animation"
                   style={{
                     visibility:
-                      currentAnimationIndex === loadedAnimations.length - 1 ? 'hidden' : 'visible',
-
+                      currentAnimationIndex === config.animations - 1 ? 'hidden' : 'visible',
                   }}
                 >
                   Next
@@ -771,7 +776,7 @@ export default function Page() {
                 aria-label="Next Animation"
                 style={{
                   visibility:
-                    currentAnimationIndex === loadedAnimations.length - 1 ? 'hidden' : 'visible',
+                    currentAnimationIndex === config.animations - 1 ? 'hidden' : 'visible',
                 }}
               >
                 Next

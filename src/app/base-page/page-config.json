@@ -1,6 +1,6 @@
 {
-  "animations": 13,
-  "animationLoopSettings": [true, false, true, false, true, false, true, false, true, false, true, false, true],
+  "animations": 15,
+  "animationLoopSettings": [true, false, true, false, true, false, true, false, true, false, true, false, true, false, true],
   "contractAddress": "0xfe3Fc6cb04bA5958b0577a0c6528269964e7C8bF",
   "chainId": 8453,
   "contractDeploymentBlock": 20207949

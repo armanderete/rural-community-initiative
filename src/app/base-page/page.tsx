@@ -35,6 +35,10 @@ import VotingConfigAnimation10 from './configs/VotingConfigAnimation10.json';
 import VotingConfigAnimation11 from './configs/VotingConfigAnimation11.json';
 import VotingConfigAnimation12 from './configs/VotingConfigAnimation12.json';
 import VotingConfigAnimation13 from './configs/VotingConfigAnimation13.json';
+import VotingConfigAnimation14 from './configs/VotingConfigAnimation14.json';
+import VotingConfigAnimation15 from './configs/VotingConfigAnimation15.json';
+
+
 
 // **Import the VoteDrawer Component**
 import VoteDrawer from './components/drawers/VoteDrawer';
@@ -130,6 +134,9 @@ export default function Page() {
     VotingConfigAnimation11 as VotingConfig,
     VotingConfigAnimation12 as VotingConfig,
     VotingConfigAnimation13 as VotingConfig,
+    VotingConfigAnimation14 as VotingConfig,
+    VotingConfigAnimation15 as VotingConfig,
+
   ];
 
   // State to manage current animation index
@@ -300,6 +307,10 @@ export default function Page() {
       () => import('./animations/animation11.json'),
       () => import('./animations/animation12.json'),
       () => import('./animations/animation13.json'),
+      () => import('./animations/animation14.json'),
+      () => import('./animations/animation15.json'),
+
+
     ],
     []
   );

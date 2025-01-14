@@ -1,0 +1,108 @@
+{
+    "MilestoneButtonsVisible": true,
+    "MilestoneButton1": {
+      "Active": true,
+      "animation": "2",
+      "positionXaxis": "5%",
+      "positionYaxis": "5%",
+      "width": "20%",
+      "height": "15%"
+    },
+    "MilestoneButton2": {
+      "Active": true,
+      "animation": "3",
+      "positionXaxis": "5%",
+      "positionYaxis": "25%",
+      "width": "20%",
+      "height": "15%"
+    },
+    "MilestoneButton3": {
+      "Active": true,
+      "animation": "4",
+      "positionXaxis": "5%",
+      "positionYaxis": "45%",
+      "width": "20%",
+      "height": "15%"
+    },
+    "MilestoneButton4": {
+      "Active": true,
+      "animation": "5",
+      "positionXaxis": "5%",
+      "positionYaxis": "65%",
+      "width": "20%",
+      "height": "15%"
+    },
+    "MilestoneButton5": {
+      "Active": true,
+      "animation": "6",
+      "positionXaxis": "75%",
+      "positionYaxis": "5%",
+      "width": "20%",
+      "height": "15%"
+    },
+    "MilestoneButton6": {
+      "Active": true,
+      "animation": "7",
+      "positionXaxis": "75%",
+      "positionYaxis": "25%",
+      "width": "20%",
+      "height": "15%"
+    },
+    "MilestoneButton7": {
+      "Active": true,
+      "animation": "8",
+      "positionXaxis": "75%",
+      "positionYaxis": "45%",
+      "width": "20%",
+      "height": "15%"
+    },
+    "MilestoneButton8": {
+      "Active": true,
+      "animation": "9",
+      "positionXaxis": "75%",
+      "positionYaxis": "65%",
+      "width": "20%",
+      "height": "15%"
+    },
+    "MilestoneScoringButton1.1": {
+        "Active": true,
+        "value": "1",
+        "positionXaxis": "5%",
+        "positionYaxis": "20%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "MilestoneScoringButton1.2": {
+        "Active": true,
+        "value": "1",
+        "positionXaxis": "5%",
+        "positionYaxis": "20%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "MilestoneScoringButton1.3": {
+        "Active": true,
+        "value": "1",
+        "positionXaxis": "5%",
+        "positionYaxis": "20%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "MilestoneScoringButton1.4": {
+        "Active": true,
+        "value": "1",
+        "positionXaxis": "5%",
+        "positionYaxis": "20%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "MilestoneScoringButton1.5": {
+        "Active": true,
+        "value": "1",
+        "positionXaxis": "5%",
+        "positionYaxis": "20%",
+        "width": "10%",
+        "height": "10%"
+      }
+  }
+  

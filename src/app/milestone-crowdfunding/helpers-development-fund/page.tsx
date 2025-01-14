@@ -40,7 +40,6 @@ import VotingConfigAnimation15 from './configs/VotingConfigAnimation15.json';
 import VotingConfigAnimation16 from './configs/VotingConfigAnimation16.json';
 import VotingConfigAnimation17 from './configs/VotingConfigAnimation17.json';
 
-
 // **Import the VoteDrawer Component**
 import VoteDrawer from './components/drawers/VoteDrawer';
 
@@ -49,6 +48,9 @@ import PrimarySecondaryDrawer from './components/drawers/PrimarySecondaryDrawer'
 
 // Import the configuration
 import config from './page-config.json';
+
+// **Import Milestone Buttons JSON** (adjust path as necessary)
+import MilestoneMenuButtons from './configs/MilestoneMenuButtons.json';
 
 // **Import Supabase Client**
 import { createClient } from '@supabase/supabase-js';
@@ -85,7 +87,7 @@ interface VotingConfig {
   VoteOption5: VotingOption;
 }
 
-// Define the type for the config to ensure type safety
+// **Define the type for the config to ensure type safety
 interface PageConfig {
   animations: number;
   animationLoopSettings: boolean[];
@@ -139,9 +141,6 @@ export default function Page() {
     VotingConfigAnimation15 as VotingConfig,
     VotingConfigAnimation16 as VotingConfig,
     VotingConfigAnimation17 as VotingConfig,
-
-
-
   ];
 
   // State to manage current animation index
@@ -169,7 +168,6 @@ export default function Page() {
 
   // State to store balances (allows balance to be number or string)
   const [balances, setBalances] = useState<Balance[]>([]);
-
   const [userBalance, setUserBalance] = useState<number | null>(null);
 
   // State to store community pool balance
@@ -316,9 +314,6 @@ export default function Page() {
       () => import('./animations/animation15.json'),
       () => import('./animations/animation16.json'),
       () => import('./animations/animation17.json'),
-
-
-
     ],
     []
   );
@@ -326,6 +321,8 @@ export default function Page() {
   /**
    * **Effect Hook to Start Loading Animations Sequentially**
    */
+  const [loadingIndex, setLoadingIndex] = useState<number>(0);
+
   useEffect(() => {
     if (address && !animationPlayed) {
       setAnimationPlayed(true);
@@ -334,9 +331,6 @@ export default function Page() {
       setLoadingIndex(0);
     }
   }, [address, animationPlayed]);
-
-  // State to track which animation is being loaded
-  const [loadingIndex, setLoadingIndex] = useState<number>(0);
 
   useEffect(() => {
     if (loadingIndex >= animationImports.length) {
@@ -488,6 +482,7 @@ export default function Page() {
 
   /**
    * Handler for the Prev button to navigate to the previous animation.
+   * (Going back 2 steps by design)
    */
   const handlePrev = () => {
     if (currentAnimationIndex > 1) {
@@ -553,6 +548,84 @@ export default function Page() {
     const percentage = (processedBatches / totalBatches) * 100;
     return `${percentage.toFixed(2)}%`;
   };
+
+  // ------------------------------------------------------------------------
+  //                    MILESTONE MENU BUTTONS LOGIC
+  // ------------------------------------------------------------------------
+  // 1) We read from MilestoneMenuButtons.json
+  // 2) We skip inactive
+  // 3) We apply each button's style
+  // 4) On click, we parse the "animation", check range, and set the index
+  // ------------------------------------------------------------------------
+  const renderMilestoneButtons = () => {
+    // Check if the JSON says the buttons are visible
+    if (!MilestoneMenuButtons.MilestoneButtonsVisible) {
+      return null;
+    }
+
+    // Prepare an array to gather rendered buttons
+    const buttonsToRender: JSX.Element[] = [];
+
+    // We'll loop through the known keys: MilestoneButton1..8
+    // (or dynamically gather them).
+    for (let i = 1; i <= 8; i++) {
+      const buttonKey = `MilestoneButton${i}`;
+      const buttonData = (MilestoneMenuButtons as any)[buttonKey];
+
+      if (!buttonData) continue; // if JSON doesn't have the key
+
+      // If "Active" is false, skip rendering
+      if (!buttonData.Active) continue;
+
+      // Grab info from JSON
+      const { animation, positionXaxis, positionYaxis, width, height, color } = buttonData;
+
+      const handleMilestoneClick = () => {
+        // parse animation to number
+        const newIndex = parseInt(animation, 10);
+
+        // If out of range, log error
+        if (isNaN(newIndex) || newIndex < 0 || newIndex >= config.animations) {
+          console.error(`Invalid animation index for ${buttonKey}:`, animation);
+          return;
+        }
+
+        // set the currentAnimationIndex
+        setCurrentAnimationIndex(newIndex);
+
+        // set the current animation from loaded animations
+        if (!loadedAnimations[newIndex]) {
+          console.error(`Animation not loaded for index ${newIndex}.`);
+          return;
+        }
+        setCurrentAnimation(loadedAnimations[newIndex]);
+      };
+
+      buttonsToRender.push(
+        <button
+          key={buttonKey}
+          onClick={handleMilestoneClick}
+          style={{
+            position: 'absolute',
+            left: positionXaxis,
+            top: positionYaxis,
+            width: width,
+            height: height, 
+            backgroundColor: 'white',
+            color: 'transparent',
+            border: 'transparent',
+            cursor: 'pointer',
+            zIndex: 20,
+          }}
+        >
+          {buttonKey}
+        </button>
+      );
+    }
+
+    return buttonsToRender;
+  };
+  // ------------------------------------------------------------------------
 
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
@@ -625,6 +698,12 @@ export default function Page() {
               Loading...
             </div>
           )}
+
+          {/* ---------------------------
+              MILESTONE MENU BUTTONS
+              (Only rendered if active)
+          ---------------------------- */}
+          {renderMilestoneButtons()}
         </div>
 
         {/* Red Container (right side) */}
@@ -777,6 +856,9 @@ export default function Page() {
               Loading...
             </div>
           )}
+
+          {/* Milestone Buttons for Mobile */}
+          {MilestoneMenuButtons.MilestoneButtonsVisible && renderMilestoneButtons()}
         </div>
 
         {/* Blue Container */}

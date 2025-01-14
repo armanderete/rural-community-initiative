@@ -19,7 +19,7 @@ import VotingConfigAnimation10 from '../../configs/VotingConfigAnimation10.json'
 import VotingConfigAnimation11 from '../../configs/VotingConfigAnimation11.json';
 
 // **Import the TransactWithPaymaster Component**
-import { TransactWithPaymaster } from '../../../../components/TransactWithPaymaster';
+import { TransactWithPaymaster } from '../../../../../components/TransactWithPaymaster';
 
 // **Import ABI and configuration**
 import abi from '../../abi.json'; // Adjust the path as necessary

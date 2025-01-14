@@ -14,12 +14,12 @@ import { base } from 'wagmi/chains';
 import { BigNumber, ethers } from 'ethers';
 import Lottie from 'lottie-react';
 import Image from 'next/image';
-import LoginButton from '../../components/LoginButton';
-import SignupButton from '../../components/SignupButton';
+import LoginButton from '../../../components/LoginButton';
+import SignupButton from '../../../components/SignupButton';
 import abi from './abi.json'; // Import ABI from the JSON file
-import { getBasename } from '../../basenames';
-import { getEnsName } from '../../ensnames';
-import { truncateWalletAddress } from '../../utils';
+import { getBasename } from '../../../basenames';
+import { getEnsName } from '../../../ensnames';
+import { truncateWalletAddress } from '../../../utils';
 
 // **Import Voting Configurations** Needed for the VoteButton to appear
 import VotingConfigAnimation1 from './configs/VotingConfigAnimation1.json';

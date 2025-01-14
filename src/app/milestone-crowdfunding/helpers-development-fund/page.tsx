@@ -631,7 +631,7 @@ export default function Page() {
             width,
             height,
             backgroundColor: 'green',
-            color: 'white',
+            color: 'transparent',
             border: '1px solid green',
             cursor: 'pointer',
             zIndex: 30,

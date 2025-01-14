@@ -1,5 +1,3 @@
-// pages/Page.tsx
-
 'use client';
 import { useState, useEffect, useMemo } from 'react';
 import {
@@ -21,7 +19,7 @@ import { getBasename } from '../../../basenames';
 import { getEnsName } from '../../../ensnames';
 import { truncateWalletAddress } from '../../../utils';
 
-// **Import Voting Configurations** Needed for the VoteButton to appear
+// **Import Voting Configurations** Needed for the Vote button to appear
 import VotingConfigAnimation1 from './configs/VotingConfigAnimation1.json';
 import VotingConfigAnimation2 from './configs/VotingConfigAnimation2.json';
 import VotingConfigAnimation3 from './configs/VotingConfigAnimation3.json';
@@ -370,7 +368,7 @@ export default function Page() {
       // Fetch data from Supabase and smart contract
       const fetchData = async () => {
         try {
-          // Step 1: Fetch all community member addresses from Supabase for the specific contract
+          // Step 1: Fetch all community member addresses
           const addresses = await fetchAllAddressesFromSupabase(CONTRACT_ADDRESS);
 
           if (addresses.length === 0) {
@@ -379,14 +377,13 @@ export default function Page() {
             return;
           }
 
-          // Step 2: Fetch balances for all addresses
+          // Step 2: Fetch balances
           const balancePromises = addresses.map(async (addr: string) => {
             const balance = await fetchBalance(addr);
             return { address: addr, balance };
           });
 
           const results: Balance[] = await Promise.all(balancePromises);
-
           setBalances(results);
           console.log('Fetched Balances:', results);
 
@@ -395,7 +392,7 @@ export default function Page() {
           setCommunityPoolBalance(poolBalance);
           console.log('Community Pool Balance:', poolBalance);
 
-          // Step 4: Determine top 10 balances (only numbers)
+          // Step 4: Determine top 10 balances
           const top10Results: Top10Balance[] = results
             .filter((item): item is Top10Balance => typeof item.balance === 'number')
             .sort((a, b) => b.balance - a.balance)
@@ -431,7 +428,6 @@ export default function Page() {
               maximumFractionDigits: 2,
             });
 
-            // Populate the top10UserInfosArray
             top10UserInfosArray.push({ place, userInfo, balanceInfo });
           }
 
@@ -450,8 +446,6 @@ export default function Page() {
 
   /**
    * Function to get the ordinal suffix for a given number.
-   * @param i - The number to get the ordinal suffix for
-   * @returns Ordinal suffix string
    */
   const getOrdinalSuffix = (i: number): string => {
     const j = i % 10,
@@ -472,7 +466,6 @@ export default function Page() {
    * Handler for the Next button to navigate to the next animation.
    */
   const handleNext = () => {
-    // Use config.animations to determine the last animation index
     if (currentAnimationIndex < config.animations - 1) {
       const nextIndex = currentAnimationIndex + 1;
       setCurrentAnimationIndex(nextIndex);
@@ -490,58 +483,40 @@ export default function Page() {
       setCurrentAnimationIndex(prevIndex);
       setCurrentAnimation(loadedAnimations[prevIndex]);
     } else if (currentAnimationIndex === 1) {
-      // Prevent negative index
       const prevIndex = 0;
       setCurrentAnimationIndex(prevIndex);
       setCurrentAnimation(loadedAnimations[prevIndex]);
     }
   };
 
-  /**
-   * Handler to open the primary drawer.
-   */
+  // ------------------------------------------------
+  // Dashboard Drawer Handlers
+  // ------------------------------------------------
   const handleDashboardButtonClick = () => {
     setDrawerState('primary-open');
   };
-
-  /**
-   * Handler to close the primary drawer.
-   */
   const handleClosePrimaryDrawer = () => {
     setDrawerState('closed');
   };
-
-  /**
-   * Handler to open the secondary drawer.
-   */
   const handleOpenSecondaryDrawer = () => {
     setDrawerState('secondary-open');
   };
-
-  /**
-   * Handler to close the secondary drawer and reopen the primary drawer.
-   */
   const handleCloseSecondaryDrawer = () => {
     setDrawerState('primary-open');
   };
 
-  /**
-   * **Handler to open the vote drawer.**
-   */
+  // ------------------------------------------------
+  // Vote Drawer Handlers
+  // ------------------------------------------------
   const handleVoteButtonClick = () => {
     setDrawerState('vote-open');
   };
-
-  /**
-   * **Handler to close the vote drawer.**
-   */
   const handleCloseVoteDrawer = () => {
     setDrawerState('closed');
   };
 
   /**
    * Calculate the percentage completion based on batches processed.
-   * @returns Percentage string
    */
   const calculateCompletionPercentage = (): string => {
     if (totalBatches === 0) return '0%';
@@ -549,68 +524,58 @@ export default function Page() {
     return `${percentage.toFixed(2)}%`;
   };
 
-  // ------------------------------------------------------------------------
-  //                    MILESTONE MENU BUTTONS LOGIC
-  // ------------------------------------------------------------------------
-  // 1) We read from MilestoneMenuButtons.json
-  // 2) We skip inactive
-  // 3) We apply each button's style
-  // 4) On click, we parse the "animation", check range, and set the index
-  // ------------------------------------------------------------------------
+  // ------------------------------------------------
+  // Milestone Buttons + Scoring Buttons
+  // ------------------------------------------------
+
+  // Track the current milestone clicked (e.g. 'MilestoneButton1') so we can show the scoring buttons
+  const [currentMilestone, setCurrentMilestone] = useState<string | null>(null);
+
+  /**
+   * Renders the main milestone buttons (MilestoneButton1..8).
+   */
   const renderMilestoneButtons = () => {
-    // Check if the JSON says the buttons are visible
-    if (!MilestoneMenuButtons.MilestoneButtonsVisible) {
-      return null;
-    }
+    if (!MilestoneMenuButtons.MilestoneButtonsVisible) return null;
 
-    // Prepare an array to gather rendered buttons
-    const buttonsToRender: JSX.Element[] = [];
+    const result: JSX.Element[] = [];
 
-    // We'll loop through the known keys: MilestoneButton1..8
-    // (or dynamically gather them).
     for (let i = 1; i <= 8; i++) {
-      const buttonKey = `MilestoneButton${i}`;
-      const buttonData = (MilestoneMenuButtons as any)[buttonKey];
+      const key = `MilestoneButton${i}`;
+      const data = (MilestoneMenuButtons as any)[key];
+      if (!data || !data.Active) continue;
 
-      if (!buttonData) continue; // if JSON doesn't have the key
+      const { animation, positionXaxis, positionYaxis, width, height } = data;
 
-      // If "Active" is false, skip rendering
-      if (!buttonData.Active) continue;
-
-      // Grab info from JSON
-      const { animation, positionXaxis, positionYaxis, width, height, color } = buttonData;
-
-      const handleMilestoneClick = () => {
-        // parse animation to number
+      // On click, set the currentAnimationIndex (as existing) and set milestone
+      const handleClick = () => {
         const newIndex = parseInt(animation, 10);
-
-        // If out of range, log error
         if (isNaN(newIndex) || newIndex < 0 || newIndex >= config.animations) {
-          console.error(`Invalid animation index for ${buttonKey}:`, animation);
+          console.error(`Invalid animation index for ${key}:`, animation);
           return;
         }
 
-        // set the currentAnimationIndex
+        // Set the main animation
         setCurrentAnimationIndex(newIndex);
-
-        // set the current animation from loaded animations
         if (!loadedAnimations[newIndex]) {
           console.error(`Animation not loaded for index ${newIndex}.`);
           return;
         }
         setCurrentAnimation(loadedAnimations[newIndex]);
+
+        // Also set the current milestone to the key (e.g. 'MilestoneButton1')
+        setCurrentMilestone(key);
       };
 
-      buttonsToRender.push(
+      result.push(
         <button
-          key={buttonKey}
-          onClick={handleMilestoneClick}
+          key={key}
+          onClick={handleClick}
           style={{
             position: 'absolute',
             left: positionXaxis,
             top: positionYaxis,
-            width: width,
-            height: height, 
+            width,
+            height,
             backgroundColor: 'white',
             color: 'transparent',
             border: 'transparent',
@@ -618,14 +583,71 @@ export default function Page() {
             zIndex: 20,
           }}
         >
-          {buttonKey}
+          {key}
         </button>
       );
     }
 
-    return buttonsToRender;
+    return result;
   };
-  // ------------------------------------------------------------------------
+
+  /**
+   * Renders the scoring buttons for the currently selected milestone.
+   * According to #5, each milestone might have up to 5 scoring buttons named like:
+   *  "MilestoneScoringButton1.1", "MilestoneScoringButton1.2", etc.
+   * If currentMilestone is "MilestoneButton1", we only show scoring buttons that start with "MilestoneScoringButton1.".
+   */
+  const renderScoringButtons = () => {
+    if (!currentMilestone) return null; // no milestone selected => hide scoring
+  
+    // e.g. if currentMilestone = "MilestoneButton1", we want "MilestoneScoringButton1."
+    const milestoneNumber = currentMilestone.replace('MilestoneButton', ''); // "1"
+    const prefix = `MilestoneScoringButton${milestoneNumber}.`; // "MilestoneScoringButton1."
+  
+    const scoringElements: JSX.Element[] = [];
+  
+    // Loop through all keys in the JSON that start with the desired prefix
+    for (const key in MilestoneMenuButtons) {
+      if (!key.startsWith(prefix)) continue; // Skip keys that don't match the current milestone
+  
+      const data = (MilestoneMenuButtons as any)[key];
+      if (!data || !data.Active) continue; // Skip inactive buttons
+  
+      const { value, positionXaxis, positionYaxis, width, height } = data;
+  
+      const handleScoringClick = () => {
+        // Alert on click with milestone and score info
+        alert(`(clicked milestone ${currentMilestone} / score ${value})`);
+      };
+  
+      scoringElements.push(
+        <button
+          key={key}
+          onClick={handleScoringClick}
+          style={{
+            position: 'absolute',
+            left: positionXaxis,
+            top: positionYaxis,
+            width,
+            height,
+            backgroundColor: 'green',
+            color: 'white',
+            border: '1px solid green',
+            cursor: 'pointer',
+            zIndex: 30,
+          }}
+        >
+          {key}
+        </button>
+      );
+    }
+  
+    return scoringElements;
+  };
+    
+  // ------------------------------------------------
+  // End Milestone + Scoring Logic
+  // ------------------------------------------------
 
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
@@ -672,7 +694,6 @@ export default function Page() {
               {error}
             </div>
           )}
-
           {loading && (
             <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-gray-700 text-white px-4 py-2 rounded flex items-center">
               <svg
@@ -699,11 +720,11 @@ export default function Page() {
             </div>
           )}
 
-          {/* ---------------------------
-              MILESTONE MENU BUTTONS
-              (Only rendered if active)
-          ---------------------------- */}
+          {/* Milestone Buttons */}
           {renderMilestoneButtons()}
+
+          {/* Scoring Buttons for the selected milestone */}
+          {renderScoringButtons()}
         </div>
 
         {/* Red Container (right side) */}
@@ -720,7 +741,7 @@ export default function Page() {
             {address && votingConfigs[currentAnimationIndex]?.votingButtonVisible && (
               <button
                 onClick={handleVoteButtonClick}
-                className="vote-button z-20" // Use the class defined in global.css
+                className="vote-button z-20"
                 aria-label="Vote Button"
               >
                 <Image
@@ -737,7 +758,7 @@ export default function Page() {
             {address && dashboardButtonVisible && (
               <button
                 onClick={handleDashboardButtonClick}
-                className="dashboard-button z-20" // Use the class defined in global.css
+                className="dashboard-button z-20"
                 aria-label="Dashboard Button"
               >
                 <Image
@@ -766,8 +787,7 @@ export default function Page() {
                   onClick={handleNext}
                   aria-label="Next Animation"
                   style={{
-                    visibility:
-                      currentAnimationIndex === config.animations - 1 ? 'hidden' : 'visible',
+                    visibility: currentAnimationIndex === config.animations - 1 ? 'hidden' : 'visible',
                   }}
                 >
                   Next
@@ -804,7 +824,7 @@ export default function Page() {
               <Lottie
                 animationData={currentAnimation}
                 loop={config.animationLoopSettings[currentAnimationIndex]} // true or false
-                onComplete={handleNext} // Automatically calls handleNext when animation completes
+                onComplete={handleNext}
                 style={{
                   width: '100%',
                   height: '100%',
@@ -830,7 +850,6 @@ export default function Page() {
               {error}
             </div>
           )}
-
           {loading && (
             <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-gray-700 text-white px-4 py-2 rounded flex items-center">
               <svg
@@ -859,6 +878,8 @@ export default function Page() {
 
           {/* Milestone Buttons for Mobile */}
           {MilestoneMenuButtons.MilestoneButtonsVisible && renderMilestoneButtons()}
+          {/* Scoring Buttons for the selected milestone */}
+          {renderScoringButtons()}
         </div>
 
         {/* Blue Container */}
@@ -882,8 +903,7 @@ export default function Page() {
                 onClick={handleNext}
                 aria-label="Next Animation"
                 style={{
-                  visibility:
-                    currentAnimationIndex === config.animations - 1 ? 'hidden' : 'visible',
+                  visibility: currentAnimationIndex === config.animations - 1 ? 'hidden' : 'visible',
                 }}
               >
                 Next
@@ -895,7 +915,7 @@ export default function Page() {
           {address && dashboardButtonVisible && (
             <button
               onClick={handleDashboardButtonClick}
-              className="dashboard-button z-20" // Use the class defined in global.css
+              className="dashboard-button z-20"
               aria-label="Dashboard Button"
             >
               <Image
@@ -912,7 +932,7 @@ export default function Page() {
           {address && votingConfigs[currentAnimationIndex]?.votingButtonVisible && (
             <button
               onClick={handleVoteButtonClick}
-              className="vote-button z-20" // Use the class defined in global.css
+              className="vote-button z-20"
               aria-label="Vote Button"
             >
               <Image

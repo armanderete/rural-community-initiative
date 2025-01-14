@@ -75,15 +75,15 @@
       "MilestoneScoringButton1.2": {
         "Active": true,
         "value": "1",
-        "positionXaxis": "5%",
-        "positionYaxis": "20%",
+        "positionXaxis": "15%",
+        "positionYaxis": "25%",
         "width": "10%",
         "height": "10%"
       },
       "MilestoneScoringButton1.3": {
         "Active": true,
         "value": "1",
-        "positionXaxis": "5%",
+        "positionXaxis": "25%",
         "positionYaxis": "20%",
         "width": "10%",
         "height": "10%"
@@ -91,16 +91,24 @@
       "MilestoneScoringButton1.4": {
         "Active": true,
         "value": "1",
-        "positionXaxis": "5%",
-        "positionYaxis": "20%",
+        "positionXaxis": "30%",
+        "positionYaxis": "15%",
         "width": "10%",
         "height": "10%"
       },
       "MilestoneScoringButton1.5": {
         "Active": true,
         "value": "1",
+        "positionXaxis": "25%",
+        "positionYaxis": "5%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "MilestoneScoringButton2.1": {
+        "Active": true,
+        "value": "1",
         "positionXaxis": "5%",
-        "positionYaxis": "20%",
+        "positionYaxis": "40%",
         "width": "10%",
         "height": "10%"
       }

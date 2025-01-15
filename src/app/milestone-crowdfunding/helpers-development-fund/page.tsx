@@ -94,6 +94,12 @@ interface PageConfig {
   contractDeploymentBlock: number;
 }
 
+// Define the type for newRow
+type MilestoneRow = {
+  wallet_address: string;
+  [key: string]: number | string; // Allow dynamic keys
+};
+
 /**
  * Custom hook to convert Wagmi's WalletClient to ethers.js Signer
  */
@@ -615,9 +621,50 @@ export default function Page() {
   
       const { value, positionXaxis, positionYaxis, width, height } = data;
   
-      const handleScoringClick = () => {
-        // Alert on click with milestone and score info
-        alert(`(clicked milestone ${currentMilestone} / score ${value})`);
+      const handleScoringClick = async () => {
+        if (!address) return; // Ensure the user is logged in
+
+        const tableName = config.milestoneScoringTable;
+        const column = `milestone${currentMilestone.replace('MilestoneButton', '')}`; // Extract milestone number
+
+        // Query Supabase for the wallet address
+        const { data, error } = await supabase
+          .from(tableName)
+          .select('*')
+          .eq('wallet_address', address.toLowerCase());
+
+        if (error) {
+          console.error('Supabase query error:', error);
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          // Wallet address not found – create new row
+          const newRow: MilestoneRow = { wallet_address: address.toLowerCase() };
+          newRow[column] = value; // Set the score for the clicked milestone
+
+          // Insert new row into Supabase
+          const { error: insertError } = await supabase
+            .from(tableName)
+            .insert(newRow);
+
+          if (insertError) {
+            console.error('Error inserting new row:', insertError);
+          }
+        } else {
+          // Wallet exists – update the existing score
+          const existingData = data[0];
+          const updatedRow = { [column]: value }; // Update the specific milestone score
+
+          const { error: updateError } = await supabase
+            .from(tableName)
+            .update(updatedRow)
+            .eq('wallet_address', address.toLowerCase());
+
+          if (updateError) {
+            console.error('Error updating score:', updateError);
+          }
+        }
       };
   
       scoringElements.push(
@@ -648,6 +695,62 @@ export default function Page() {
   // ------------------------------------------------
   // End Milestone + Scoring Logic
   // ------------------------------------------------
+
+  const [milestoneScores, setMilestoneScores] = useState<number[]>(Array(8).fill(0)); // Initialize with default scores
+
+  useEffect(() => {
+    const initializeMilestoneScores = async () => {
+      if (!address) return; // No wallet connected, skip initialization
+
+      const tableName = config.milestoneScoringTable;
+
+      // Query Supabase for the wallet address
+      const { data, error } = await supabase
+        .from(tableName)
+        .select('*')
+        .eq('wallet_address', address.toLowerCase());
+
+      if (error) {
+        console.error('Supabase query error:', error);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        // Wallet address not found – create new row
+        const defaultScore = MilestoneMenuButtons.defaultMilestoneScore;
+        const newRow: MilestoneRow = { wallet_address: address.toLowerCase() }; // Use the actual wallet address
+
+        // Populate all milestone score columns with defaultScore
+        for (let i = 1; i <= 8; i++) {
+          newRow[`milestone${i}`] = defaultScore;
+        }
+
+        // Insert new row into Supabase
+        const { error: insertError } = await supabase
+          .from(tableName)
+          .insert(newRow);
+
+        if (insertError) {
+          console.error('Error inserting new row:', insertError);
+        } else {
+          // Update state with default scores
+          setMilestoneScores(Array(8).fill(defaultScore));
+        }
+      } else {
+        // Wallet exists – process existing scores
+        const existingData = data[0];
+        const scores = [];
+        for (let i = 1; i <= 8; i++) {
+          const column = `milestone${i}`;
+          scores.push(existingData[column]);
+          // Highlight logic can be implemented here
+        }
+        setMilestoneScores(scores);
+      }
+    };
+
+    initializeMilestoneScores();
+  }, [address]);
 
   return (
     <div className="min-h-screen bg-black flex flex-col relative">

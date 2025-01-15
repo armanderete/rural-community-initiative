@@ -1,5 +1,6 @@
 {
     "MilestoneButtonsVisible": true,
+    "defaultMilestoneScore": "1",
     "MilestoneButton1": {
       "Active": true,
       "animation": "2",

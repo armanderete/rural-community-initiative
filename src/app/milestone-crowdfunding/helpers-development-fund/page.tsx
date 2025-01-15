@@ -553,23 +553,40 @@ export default function Page() {
       const { animation, positionXaxis, positionYaxis, width, height } = data;
 
       // On click, set the currentAnimationIndex (as existing) and set milestone
-      const handleClick = () => {
+      const handleClick = async () => {
         const newIndex = parseInt(animation, 10);
         if (isNaN(newIndex) || newIndex < 0 || newIndex >= config.animations) {
           console.error(`Invalid animation index for ${key}:`, animation);
           return;
         }
 
-        // Set the main animation
+        // Set the animation
         setCurrentAnimationIndex(newIndex);
-        if (!loadedAnimations[newIndex]) {
-          console.error(`Animation not loaded for index ${newIndex}.`);
+        if (loadedAnimations[newIndex]) {
+          setCurrentAnimation(loadedAnimations[newIndex]);
+        }
+
+        // Set the milestone
+        setCurrentMilestone(key);
+
+        // Query Supabase for all columns
+        const { data, error } = await supabase
+          .from(config.milestoneScoringTable)
+          .select('*')
+          .eq('wallet_address', address?.toLowerCase());
+
+        if (error) {
+          console.error('Supabase query error:', error);
           return;
         }
-        setCurrentAnimation(loadedAnimations[newIndex]);
 
-        // Also set the current milestone to the key (e.g. 'MilestoneButton1')
-        setCurrentMilestone(key);
+        if (data?.[0]) {
+          const milestoneNumber = key.replace('MilestoneButton', '');
+          const milestoneCol = `milestone${milestoneNumber}`;
+          setCurrentScoreForMilestone(data[0][milestoneCol]);
+        } else {
+          setCurrentScoreForMilestone(null);
+        }
       };
 
       result.push(
@@ -650,6 +667,8 @@ export default function Page() {
 
           if (insertError) {
             console.error('Error inserting new row:', insertError);
+          } else {
+            setCurrentScoreForMilestone(value); // Update the current score
           }
         } else {
           // Wallet exists – update the existing score
@@ -663,6 +682,8 @@ export default function Page() {
 
           if (updateError) {
             console.error('Error updating score:', updateError);
+          } else {
+            setCurrentScoreForMilestone(value); // Update the current score
           }
         }
       };
@@ -679,7 +700,7 @@ export default function Page() {
             height,
             backgroundColor: 'green',
             color: 'transparent',
-            border: '1px solid green',
+            border: value === Number(currentScoreForMilestone) ? '2px solid yellow' : '1px solid green',
             cursor: 'pointer',
             zIndex: 30,
           }}
@@ -751,6 +772,8 @@ export default function Page() {
 
     initializeMilestoneScores();
   }, [address]);
+
+  const [currentScoreForMilestone, setCurrentScoreForMilestone] = useState<string | null>(null);
 
   return (
     <div className="min-h-screen bg-black flex flex-col relative">

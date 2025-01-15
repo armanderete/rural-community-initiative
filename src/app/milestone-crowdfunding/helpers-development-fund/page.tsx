@@ -696,6 +696,23 @@ export default function Page() {
             setCurrentScoreForMilestone(value); // Update the current score
           }
         }
+
+        // **New Code Block to Log Updated Milestone Scores**
+        const { data: scoreData, error: scoreError } = await supabase
+          .from(config.milestoneScoringTable)
+          .select('*')
+          .eq('wallet_address', address.toLowerCase());
+
+        if (scoreError) {
+          console.error('Supabase score query error:', scoreError);
+        } else if (scoreData && scoreData[0]) {
+          console.log('--- Updated Scores for All Milestones ---');
+          for (let i = 1; i <= 8; i++) {
+            const milestoneScore = scoreData[0][`milestone${i}`];
+            console.log(`Milestone ${i} =>`, milestoneScore);
+          }
+        }
+        // **End of New Code Block**
       };
   
       scoringElements.push(

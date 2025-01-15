@@ -587,6 +587,16 @@ export default function Page() {
         } else {
           setCurrentScoreForMilestone(null);
         }
+
+        // **New Code Block to Log Milestone Scores**
+        if (data && data[0]) {
+          console.log('--- Current Scores for All Milestones ---');
+          for (let i = 1; i <= 8; i++) {
+            const milestoneScore = data[0][`milestone${i}`];
+            console.log(`Milestone ${i} =>`, milestoneScore);
+          }
+        }
+        // **End of New Code Block**
       };
 
       result.push(

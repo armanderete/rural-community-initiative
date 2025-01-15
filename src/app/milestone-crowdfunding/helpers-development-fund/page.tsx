@@ -313,11 +313,6 @@ export default function Page() {
       () => import('./animations/animation10.json'),
       () => import('./animations/animation11.json'),
       () => import('./animations/animation12.json'),
-      () => import('./animations/animation13.json'),
-      () => import('./animations/animation14.json'),
-      () => import('./animations/animation15.json'),
-      () => import('./animations/animation16.json'),
-      () => import('./animations/animation17.json'),
     ],
     []
   );
@@ -609,7 +604,7 @@ export default function Page() {
             top: positionYaxis,
             width,
             height,
-            backgroundColor: 'white',
+            backgroundColor: 'transparent',
             color: 'transparent',
             border: 'transparent',
             cursor: 'pointer',

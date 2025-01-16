@@ -591,7 +591,7 @@ export default function Page() {
             console.log(`Milestone ${i} =>`, milestoneScore);
           }
         }
-        // **End of New Code Block**
+        // **End of New Code Block** in the following section you change milestonebuttoncolor 
       };
 
       result.push(
@@ -604,7 +604,7 @@ export default function Page() {
             top: positionYaxis,
             width,
             height,
-            backgroundColor: 'transparent',
+            backgroundColor: 'white',
             color: 'transparent',
             border: 'transparent',
             cursor: 'pointer',
@@ -707,7 +707,7 @@ export default function Page() {
             console.log(`Milestone ${i} =>`, milestoneScore);
           }
         }
-        // **End of New Code Block**
+        // **End of New Code Block** in the following section you change scoringbuttoncolor
       };
   
       scoringElements.push(
@@ -720,9 +720,9 @@ export default function Page() {
             top: positionYaxis,
             width,
             height,
-            backgroundColor: 'green',
+            backgroundColor: 'transparent',
             color: 'transparent',
-            border: value === Number(currentScoreForMilestone) ? '2px solid yellow' : '1px solid green',
+            border: 'transparent',
             cursor: 'pointer',
             zIndex: 30,
           }}

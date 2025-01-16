@@ -604,9 +604,8 @@ export default function Page() {
             top: positionYaxis,
             width,
             height,
-            backgroundColor: 'white',
+            backgroundColor: 'transparent',
             color: 'transparent',
-            border: 'transparent',
             cursor: 'pointer',
             zIndex: 20,
           }}

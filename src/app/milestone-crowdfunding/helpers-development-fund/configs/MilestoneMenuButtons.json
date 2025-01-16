@@ -1,5 +1,7 @@
 {
     "MilestoneButtonsVisible": true,
+    "FundingMultiplier": "5",
+    "DefaultTier": "10",
     "defaultMilestoneScore": "1",
     "MilestoneButton1": {
       "Active": true,
@@ -91,7 +93,7 @@
       },
       "MilestoneScoringButton1.4": {
         "Active": true,
-        "value": "3",
+        "value": "5",
         "positionXaxis": "40%",
         "positionYaxis": "9%",
         "width": "10%",
@@ -99,7 +101,7 @@
       },
       "MilestoneScoringButton1.5": {
         "Active": true,
-        "value": "4",
+        "value": "10",
         "positionXaxis": "50%",
         "positionYaxis": "5%",
         "width": "10%",
@@ -108,40 +110,40 @@
       "MilestoneScoringButton2.1": {
         "Active": true,
         "value": "0",
-        "positionXaxis": "10%",
-        "positionYaxis": "38%",
+        "positionXaxis": "22%",
+        "positionYaxis": "30%",
         "width": "10%",
-        "height": "10%"
+        "height": "11%"
       },
       "MilestoneScoringButton2.2": {
         "Active": true,
         "value": "1",
-        "positionXaxis": "20%",
-        "positionYaxis": "35%",
+        "positionXaxis": "32.5%",
+        "positionYaxis": "27%",
         "width": "10%",
-        "height": "10%"
+        "height": "11%"
       },
       "MilestoneScoringButton2.3": {
         "Active": true,
         "value": "2",
-        "positionXaxis": "30%",
-        "positionYaxis": "31%",
+        "positionXaxis": "42.5%",
+        "positionYaxis": "23%",
         "width": "10%",
-        "height": "10%"
+        "height": "11%"
       },
       "MilestoneScoringButton2.4": {
         "Active": true,
-        "value": "3",
-        "positionXaxis": "40%",
-        "positionYaxis": "27%",
-        "width": "10%",
-        "height": "10%"
+        "value": "5",
+        "positionXaxis": "52.5%",
+        "positionYaxis": "18%",
+        "width": "9.5%",
+        "height": "11%"
       },
       "MilestoneScoringButton2.5": {
         "Active": true,
-        "value": "4",
-        "positionXaxis": "50%",
-        "positionYaxis": "23%",
+        "value": "10",
+        "positionXaxis": "61.5%",
+        "positionYaxis": "12%",
         "width": "10%",
         "height": "10%"
       },
@@ -171,7 +173,7 @@
       },
       "MilestoneScoringButton3.4": {
         "Active": true,
-        "value": "3",
+        "value": "5",
         "positionXaxis": "40%",
         "positionYaxis": "45%",
         "width": "10%",
@@ -179,7 +181,7 @@
       },
       "MilestoneScoringButton3.5": {
         "Active": true,
-        "value": "4",
+        "value": "10",
         "positionXaxis": "50%",
         "positionYaxis": "41%",
         "width": "10%",
@@ -211,7 +213,7 @@
       },
       "MilestoneScoringButton4.4": {
         "Active": true,
-        "value": "3",
+        "value": "5",
         "positionXaxis": "40%",
         "positionYaxis": "63%",
         "width": "10%",
@@ -219,7 +221,7 @@
       },
       "MilestoneScoringButton4.5": {
         "Active": true,
-        "value": "4",
+        "value": "10",
         "positionXaxis": "50%",
         "positionYaxis": "59%",
         "width": "10%",
@@ -251,7 +253,7 @@
       },
       "MilestoneScoringButton5.4": {
         "Active": true,
-        "value": "3",
+        "value": "5",
         "positionXaxis": "50%",
         "positionYaxis": "9%",
         "width": "10%",
@@ -259,7 +261,7 @@
       },
       "MilestoneScoringButton5.5": {
         "Active": true,
-        "value": "4",
+        "value": "10",
         "positionXaxis": "40%",
         "positionYaxis": "5%",
         "width": "10%",
@@ -291,7 +293,7 @@
       },
       "MilestoneScoringButton6.4": {
         "Active": true,
-        "value": "3",
+        "value": "5",
         "positionXaxis": "50%",
         "positionYaxis": "27%",
         "width": "10%",
@@ -299,7 +301,7 @@
       },
       "MilestoneScoringButton6.5": {
         "Active": true,
-        "value": "4",
+        "value": "10",
         "positionXaxis": "40%",
         "positionYaxis": "23%",
         "width": "10%",
@@ -331,7 +333,7 @@
       },
       "MilestoneScoringButton7.4": {
         "Active": true,
-        "value": "3",
+        "value": "5",
         "positionXaxis": "50%",
         "positionYaxis": "45%",
         "width": "10%",
@@ -339,7 +341,7 @@
       },
       "MilestoneScoringButton7.5": {
         "Active": true,
-        "value": "4",
+        "value": "10",
         "positionXaxis": "40%",
         "positionYaxis": "41%",
         "width": "10%",
@@ -371,7 +373,7 @@
       },
       "MilestoneScoringButton8.4": {
         "Active": true,
-        "value": "3",
+        "value": "5",
         "positionXaxis": "50%",
         "positionYaxis": "63%",
         "width": "10%",
@@ -379,9 +381,49 @@
       },
       "MilestoneScoringButton8.5": {
         "Active": true,
-        "value": "4",
+        "value": "10",
         "positionXaxis": "40%",
         "positionYaxis": "59%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "TierButton1": {
+        "Active": true,
+        "value": "5",
+        "positionXaxis": "5%",
+        "positionYaxis": "90%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "TierButton2": {
+        "Active": true,
+        "value": "10",
+        "positionXaxis": "20%",
+        "positionYaxis": "90%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "TierButton3": {
+        "Active": true,
+        "value": "20",
+        "positionXaxis": "35%",
+        "positionYaxis": "90%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "TierButton4": {
+        "Active": true,
+        "value": "30",
+        "positionXaxis": "50%",
+        "positionYaxis": "90%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "TierButton5": {
+        "Active": true,
+        "value": "50",
+        "positionXaxis": "65%",
+        "positionYaxis": "90%",
         "width": "10%",
         "height": "10%"
       }

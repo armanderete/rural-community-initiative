@@ -583,15 +583,16 @@ export default function Page() {
           setCurrentScoreForMilestone(null);
         }
 
-        // **New Code Block to Log Milestone Scores**
+        // **New Code Block to Log Milestone Scores and Current Tier**
         if (data && data[0]) {
           console.log('--- Current Scores for All Milestones ---');
           for (let i = 1; i <= 8; i++) {
             const milestoneScore = data[0][`milestone${i}`];
-            console.log(`Milestone ${i} =>`, milestoneScore);
+            console.log(`Milestone ${i} => Score: ${milestoneScore}`);
           }
+          console.log(`Current Tier: ${currentUserTier}`); // Log current user tier
         }
-        // **End of New Code Block** in the following section you change milestonebuttoncolor 
+        // **End of New Code Block**
       };
 
       result.push(
@@ -691,7 +692,7 @@ export default function Page() {
           }
         }
 
-        // **New Code Block to Log Updated Milestone Scores**
+        // **New Code Block to Log Updated Milestone Scores and Current Tier**
         const { data: scoreData, error: scoreError } = await supabase
           .from(config.milestoneScoringTable)
           .select('*')
@@ -703,10 +704,11 @@ export default function Page() {
           console.log('--- Updated Scores for All Milestones ---');
           for (let i = 1; i <= 8; i++) {
             const milestoneScore = scoreData[0][`milestone${i}`];
-            console.log(`Milestone ${i} =>`, milestoneScore);
+            console.log(`Milestone ${i} => Score: ${milestoneScore}`);
           }
+          console.log(`Current Tier: ${currentUserTier}`); // Log current user tier
         }
-        // **End of New Code Block** in the following section you change scoringbuttoncolor
+        // **End of New Code Block**
       };
   
       scoringElements.push(
@@ -766,6 +768,7 @@ export default function Page() {
         for (let i = 1; i <= 8; i++) {
           newRow[`milestone${i}`] = defaultScore;
         }
+        newRow['tier'] = MilestoneMenuButtons.DefaultTier; // Set the tier
 
         // Insert new row into Supabase
         const { error: insertError } = await supabase
@@ -775,19 +778,30 @@ export default function Page() {
         if (insertError) {
           console.error('Error inserting new row:', insertError);
         } else {
-          // Update state with default scores
+          // Update state with default scores and tier
           setMilestoneScores(Array(8).fill(defaultScore));
+          setCurrentUserTier(MilestoneMenuButtons.DefaultTier); // Set the current user tier
         }
       } else {
-        // Wallet exists – process existing scores
+        // Existing user
         const existingData = data[0];
         const scores = [];
         for (let i = 1; i <= 8; i++) {
           const column = `milestone${i}`;
           scores.push(existingData[column]);
-          // Highlight logic can be implemented here
         }
         setMilestoneScores(scores);
+
+        // Handle user tier
+        const tierValue = existingData['tier'] || MilestoneMenuButtons.DefaultTier;
+        if (!existingData['tier']) {
+          // Optionally update row with default tier if missing
+          await supabase
+            .from(tableName)
+            .update({ tier: MilestoneMenuButtons.DefaultTier })
+            .eq('wallet_address', address.toLowerCase());
+        }
+        setCurrentUserTier(tierValue); // Set the current user tier
       }
     };
 
@@ -795,6 +809,104 @@ export default function Page() {
   }, [address]);
 
   const [currentScoreForMilestone, setCurrentScoreForMilestone] = useState<string | null>(null);
+
+  const [currentUserTier, setCurrentUserTier] = useState<string>('');
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      // Fetch user data logic...
+      if (address) {
+        const { data, error } = await supabase
+          .from(config.milestoneScoringTable)
+          .select('*')
+          .eq('wallet_address', address.toLowerCase());
+
+        if (data && data[0]) {
+          const tierValue = data[0]['tier'] || MilestoneMenuButtons.DefaultTier;
+          setCurrentUserTier(tierValue); // Sync current user tier
+        }
+      } else {
+        console.error('Address is undefined.');
+      }
+    };
+
+    if (address) {
+      fetchUserData();
+    }
+  }, [address]);
+
+  /**
+   * Renders the Tier buttons based on MilestoneMenuButtons.json.
+   * Only active Tier buttons are rendered.
+   * In this section below you can change the tier button color.
+   */
+  const renderTierButtons = () => {
+    const tierButtons: JSX.Element[] = [];
+
+    for (let i = 1; i <= 5; i++) {
+      const key = `TierButton${i}`;
+      const data = (MilestoneMenuButtons as any)[key];
+      if (!data || !data.Active) continue; // Skip inactive buttons
+
+      const { value, positionXaxis, positionYaxis, width, height } = data;
+
+      const handleTierClick = async () => {
+        if (!address) return; // Ensure the user is logged in
+
+        const tableName = config.milestoneScoringTable;
+
+        // Update the tier in Supabase
+        const { error } = await supabase
+          .from(tableName)
+          .update({ tier: value })
+          .eq('wallet_address', address.toLowerCase());
+
+        if (error) {
+          console.error('Error updating tier:', error);
+          return;
+        }
+
+        // Fetch the updated tier
+        const { data: updatedData, error: fetchError } = await supabase
+          .from(tableName)
+          .select('tier')
+          .eq('wallet_address', address.toLowerCase())
+          .single();
+
+        if (fetchError) {
+          console.error('Error fetching updated tier:', fetchError);
+          return;
+        }
+
+        if (updatedData) {
+          setCurrentUserTier(updatedData.tier);
+          console.log(`Tier updated to: ${updatedData.tier}`);
+        }
+      };
+
+      tierButtons.push(
+        <button
+          key={key}
+          onClick={handleTierClick}
+          style={{
+            position: 'absolute',
+            left: positionXaxis,
+            top: positionYaxis,
+            width,
+            height,
+            backgroundColor: 'white', // Set background to white
+            border: 'none',
+            cursor: 'pointer',
+            zIndex: 25,
+          }}
+        >
+          {`Tier ${i}`}
+        </button>
+      );
+    }
+
+    return tierButtons;
+  };
 
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
@@ -872,6 +984,9 @@ export default function Page() {
 
           {/* Scoring Buttons for the selected milestone */}
           {renderScoringButtons()}
+
+          {/* Tier Buttons - Added here inside the yellow container */}
+          {address && renderTierButtons()} {/* Render Tier Buttons */}
         </div>
 
         {/* Red Container (right side) */}
@@ -1027,6 +1142,9 @@ export default function Page() {
           {MilestoneMenuButtons.MilestoneButtonsVisible && renderMilestoneButtons()}
           {/* Scoring Buttons for the selected milestone */}
           {renderScoringButtons()}
+
+          {/* Tier Buttons - Added here inside the yellow container for mobile */}
+          {address && renderTierButtons()} {/* Render Tier Buttons */}
         </div>
 
         {/* Blue Container */}

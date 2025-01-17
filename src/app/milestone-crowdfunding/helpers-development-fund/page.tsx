@@ -1055,13 +1055,14 @@ export default function Page() {
            top: positionYaxis,
            width,
            height,
-           backgroundColor: 'white', // Set background to white
+           backgroundColor: 'purple', // Set background to purple
+           color: 'white', // Set font color to white
            border: 'none',
            cursor: 'pointer',
            zIndex: 25,
          }}
        >
-         {`Tier ${i}`}
+         {value} {/* Display the value from the JSON */}
        </button>
      );
    }

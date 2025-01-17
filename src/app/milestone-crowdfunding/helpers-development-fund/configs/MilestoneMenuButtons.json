@@ -393,7 +393,7 @@
         "Active": true,
         "value": "5",
         "positionXaxis": "5%",
-        "positionYaxis": "90%",
+        "positionYaxis": "85%",
         "width": "10%",
         "height": "10%"
       },
@@ -401,7 +401,7 @@
         "Active": true,
         "value": "10",
         "positionXaxis": "20%",
-        "positionYaxis": "90%",
+        "positionYaxis": "85%",
         "width": "10%",
         "height": "10%"
       },
@@ -409,7 +409,7 @@
         "Active": true,
         "value": "20",
         "positionXaxis": "35%",
-        "positionYaxis": "90%",
+        "positionYaxis": "85%",
         "width": "10%",
         "height": "10%"
       },
@@ -417,7 +417,7 @@
         "Active": true,
         "value": "30",
         "positionXaxis": "50%",
-        "positionYaxis": "90%",
+        "positionYaxis": "85%",
         "width": "10%",
         "height": "10%"
       },
@@ -425,55 +425,55 @@
         "Active": true,
         "value": "50",
         "positionXaxis": "65%",
-        "positionYaxis": "90%",
+        "positionYaxis": "85%",
         "width": "10%",
         "height": "10%"
       },
       "FundingCalculation1": {
-        "positionXaxis": "5%",
-        "positionYaxis": "9%",
+        "positionXaxis": "7%",
+        "positionYaxis": "3%",
         "width": "10%",
         "height": "10%"
       },
       "FundingCalculation2": {
-        "positionXaxis": "5%",
-        "positionYaxis": "23%",
+        "positionXaxis": "7%",
+        "positionYaxis": "21%",
         "width": "10%",
         "height": "10%"
       },
       "FundingCalculation3": {
-        "positionXaxis": "5%",
-        "positionYaxis": "37%",
+        "positionXaxis": "7%",
+        "positionYaxis": "40%",
         "width": "10%",
         "height": "10%"
       },
       "FundingCalculation4": {
-        "positionXaxis": "5%",
-        "positionYaxis": "51%",
+        "positionXaxis": "7%",
+        "positionYaxis": "58%",
         "width": "10%",
         "height": "10%"
       },
       "FundingCalculation5": {
         "positionXaxis": "80%",
-        "positionYaxis": "9%",
+        "positionYaxis": "3%",
         "width": "10%",
         "height": "10%"
       },
       "FundingCalculation6": {
         "positionXaxis": "80%",
-        "positionYaxis": "23%",
+        "positionYaxis": "21%",
         "width": "10%",
         "height": "10%"
       },
       "FundingCalculation7": {
         "positionXaxis": "80%",
-        "positionYaxis": "37%",
+        "positionYaxis": "40%",
         "width": "10%",
         "height": "10%"
       },
       "FundingCalculation8": {
         "positionXaxis": "80%",
-        "positionYaxis": "51%",
+        "positionYaxis": "58%",
         "width": "10%",
         "height": "10%"
       }

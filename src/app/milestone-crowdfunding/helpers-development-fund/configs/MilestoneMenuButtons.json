@@ -3,6 +3,8 @@
     "FundingMultiplier": "5",
     "DefaultTier": "10",
     "defaultMilestoneScore": "1",
+    "MatchingMultiplier": "5",
+
     "MilestoneButton1": {
       "Active": true,
       "animation": "1",
@@ -424,6 +426,54 @@
         "value": "50",
         "positionXaxis": "65%",
         "positionYaxis": "90%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "FundingCalculation1": {
+        "positionXaxis": "5%",
+        "positionYaxis": "9%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "FundingCalculation2": {
+        "positionXaxis": "5%",
+        "positionYaxis": "23%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "FundingCalculation3": {
+        "positionXaxis": "5%",
+        "positionYaxis": "37%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "FundingCalculation4": {
+        "positionXaxis": "5%",
+        "positionYaxis": "51%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "FundingCalculation5": {
+        "positionXaxis": "80%",
+        "positionYaxis": "9%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "FundingCalculation6": {
+        "positionXaxis": "80%",
+        "positionYaxis": "23%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "FundingCalculation7": {
+        "positionXaxis": "80%",
+        "positionYaxis": "37%",
+        "width": "10%",
+        "height": "10%"
+      },
+      "FundingCalculation8": {
+        "positionXaxis": "80%",
+        "positionYaxis": "51%",
         "width": "10%",
         "height": "10%"
       }

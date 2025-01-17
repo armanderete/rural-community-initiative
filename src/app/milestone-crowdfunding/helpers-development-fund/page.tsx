@@ -912,7 +912,7 @@ export default function Page() {
           <Lottie 
             animationData={selectionRingAnimation} 
             loop={true} 
-            style={{ width: '100%', height: '100%' }} 
+            style={{ width: '100%', height: '100%', transform: 'scale(1.4)' }}
           />
         </div>
         {scoringElements}

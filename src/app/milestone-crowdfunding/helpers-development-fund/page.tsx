@@ -1402,6 +1402,10 @@ export default function Page() {
 
          {/* Tier Buttons - Added here inside the yellow container for mobile */}
          {address && renderTierButtons()} {/* Render Tier Buttons */}
+
+
+         {/* Funding Calculations for Mobile */}
+         {renderFundingCalculations()} {/* Render Funding Calculations */}
        </div>
 
 

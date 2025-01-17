@@ -18,6 +18,7 @@ import abi from './abi.json'; // Import ABI from the JSON file
 import { getBasename } from '../../../basenames';
 import { getEnsName } from '../../../ensnames';
 import { truncateWalletAddress } from '../../../utils';
+import selectionRingAnimation from './animations/selection-ring.json'; // Import Selection Ring Animation
 
 
 // **Import Voting Configurations** Needed for the Vote button to appear
@@ -110,6 +111,12 @@ interface PageConfig {
 type MilestoneRow = {
  wallet_address: string;
  [key: string]: number | string; // Allow dynamic keys
+};
+
+
+// Add this type definition near the top of the file
+type MilestoneMenuButtonsType = typeof MilestoneMenuButtons & {
+  [key: string]: any;
 };
 
 
@@ -608,25 +615,41 @@ export default function Page() {
 
 
  /**
+  * Helper function to find scoring button config for a given milestone number and score value
+  */
+ const findScoringButtonConfig = (milestoneNumber: string, scoreValue: string) => {
+   const prefix = `MilestoneScoringButton${milestoneNumber}.`;
+   const buttons = MilestoneMenuButtons as MilestoneMenuButtonsType;
+   
+   for (const key in buttons) {
+     if (
+       key.startsWith(prefix) && 
+       buttons[key].Active && 
+       String(buttons[key].value) === scoreValue
+     ) {
+       return buttons[key];
+     }
+   }
+   return undefined;
+ };
+
+
+ /**
   * Renders the main milestone buttons (MilestoneButton1..8).
   */
  const renderMilestoneButtons = () => {
    if (!MilestoneMenuButtons.MilestoneButtonsVisible) return null;
 
-
    const result: JSX.Element[] = [];
-
 
    for (let i = 1; i <= 8; i++) {
      const key = `MilestoneButton${i}`;
      const data = (MilestoneMenuButtons as any)[key];
      if (!data || !data.Active) continue;
 
-
      const { animation, positionXaxis, positionYaxis, width, height } = data;
 
-
-     // On click, set the currentAnimationIndex (as existing) and set milestone
+     // Updated click handler with ring positioning logic
      const handleClick = async () => {
        const newIndex = parseInt(animation, 10);
        if (isNaN(newIndex) || newIndex < 0 || newIndex >= config.animations) {
@@ -634,52 +657,62 @@ export default function Page() {
          return;
        }
 
-
        // Set the animation
        setCurrentAnimationIndex(newIndex);
        if (loadedAnimations[newIndex]) {
          setCurrentAnimation(loadedAnimations[newIndex]);
        }
 
-
        // Set the milestone
        setCurrentMilestone(key);
 
-
-       // Query Supabase for all columns
-       const { data, error } = await supabase
+       // Query Supabase for the user row
+       const { data: scoreData, error } = await supabase
          .from(config.milestoneScoringTable)
          .select('*')
          .eq('wallet_address', address?.toLowerCase());
-
 
        if (error) {
          console.error('Supabase query error:', error);
          return;
        }
 
-
-       if (data?.[0]) {
+       // If user row exists, find the milestone's current score
+       if (scoreData?.[0]) {
          const milestoneNumber = key.replace('MilestoneButton', '');
          const milestoneCol = `milestone${milestoneNumber}`;
-         setCurrentScoreForMilestone(data[0][milestoneCol]);
-       } else {
-         setCurrentScoreForMilestone(null);
-       }
+         const currentScore = String(scoreData[0][milestoneCol]);
 
+         // Keep track of current score
+         setCurrentScoreForMilestone(currentScore);
 
-       // **New Code Block to Log Milestone Scores and Current Tier**
-       if (data && data[0]) {
-         console.log('--- Current Scores for All Milestones ---');
-         for (let i = 1; i <= 8; i++) {
-           const milestoneScore = data[0][`milestone${i}`];
-           console.log(`Milestone ${i} => Score: ${milestoneScore}`);
+         // Find the scoring button config that has this score
+         const scoringConfig = findScoringButtonConfig(milestoneNumber, currentScore);
+         
+         if (scoringConfig) {
+           // Move the ring to that scoring button's coordinates
+           setSelectionRingStyle({
+             left: scoringConfig.positionXaxis,
+             top: scoringConfig.positionYaxis,
+             width: scoringConfig.width,
+             height: scoringConfig.height,
+             display: 'block',
+           });
+           
+           console.log(`Milestone ${milestoneNumber} => Current Score: ${currentScore}`);
+           console.log('Ring positioned at:', scoringConfig);
+         } else {
+           // No matching scoring button found
+           setSelectionRingStyle(prev => ({ ...prev, display: 'none' }));
+           console.log(`No scoring button found for milestone ${milestoneNumber} score ${currentScore}`);
          }
-         console.log(`Current Tier: ${currentUserTier}`); // Log current user tier
+       } else {
+         // No user data found
+         setCurrentScoreForMilestone(null);
+         setSelectionRingStyle(prev => ({ ...prev, display: 'none' }));
+         console.log('No user data found in Supabase');
        }
-       // **End of New Code Block**
      };
-
 
      result.push(
        <button
@@ -701,7 +734,6 @@ export default function Page() {
        </button>
      );
    }
-
 
    return result;
  };
@@ -843,6 +875,15 @@ export default function Page() {
          console.log(`Current Tier: ${currentUserTier}`); // Log current user tier
        }
        // **End of New Code Block**
+
+       // **Update Selection Ring Style**
+       setSelectionRingStyle({
+         left: positionXaxis,
+         top: positionYaxis,
+         width: width, // Use the button's width
+         height: height, // Use the button's height
+         display: 'block',
+       });
      };
       scoringElements.push(
        <button
@@ -865,7 +906,18 @@ export default function Page() {
        </button>
      );
    }
-    return scoringElements;
+    return (
+      <>
+        <div style={{ ...selectionRingStyle, position: 'absolute', zIndex: 35 }}>
+          <Lottie 
+            animationData={selectionRingAnimation} 
+            loop={true} 
+            style={{ width: '100%', height: '100%' }} 
+          />
+        </div>
+        {scoringElements}
+      </>
+    );
  };
   
  // ------------------------------------------------
@@ -1144,6 +1196,12 @@ export default function Page() {
  useEffect(() => {
    calculateFunding(); // Recalculate funding whenever scores or tier changes
  }, [milestoneScores, currentUserTier]);
+
+
+ // **State for Selection Ring Style**
+ const [selectionRingStyle, setSelectionRingStyle] = useState({ 
+   left: '0%', top: '0%', width: '0', height: '0', display: 'none' 
+ });
 
 
  return (

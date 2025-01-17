@@ -902,7 +902,7 @@ export default function Page() {
            zIndex: 30,
          }}
        >
-         {key}
+         ${value} {/* Display the value from the JSON */}
        </button>
      );
    }
@@ -1041,7 +1041,7 @@ export default function Page() {
  /**
   * Renders the Tier buttons based on MilestoneMenuButtons.json.
   * Only active Tier buttons are rendered.
-  * In this section below you can change the tier button color.
+  * In this section below you can change the tierbuttoncolor.
   */
  const renderTierButtons = () => {
    const tierButtons: JSX.Element[] = [];
@@ -1107,14 +1107,16 @@ export default function Page() {
            top: positionYaxis,
            width,
            height,
-           backgroundColor: 'purple', // Set background to purple
+           background: 'linear-gradient(45deg, #663399, #836fff)', // Gradient background
            color: 'white', // Set font color to white
            border: 'none',
+           borderRadius: '50%',
            cursor: 'pointer',
            zIndex: 25,
+           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2), inset 0 -2px 5px rgba(255, 255, 255, 0.5)', // Bevel/emboss effect
          }}
        >
-         {value} {/* Display the value from the JSON */}
+         ${value} {/* Display the value from the JSON */}
        </button>
      );
    }

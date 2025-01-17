@@ -393,39 +393,39 @@
         "Active": true,
         "value": "5",
         "positionXaxis": "5%",
-        "positionYaxis": "85%",
+        "positionYaxis": "88%",
         "width": "10%",
         "height": "10%"
       },
       "TierButton2": {
         "Active": true,
         "value": "10",
-        "positionXaxis": "20%",
-        "positionYaxis": "85%",
+        "positionXaxis": "18%",
+        "positionYaxis": "88%",
         "width": "10%",
         "height": "10%"
       },
       "TierButton3": {
         "Active": true,
         "value": "20",
-        "positionXaxis": "35%",
-        "positionYaxis": "85%",
+        "positionXaxis": "31%",
+        "positionYaxis": "88%",
         "width": "10%",
         "height": "10%"
       },
       "TierButton4": {
         "Active": true,
         "value": "30",
-        "positionXaxis": "50%",
-        "positionYaxis": "85%",
+        "positionXaxis": "44%",
+        "positionYaxis": "88%",
         "width": "10%",
         "height": "10%"
       },
       "TierButton5": {
         "Active": true,
         "value": "50",
-        "positionXaxis": "65%",
-        "positionYaxis": "85%",
+        "positionXaxis": "57%",
+        "positionYaxis": "88%",
         "width": "10%",
         "height": "10%"
       },

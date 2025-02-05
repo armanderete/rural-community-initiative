@@ -1,5 +1,5 @@
 {
-    "votingButtonVisible": false,
+    "votingButtonVisible": true,
     "votingType": "abc",
     "VoteOption1": {
       "Active": true,

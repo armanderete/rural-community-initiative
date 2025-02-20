@@ -17,35 +17,35 @@
               "token_contract": "",
               "order": 1,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "USDC",
               "token_contract": "0xOptimismUSDC",
               "order": 2,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "USDT",
               "token_contract": "0xOptimismUSDT",
               "order": 3,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "wBTC",
               "token_contract": "0xOptimismwBTC",
               "order": 4,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "OP",
               "token_contract": "0xOptimismARB",
               "order": 5,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             }
           ]
         },
@@ -60,35 +60,35 @@
               "token_contract": "",
               "order": 1,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "USDC",
               "token_contract": "0xArbitrumUSDC",
               "order": 2,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "USDT",
               "token_contract": "0xArbitrumUSDT",
               "order": 3,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "wBTC",
               "token_contract": "0xArbitrumwBTC",
               "order": 4,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "ARB",
               "token_contract": "0xArbitrumARB",
               "order": 5,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             }
           ]
         },
@@ -103,7 +103,7 @@
               "token_contract": "",
               "order": 1,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "USDC",
@@ -117,14 +117,14 @@
               "token_contract": "0xBaseUSDT",
               "order": 3,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "wBTC",
               "token_contract": "0xBasewBTC",
               "order": 4,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             }
           ]
         },
@@ -139,35 +139,35 @@
               "token_contract": "",
               "order": 1,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "USDC",
               "token_contract": "0xPolygonUSDC",
               "order": 2,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "USDT",
               "token_contract": "0xPolygonUSDT",
               "order": 3,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "wBTC",
               "token_contract": "0xPolygonwBTC",
               "order": 4,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "POL",
               "token_contract": "0xPolygonARB",
               "order": 5,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             }
           ]
         },
@@ -182,35 +182,35 @@
               "token_contract": "",
               "order": 1,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "USDC",
               "token_contract": "0xCeloUSDC",
               "order": 2,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "USDT",
               "token_contract": "0xCeloUSDT",
               "order": 3,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "wBTC",
               "token_contract": "0xCelowBTC",
               "order": 4,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             },
             {
               "name": "CELO",
               "token_contract": "0xCeloARB",
               "order": 5,
               "conversionFactor": "",
-              "eip2612": true
+              "eip2612": false
             }
           ]
         }

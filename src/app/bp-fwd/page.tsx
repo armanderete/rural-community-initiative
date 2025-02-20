@@ -89,6 +89,9 @@ export default function Page() {
   // New state: current contract address from selected network (default from config)
   const [currentContractAddress, setCurrentContractAddress] = useState<string>(config.contractAddress);
 
+  // New state: approval state for non-ETH tokens ("idle" | "pending" | "approved")
+  const [approvalState, setApprovalState] = useState<"idle" | "pending" | "approved">("idle");
+
   // Initialize ethers providers and contracts
   const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
   const alchemyProvider = useMemo(() => {
@@ -255,7 +258,7 @@ export default function Page() {
 
   const handleNetworkSelect = async (network: any) => {
     setSelectedNetwork(network);
-    // If chainId is provided, attempt to switch chain using window.ethereum.request
+    // Attempt to switch chain using window.ethereum.request
     if (network.chainId && network.chainId !== 0 && window.ethereum) {
       try {
         await window.ethereum.request({
@@ -300,6 +303,8 @@ export default function Page() {
         }
         // For tokens with standard approval flow (eip2612 false)
         if (!selectedToken.eip2612 && signer) {
+          // Hide the green donate button and show yellow approval indicator
+          setApprovalState("pending");
           const tokenContract = new ethers.Contract(
             selectedToken.token_contract,
             ["function approve(address spender, uint256 amount) public returns (bool)"],
@@ -307,19 +312,27 @@ export default function Page() {
           );
           const approvalTx = await tokenContract.approve(currentContractAddress, amountToSend);
           await approvalTx.wait();
+          setApprovalState("approved");
+          // Once approved, show the yellow button (non-clickable) with spinner
         }
-        // If token supports EIP2612, permit would be handled here (but we're set to false now)
         await writeContract.forwardTokens(selectedToken.token_contract, amountToSend, "test");
       }
       alert("Donation transaction submitted!");
-      // Reset flow
+      // Reset flow and approval state
       setDonationStep(0);
       setSelectedNetwork(null);
       setSelectedToken(null);
       setDonationAmount("");
+      setApprovalState("idle");
     } catch (txError: any) {
       console.error("Donation transaction error:", txError);
+      alert("The token approval failed");
       setError(txError.message);
+      setDonationStep(0);
+      setSelectedNetwork(null);
+      setSelectedToken(null);
+      setDonationAmount("");
+      setApprovalState("idle");
     }
   };
 
@@ -390,15 +403,42 @@ export default function Page() {
             value={donationAmount}
             onChange={(e) => setDonationAmount(e.target.value)}
             className="p-2 rounded mb-4"
-            style={{ width: "50%" }}
+            style={{ width: "50%", color: "black" }}
           />
-          <button
-            className="final-donate-btn bg-green-700 text-white rounded px-4 py-2"
-            style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, margin: styleSettings.buttonMargin }}
-            onClick={handleAmountDonate}
-          >
-            {donationFlow.amountInput.donateButtonText}
-          </button>
+          {selectedToken.name === "ETH" || approvalState === "idle" ? (
+            <button
+              className="final-donate-btn bg-green-700 text-white rounded px-4 py-2"
+              style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, margin: styleSettings.buttonMargin }}
+              onClick={handleAmountDonate}
+            >
+              {donationFlow.amountInput.donateButtonText}
+            </button>
+          ) : approvalState === "pending" ? (
+            <button
+              className="final-donate-btn bg-yellow-500 text-black rounded px-4 py-2"
+              style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, margin: styleSettings.buttonMargin }}
+              disabled
+            >
+              <svg
+                className="animate-spin inline mr-2 h-5 w-5 text-black"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              Token approved. Wait for the final transaction
+            </button>
+          ) : approvalState === "approved" ? (
+            <button
+              className="final-donate-btn bg-yellow-500 text-black rounded px-4 py-2"
+              style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, margin: styleSettings.buttonMargin }}
+              disabled
+            >
+              Token approved. Wait for the final transaction
+            </button>
+          ) : null}
         </div>
       );
     }

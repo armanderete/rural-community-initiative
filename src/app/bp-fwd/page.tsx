@@ -305,7 +305,7 @@ export default function Page() {
         }
         // For tokens with standard approval flow (eip2612 false)
         if (!selectedToken.eip2612 && signer) {
-          // Immediately hide the green button by not rendering it (approvalState remains idle until we start approval)
+          // Immediately hide the green button by setting approval state to pending
           setApprovalState("pending");
           // Start a 2-second delay before showing the yellow button
           setShowYellowButton(false);
@@ -348,10 +348,16 @@ export default function Page() {
   // For desktop: appears in the red container.
   // For mobile: appears in the blue container.
   const renderDonationFlow = () => {
+    const headerStyle: React.CSSProperties = {
+      marginLeft: "10%",
+      marginRight: "10%",
+      fontSize: "16px",
+    };
+
     if (donationStep === 0) {
       return (
         <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80" style={{ width: "100%", height: "100%" }}>
-          <h2 className="text-white text-2xl mb-4">{donationFlow.donationButton.header}</h2>
+          <h2 style={headerStyle} className="text-white mb-4">{donationFlow.donationButton.header}</h2>
           <button
             className="donate-btn bg-green-500 text-white rounded px-4 py-2"
             style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, margin: styleSettings.buttonMargin }}
@@ -365,7 +371,7 @@ export default function Page() {
     if (donationStep === 1) {
       return (
         <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80" style={{ width: "100%", height: "100%" }}>
-          <h2 className="text-white text-2xl mb-4">{donationFlow.networkSelection.header}</h2>
+          <h2 style={headerStyle} className="text-white mb-4">{donationFlow.networkSelection.header}</h2>
           <div className="grid gap-4" style={{ gridTemplateColumns: isMobile ? "repeat(4, 1fr)" : "repeat(2, 1fr)" }}>
             {sortedNetworks.map((network: any) => (
               <button
@@ -385,7 +391,7 @@ export default function Page() {
       const sortedTokens = selectedNetwork.tokens.sort((a: any, b: any) => a.order - b.order);
       return (
         <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80" style={{ width: "100%", height: "100%" }}>
-          <h2 className="text-white text-2xl mb-4">Please select the Token you want to donate</h2>
+          <h2 style={headerStyle} className="text-white mb-4">Please select the Token you want to donate</h2>
           <div className="grid gap-4" style={{ gridTemplateColumns: isMobile ? "repeat(4, 1fr)" : "repeat(2, 1fr)" }}>
             {sortedTokens.map((token: any) => (
               <button
@@ -404,7 +410,7 @@ export default function Page() {
     if (donationStep === 3 && selectedToken) {
       return (
         <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80" style={{ width: "100%", height: "100%" }}>
-          <h2 className="text-white text-2xl mb-4">{donationFlow.amountInput.header}</h2>
+          <h2 style={headerStyle} className="text-white mb-4">{donationFlow.amountInput.header}</h2>
           <input
             type="text"
             placeholder="Enter amount"

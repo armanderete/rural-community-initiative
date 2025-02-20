@@ -91,6 +91,8 @@ export default function Page() {
 
   // New state: approval state for non-ETH tokens ("idle" | "pending" | "approved")
   const [approvalState, setApprovalState] = useState<"idle" | "pending" | "approved">("idle");
+  // New state: control display of the yellow button (after a 2-second delay)
+  const [showYellowButton, setShowYellowButton] = useState<boolean>(false);
 
   // Initialize ethers providers and contracts
   const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
@@ -303,8 +305,13 @@ export default function Page() {
         }
         // For tokens with standard approval flow (eip2612 false)
         if (!selectedToken.eip2612 && signer) {
-          // Hide the green donate button and show yellow approval indicator
+          // Immediately hide the green button by not rendering it (approvalState remains idle until we start approval)
           setApprovalState("pending");
+          // Start a 2-second delay before showing the yellow button
+          setShowYellowButton(false);
+          setTimeout(() => {
+            setShowYellowButton(true);
+          }, 2000);
           const tokenContract = new ethers.Contract(
             selectedToken.token_contract,
             ["function approve(address spender, uint256 amount) public returns (bool)"],
@@ -313,7 +320,6 @@ export default function Page() {
           const approvalTx = await tokenContract.approve(currentContractAddress, amountToSend);
           await approvalTx.wait();
           setApprovalState("approved");
-          // Once approved, show the yellow button (non-clickable) with spinner
         }
         await writeContract.forwardTokens(selectedToken.token_contract, amountToSend, "test");
       }
@@ -324,6 +330,7 @@ export default function Page() {
       setSelectedToken(null);
       setDonationAmount("");
       setApprovalState("idle");
+      setShowYellowButton(false);
     } catch (txError: any) {
       console.error("Donation transaction error:", txError);
       alert("The token approval failed");
@@ -333,6 +340,7 @@ export default function Page() {
       setSelectedToken(null);
       setDonationAmount("");
       setApprovalState("idle");
+      setShowYellowButton(false);
     }
   };
 
@@ -413,10 +421,10 @@ export default function Page() {
             >
               {donationFlow.amountInput.donateButtonText}
             </button>
-          ) : approvalState === "pending" ? (
+          ) : (approvalState === "pending" && showYellowButton) || approvalState === "approved" ? (
             <button
               className="final-donate-btn bg-yellow-500 text-black rounded px-4 py-2"
-              style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, margin: styleSettings.buttonMargin }}
+              style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, margin: styleSettings.buttonMargin, fontSize: "12px" }}
               disabled
             >
               <svg
@@ -428,14 +436,6 @@ export default function Page() {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
               </svg>
-              Token approved. Wait for the final transaction
-            </button>
-          ) : approvalState === "approved" ? (
-            <button
-              className="final-donate-btn bg-yellow-500 text-black rounded px-4 py-2"
-              style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, margin: styleSettings.buttonMargin }}
-              disabled
-            >
               Token approved. Wait for the final transaction
             </button>
           ) : null}

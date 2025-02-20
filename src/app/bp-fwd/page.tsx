@@ -243,7 +243,7 @@ export default function Page() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Style settings from donationFlow.json (global)
+  // Use style settings from donationFlow.json (global)
   const styleSettings = isMobile
     ? donationFlow.style.mobile
     : donationFlow.style.desktop;
@@ -305,10 +305,10 @@ export default function Page() {
         }
         // For tokens with standard approval flow (eip2612 false)
         if (!selectedToken.eip2612 && signer) {
-          // Immediately hide the green button by setting approval state to pending
+          // Set approval state to pending and hide the green button
           setApprovalState("pending");
-          // Start a 2-second delay before showing the yellow button
           setShowYellowButton(false);
+          // Start a 2-second delay before showing the yellow button
           setTimeout(() => {
             setShowYellowButton(true);
           }, 2000);
@@ -360,7 +360,7 @@ export default function Page() {
           <h2 style={headerStyle} className="text-white mb-4">{donationFlow.donationButton.header}</h2>
           <button
             className="donate-btn bg-green-500 text-white rounded px-4 py-2"
-            style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, margin: styleSettings.buttonMargin }}
+            style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, marginLeft: styleSettings.buttonMargin }}
             onClick={handleDonateClick}
           >
             {donationFlow.donationButton.text}
@@ -372,12 +372,18 @@ export default function Page() {
       return (
         <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80" style={{ width: "100%", height: "100%" }}>
           <h2 style={headerStyle} className="text-white mb-4">{donationFlow.networkSelection.header}</h2>
-          <div className="grid gap-4" style={{ gridTemplateColumns: isMobile ? "repeat(4, 1fr)" : "repeat(2, 1fr)" }}>
+          <div
+            className="grid"
+            style={{
+              gridTemplateColumns: isMobile ? "repeat(4, 1fr)" : "repeat(2, 1fr)",
+              gap: styleSettings.buttonMargin,
+            }}
+          >
             {sortedNetworks.map((network: any) => (
               <button
                 key={network.name}
                 className="network-btn bg-blue-500 text-white rounded"
-                style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, margin: styleSettings.buttonMargin }}
+                style={{ width: "100%", height: "100%" }}
                 onClick={() => handleNetworkSelect(network)}
               >
                 {network.name}
@@ -392,12 +398,18 @@ export default function Page() {
       return (
         <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80" style={{ width: "100%", height: "100%" }}>
           <h2 style={headerStyle} className="text-white mb-4">Please select the Token you want to donate</h2>
-          <div className="grid gap-4" style={{ gridTemplateColumns: isMobile ? "repeat(4, 1fr)" : "repeat(2, 1fr)" }}>
+          <div
+            className="grid"
+            style={{
+              gridTemplateColumns: isMobile ? "repeat(4, 1fr)" : "repeat(2, 1fr)",
+              gap: styleSettings.buttonMargin,
+            }}
+          >
             {sortedTokens.map((token: any) => (
               <button
                 key={token.name}
                 className="token-btn bg-purple-500 text-white rounded"
-                style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, margin: styleSettings.buttonMargin }}
+                style={{ width: "100%", height: "100%" }}
                 onClick={() => handleTokenSelect(token)}
               >
                 {token.name}
@@ -422,7 +434,7 @@ export default function Page() {
           {selectedToken.name === "ETH" || approvalState === "idle" ? (
             <button
               className="final-donate-btn bg-green-700 text-white rounded px-4 py-2"
-              style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, margin: styleSettings.buttonMargin }}
+              style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, marginLeft: styleSettings.buttonMargin }}
               onClick={handleAmountDonate}
             >
               {donationFlow.amountInput.donateButtonText}
@@ -430,7 +442,7 @@ export default function Page() {
           ) : (approvalState === "pending" && showYellowButton) || approvalState === "approved" ? (
             <button
               className="final-donate-btn bg-yellow-500 text-black rounded px-4 py-2"
-              style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, margin: styleSettings.buttonMargin, fontSize: "12px" }}
+              style={{ width: styleSettings.buttonWidth, height: styleSettings.buttonHeight, marginLeft: styleSettings.buttonMargin, fontSize: "12px" }}
               disabled
             >
               <svg

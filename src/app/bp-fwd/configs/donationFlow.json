@@ -1,7 +1,7 @@
 {
     "donationButton": {
       "text": "Donate",
-      "header": "Click 'Donate' to start the donation flow"
+      "header": "Please donate to Helpers Development Fund:"
     },
     "networkSelection": {
       "header": "Please select your preferred Network",
@@ -224,7 +224,7 @@
       "desktop": {
         "buttonWidth": "40%",
         "buttonHeight": "20%",
-        "buttonMargin": "10%"
+        "buttonMargin": "30%"
       },
       "mobile": {
         "buttonWidth": "20%",

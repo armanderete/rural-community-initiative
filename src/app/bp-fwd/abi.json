@@ -1,17 +1,9 @@
-
-
-
 [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_usdc",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_owner",
+				"internalType": "address payable",
+				"name": "initialRecipient",
 				"type": "address"
 			}
 		],
@@ -46,38 +38,13 @@
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "user",
+				"name": "sender",
 				"type": "address"
 			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "tag",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "concept",
-				"type": "string"
-			}
-		],
-		"name": "Assigned",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "user",
+				"name": "recipient",
 				"type": "address"
 			},
 			{
@@ -89,116 +56,11 @@
 			{
 				"indexed": false,
 				"internalType": "string",
-				"name": "tag",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
 				"name": "concept",
 				"type": "string"
 			}
 		],
-		"name": "CashedOut",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "tag",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "concept",
-				"type": "string"
-			}
-		],
-		"name": "Deposit",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "tag",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "concept",
-				"type": "string"
-			}
-		],
-		"name": "ExternalTransfer",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "user",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "contractAddress",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "tag",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "concept",
-				"type": "string"
-			}
-		],
-		"name": "FreeVote",
+		"name": "EthTransferred",
 		"type": "event"
 	},
 	{
@@ -226,13 +88,38 @@
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "from",
+				"name": "oldRecipient",
 				"type": "address"
 			},
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "to",
+				"name": "newRecipient",
+				"type": "address"
+			}
+		],
+		"name": "RecipientUpdated",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "token",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "recipient",
 				"type": "address"
 			},
 			{
@@ -244,66 +131,22 @@
 			{
 				"indexed": false,
 				"internalType": "string",
-				"name": "tag",
-				"type": "string"
-			},
-			{
-				"indexed": false,
-				"internalType": "string",
 				"name": "concept",
 				"type": "string"
 			}
 		],
-		"name": "Transferred",
+		"name": "TokensForwarded",
 		"type": "event"
 	},
 	{
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_recipient",
+				"name": "token",
 				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_tag",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_concept",
-				"type": "string"
 			}
 		],
-		"name": "assignCommunityUSDC",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_tag",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_concept",
-				"type": "string"
-			}
-		],
-		"name": "cashOutCommunityUSDC",
+		"name": "addAllowedToken",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -316,12 +159,12 @@
 				"type": "address"
 			}
 		],
-		"name": "communityUSDC",
+		"name": "allowedTokens",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "bool",
 				"name": "",
-				"type": "uint256"
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -331,189 +174,16 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_tag",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_concept",
-				"type": "string"
-			}
-		],
-		"name": "depositUSDC",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_from",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_tag",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_concept",
-				"type": "string"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_signature",
-				"type": "bytes"
-			}
-		],
-		"name": "executeMetaTransactionCashOut",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_tag",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_concept",
-				"type": "string"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_signature",
-				"type": "bytes"
-			}
-		],
-		"name": "executeMetaTransactionFreeVote",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_tag",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_concept",
-				"type": "string"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_signature",
-				"type": "bytes"
-			}
-		],
-		"name": "executeMetaTransactionTransfer",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_tag",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_concept",
-				"type": "string"
-			}
-		],
-		"name": "externalTransfer",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "_tag",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_concept",
-				"type": "string"
-			}
-		],
-		"name": "freeVote",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_user",
-				"type": "address"
-			}
-		],
-		"name": "getCommunityUSDC",
-		"outputs": [
-			{
-				"internalType": "uint256",
 				"name": "",
 				"type": "uint256"
+			}
+		],
+		"name": "allowedTokensList",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -522,32 +192,23 @@
 	{
 		"inputs": [
 			{
-				"internalType": "bytes32",
-				"name": "_messageHash",
-				"type": "bytes32"
-			}
-		],
-		"name": "getEthSignedMessageHash",
-		"outputs": [
-			{
-				"internalType": "bytes32",
-				"name": "",
-				"type": "bytes32"
-			}
-		],
-		"stateMutability": "pure",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getUnassignedPoolBalance",
-		"outputs": [
+				"internalType": "address",
+				"name": "tokenAddress",
+				"type": "address"
+			},
 			{
 				"internalType": "uint256",
-				"name": "",
+				"name": "amount",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "concept",
+				"type": "string"
 			}
 		],
+		"name": "forwardTokens",
+		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -565,27 +226,29 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "_message",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_signature",
-				"type": "bytes"
-			}
-		],
-		"name": "recoverSigner",
+		"inputs": [],
+		"name": "recipient",
 		"outputs": [
 			{
-				"internalType": "address",
+				"internalType": "address payable",
 				"name": "",
 				"type": "address"
 			}
 		],
-		"stateMutability": "pure",
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "token",
+				"type": "address"
+			}
+		],
+		"name": "removeAllowedToken",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -598,78 +261,18 @@
 	{
 		"inputs": [
 			{
-				"internalType": "bytes",
-				"name": "_sig",
-				"type": "bytes"
+				"internalType": "address payable",
+				"name": "newRecipient",
+				"type": "address"
 			}
 		],
-		"name": "splitSignature",
-		"outputs": [
-			{
-				"internalType": "bytes32",
-				"name": "r",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "bytes32",
-				"name": "s",
-				"type": "bytes32"
-			},
-			{
-				"internalType": "uint8",
-				"name": "v",
-				"type": "uint8"
-			}
-		],
-		"stateMutability": "pure",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalAssigned",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalAssignedUSDC",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalPoolBalance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
+		"name": "setRecipient",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_to",
-				"type": "address"
-			},
 			{
 				"internalType": "uint256",
 				"name": "_amount",
@@ -677,18 +280,13 @@
 			},
 			{
 				"internalType": "string",
-				"name": "_tag",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "_concept",
+				"name": "concept",
 				"type": "string"
 			}
 		],
-		"name": "transferCommunityUSDC",
+		"name": "transferEth",
 		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -703,32 +301,5 @@
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "unassignedPoolBalance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "usdc",
-		"outputs": [
-			{
-				"internalType": "contract IERC20",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
 	}
 ]
-

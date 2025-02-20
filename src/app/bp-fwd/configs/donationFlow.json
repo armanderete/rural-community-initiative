@@ -1,0 +1,202 @@
+{
+    "donationButton": {
+      "text": "Donate",
+      "header": "Click 'Donate' to start the donation flow"
+    },
+    "networkSelection": {
+      "header": "Please select your preferred Network",
+      "networks": [
+        {
+          "name": "optimism",
+          "order": 1,
+          "tokens": [
+            {
+              "name": "ETH",
+              "token_contract": "",
+              "order": 1,
+              "conversionFactor": ""
+            },
+            {
+              "name": "USDC",
+              "token_contract": "0xOptimismUSDC",
+              "order": 2,
+              "conversionFactor": ""
+            },
+            {
+              "name": "USDT",
+              "token_contract": "0xOptimismUSDT",
+              "order": 3,
+              "conversionFactor": ""
+            },
+            {
+              "name": "wBTC",
+              "token_contract": "0xOptimismwBTC",
+              "order": 4,
+              "conversionFactor": ""
+            },
+            {
+              "name": "OP",
+              "token_contract": "0xOptimismARB",
+              "order": 5,
+              "conversionFactor": ""
+            }
+          ]
+        },
+        {
+          "name": "arbitrum",
+          "order": 2,
+          "tokens": [
+            {
+              "name": "ETH",
+              "token_contract": "",
+              "order": 1,
+              "conversionFactor": ""
+            },
+            {
+              "name": "USDC",
+              "token_contract": "0xArbitrumUSDC",
+              "order": 2,
+              "conversionFactor": ""
+            },
+            {
+              "name": "USDT",
+              "token_contract": "0xArbitrumUSDT",
+              "order": 3,
+              "conversionFactor": ""
+            },
+            {
+              "name": "wBTC",
+              "token_contract": "0xArbitrumwBTC",
+              "order": 4,
+              "conversionFactor": ""
+            },
+            {
+              "name": "ARB",
+              "token_contract": "0xArbitrumARB",
+              "order": 5,
+              "conversionFactor": ""
+            }
+          ]
+        },
+        {
+          "name": "base",
+          "order": 3,
+          "tokens": [
+            {
+              "name": "ETH",
+              "token_contract": "",
+              "order": 1,
+              "conversionFactor": ""
+            },
+            {
+              "name": "USDC",
+              "token_contract": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+              "order": 2,
+              "conversionFactor": 1000000
+            },
+            {
+              "name": "USDT",
+              "token_contract": "0xBaseUSDT",
+              "order": 3,
+              "conversionFactor": ""
+            },
+            {
+              "name": "wBTC",
+              "token_contract": "0xBasewBTC",
+              "order": 4,
+              "conversionFactor": ""
+            }
+          ]
+        },
+        {
+          "name": "polygon",
+          "order": 4,
+          "tokens": [
+            {
+              "name": "ETH",
+              "token_contract": "",
+              "order": 1,
+              "conversionFactor": ""
+            },
+            {
+              "name": "USDC",
+              "token_contract": "0xPolygonUSDC",
+              "order": 2,
+              "conversionFactor": ""
+            },
+            {
+              "name": "USDT",
+              "token_contract": "0xPolygonUSDT",
+              "order": 3,
+              "conversionFactor": ""
+            },
+            {
+              "name": "wBTC",
+              "token_contract": "0xPolygonwBTC",
+              "order": 4,
+              "conversionFactor": ""
+            },
+            {
+              "name": "POL",
+              "token_contract": "0xPolygonARB",
+              "order": 5,
+              "conversionFactor": ""
+            }
+          ]
+        },
+        {
+          "name": "celo",
+          "order": 5,
+          "tokens": [
+            {
+              "name": "ETH",
+              "token_contract": "",
+              "order": 1,
+              "conversionFactor": ""
+            },
+            {
+              "name": "USDC",
+              "token_contract": "0xCeloUSDC",
+              "order": 2,
+              "conversionFactor": ""
+            },
+            {
+              "name": "USDT",
+              "token_contract": "0xCeloUSDT",
+              "order": 3,
+              "conversionFactor": ""
+            },
+            {
+              "name": "wBTC",
+              "token_contract": "0xCelowBTC",
+              "order": 4,
+              "conversionFactor": ""
+            },
+            {
+              "name": "CELO",
+              "token_contract": "0xCeloARB",
+              "order": 5,
+              "conversionFactor": ""
+            }
+          ]
+        }
+      ]
+    },
+    "amountInput": {
+      "header": "Select the amount you want to donate",
+      "donateButtonText": "Donate"
+    },
+    "style": {
+      "desktop": {
+        "buttonWidth": "40%",
+        "buttonHeight": "20%",
+        "buttonMargin": "10%"
+      },
+      "mobile": {
+        "buttonWidth": "20%",
+        "buttonHeight": "10%",
+        "buttonMargin": "5%"
+      }
+    }
+  }
+  

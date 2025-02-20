@@ -9,6 +9,8 @@
         {
           "name": "optimism",
           "order": 1,
+          "contractAddress": "",
+          "chainId": 0,
           "tokens": [
             {
               "name": "ETH",
@@ -45,6 +47,8 @@
         {
           "name": "arbitrum",
           "order": 2,
+          "contractAddress": "",
+          "chainId": 0,
           "tokens": [
             {
               "name": "ETH",
@@ -81,6 +85,8 @@
         {
           "name": "base",
           "order": 3,
+          "contractAddress": "0xb9199293E5fcb524ad901c4c86261049D646D954",
+          "chainId": 8453,
           "tokens": [
             {
               "name": "ETH",
@@ -111,6 +117,8 @@
         {
           "name": "polygon",
           "order": 4,
+          "contractAddress": "",
+          "chainId": 0,
           "tokens": [
             {
               "name": "ETH",
@@ -147,6 +155,8 @@
         {
           "name": "celo",
           "order": 5,
+          "contractAddress": "",
+          "chainId": 0,
           "tokens": [
             {
               "name": "ETH",

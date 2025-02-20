@@ -86,6 +86,9 @@ export default function Page() {
   // State to handle loading
   const [loading, setLoading] = useState<boolean>(false);
 
+  // New state: current contract address from selected network (default from config)
+  const [currentContractAddress, setCurrentContractAddress] = useState<string>(config.contractAddress);
+
   // Initialize ethers providers and contracts
   const ALCHEMY_API_URL = process.env.NEXT_PUBLIC_ALCHEMY_API_URL;
   const alchemyProvider = useMemo(() => {
@@ -95,26 +98,23 @@ export default function Page() {
     return null;
   }, [ALCHEMY_API_URL]);
 
-  const CONTRACT_ADDRESS = config.contractAddress; // fetched from config file
-
-  // **Contracts** Using Alchemy provider for the queries, signer for wallet transactions
+  // **Contracts**
   const readContract = useMemo(() => {
     if (alchemyProvider) {
-      return new ethers.Contract(CONTRACT_ADDRESS, abi, alchemyProvider);
+      return new ethers.Contract(currentContractAddress, abi, alchemyProvider);
     }
     return null;
-  }, [alchemyProvider, CONTRACT_ADDRESS]);
+  }, [alchemyProvider, currentContractAddress]);
 
   const writeContract = useMemo(() => {
     if (signer) {
-      return new ethers.Contract(CONTRACT_ADDRESS, abi, signer);
+      return new ethers.Contract(currentContractAddress, abi, signer);
     }
     return null;
-  }, [signer, CONTRACT_ADDRESS]);
+  }, [signer, currentContractAddress]);
 
   /**
    * **Dynamic Import of Animations**
-   * Define an array of functions that dynamically import each animation.
    */
   const animationImports = useMemo(
     () => [
@@ -179,8 +179,6 @@ export default function Page() {
 
   /**
    * Function to get the ordinal suffix for a given number.
-   * @param i - The number to get the ordinal suffix for
-   * @returns Ordinal suffix string
    */
   const getOrdinalSuffix = (i: number): string => {
     const j = i % 10,
@@ -255,8 +253,21 @@ export default function Page() {
     setDonationStep(1);
   };
 
-  const handleNetworkSelect = (network: any) => {
+  const handleNetworkSelect = async (network: any) => {
     setSelectedNetwork(network);
+    // If chainId is provided, switch chain
+    if (network.chainId && network.chainId !== 0) {
+      try {
+        await switchChain(network.chainId);
+      } catch (switchError: any) {
+        console.error("Switch chain error:", switchError);
+        setError(switchError.message);
+      }
+    }
+    // Update current contract address based on network selection
+    if (network.contractAddress) {
+      setCurrentContractAddress(network.contractAddress);
+    }
     setDonationStep(2);
   };
 
@@ -274,7 +285,6 @@ export default function Page() {
     let amountToSend: BigNumber;
     try {
       if (selectedToken.name === "ETH") {
-        // Use parseEther for ETH donations
         amountToSend = ethers.utils.parseEther(donationAmount);
         await writeContract.transferEth(amountToSend, "test", { value: amountToSend });
       } else {
@@ -299,11 +309,12 @@ export default function Page() {
   };
 
   // Render the donation flow UI.
-  // This version renders relative to its container (red for desktop, blue for mobile).
+  // For desktop: appears in the red container.
+  // For mobile: appears in the blue container.
   const renderDonationFlow = () => {
     if (donationStep === 0) {
       return (
-        <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80 z-30" style={{ width: "100%", height: "100%" }}>
+        <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80" style={{ width: "100%", height: "100%" }}>
           <h2 className="text-white text-2xl mb-4">{donationFlow.donationButton.header}</h2>
           <button
             className="donate-btn bg-green-500 text-white rounded px-4 py-2"
@@ -317,7 +328,7 @@ export default function Page() {
     }
     if (donationStep === 1) {
       return (
-        <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80 z-30" style={{ width: "100%", height: "100%" }}>
+        <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80" style={{ width: "100%", height: "100%" }}>
           <h2 className="text-white text-2xl mb-4">{donationFlow.networkSelection.header}</h2>
           <div className="grid gap-4" style={{ gridTemplateColumns: isMobile ? "repeat(4, 1fr)" : "repeat(2, 1fr)" }}>
             {sortedNetworks.map((network: any) => (
@@ -337,7 +348,7 @@ export default function Page() {
     if (donationStep === 2 && selectedNetwork) {
       const sortedTokens = selectedNetwork.tokens.sort((a: any, b: any) => a.order - b.order);
       return (
-        <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80 z-30" style={{ width: "100%", height: "100%" }}>
+        <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80" style={{ width: "100%", height: "100%" }}>
           <h2 className="text-white text-2xl mb-4">Please select the Token you want to donate</h2>
           <div className="grid gap-4" style={{ gridTemplateColumns: isMobile ? "repeat(4, 1fr)" : "repeat(2, 1fr)" }}>
             {sortedTokens.map((token: any) => (
@@ -356,7 +367,7 @@ export default function Page() {
     }
     if (donationStep === 3 && selectedToken) {
       return (
-        <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80 z-30" style={{ width: "100%", height: "100%" }}>
+        <div className="donation-flow flex flex-col items-center justify-center bg-black bg-opacity-80" style={{ width: "100%", height: "100%" }}>
           <h2 className="text-white text-2xl mb-4">{donationFlow.amountInput.header}</h2>
           <input
             type="text"

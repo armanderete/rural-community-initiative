@@ -255,10 +255,14 @@ export default function Page() {
 
   const handleNetworkSelect = async (network: any) => {
     setSelectedNetwork(network);
-    // If chainId is provided, switch chain
-    if (network.chainId && network.chainId !== 0) {
+    // If chainId is provided, attempt to switch chain using window.ethereum.request
+    if (network.chainId && network.chainId !== 0 && window.ethereum) {
       try {
-        await switchChain(network.chainId);
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: ethers.utils.hexValue(network.chainId) }],
+        });
+        alert(`You are now connected to ${network.name} network`);
       } catch (switchError: any) {
         console.error("Switch chain error:", switchError);
         setError(switchError.message);

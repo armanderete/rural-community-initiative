@@ -4,7 +4,7 @@
       "header": "Please donate to Helpers Development Fund:"
     },
     "networkSelection": {
-      "header": "Please select your preferred Network",
+      "header": "Please select your preferred Network:",
       "networks": [
         {
           "name": "optimism",
@@ -217,14 +217,14 @@
       ]
     },
     "amountInput": {
-      "header": "Select the amount you want to donate",
+      "header": "Select the amount you want to donate:",
       "donateButtonText": "Donate"
     },
     "style": {
       "desktop": {
         "buttonWidth": "40%",
         "buttonHeight": "20%",
-        "buttonMargin": "30%"
+        "buttonMargin": "20%"
       },
       "mobile": {
         "buttonWidth": "20%",

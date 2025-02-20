@@ -298,6 +298,17 @@ export default function Page() {
         } else {
           amountToSend = BigNumber.from(donationAmount);
         }
+        // For tokens with standard approval flow (eip2612 false)
+        if (!selectedToken.eip2612 && signer) {
+          const tokenContract = new ethers.Contract(
+            selectedToken.token_contract,
+            ["function approve(address spender, uint256 amount) public returns (bool)"],
+            signer
+          );
+          const approvalTx = await tokenContract.approve(currentContractAddress, amountToSend);
+          await approvalTx.wait();
+        }
+        // If token supports EIP2612, permit would be handled here (but we're set to false now)
         await writeContract.forwardTokens(selectedToken.token_contract, amountToSend, "test");
       }
       alert("Donation transaction submitted!");

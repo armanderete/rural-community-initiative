@@ -87,7 +87,7 @@
               "name": "ARB",
               "token_contract": "0x912CE59144191C1204E64559FE8253a0e49E6548",
               "order": 5,
-              "conversionFactor": 1000000000000000000,
+              "conversionFactor": "1000000000000000000",
               "eip2612": false
             }
           ]

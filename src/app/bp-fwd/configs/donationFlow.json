@@ -53,7 +53,7 @@
           "name": "arbitrum",
           "order": 2,
           "contractAddress": "0x2ec2e1da4be984de504c1cea164924bdc5ec0244",
-          "chainId": 0,
+          "chainId": 42161,
           "tokens": [
             {
               "name": "ETH",

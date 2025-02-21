@@ -114,16 +114,16 @@
             },
             {
               "name": "USDT",
-              "token_contract": "0xBaseUSDT",
+              "token_contract": "0xfde4C96c8593536E31F229EA8f37b2ADa2699bb2",
               "order": 3,
-              "conversionFactor": "",
+              "conversionFactor": 1000000,
               "eip2612": false
             },
             {
               "name": "wBTC",
-              "token_contract": "0xBasewBTC",
+              "token_contract": "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf",
               "order": 4,
-              "conversionFactor": "",
+              "conversionFactor": 100000000,
               "eip2612": false
             }
           ]

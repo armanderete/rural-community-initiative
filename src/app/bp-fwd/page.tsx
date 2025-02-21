@@ -297,7 +297,10 @@ export default function Page() {
         amountToSend = ethers.utils.parseEther(donationAmount);
         await writeContract.transferEth(amountToSend, "test", { value: amountToSend });
       } else {
-        if (selectedToken.conversionFactor) {
+        // For ARB token, use parseUnits with 18 decimals
+        if (selectedToken.name === "ARB") {
+          amountToSend = ethers.utils.parseUnits(donationAmount, 18);
+        } else if (selectedToken.conversionFactor) {
           const converted = Math.floor(parseFloat(donationAmount) * selectedToken.conversionFactor);
           amountToSend = BigNumber.from(converted);
         } else {

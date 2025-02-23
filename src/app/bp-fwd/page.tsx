@@ -38,7 +38,6 @@ type Balance = { address: string; balance: number | string };
 type Top10Balance = { address: string; balance: number };
 type UserInfo = { place: string; userInfo: string; balanceInfo: string };
 
-// Define the type for the config to ensure type safety
 interface PageConfig {
   animations: number;
   animationLoopSettings: boolean[];
@@ -297,8 +296,8 @@ export default function Page() {
         amountToSend = ethers.utils.parseEther(donationAmount);
         await writeContract.transferEth(amountToSend, "test", { value: amountToSend });
       } else {
-        // For ARB token, use parseUnits with 18 decimals
-        if (selectedToken.name === "ARB") {
+        // For ARB and OP tokens, use parseUnits with 18 decimals
+        if (selectedToken.name === "ARB" || selectedToken.name === "OP") {
           amountToSend = ethers.utils.parseUnits(donationAmount, 18);
         } else if (selectedToken.conversionFactor) {
           const converted = Math.floor(parseFloat(donationAmount) * selectedToken.conversionFactor);

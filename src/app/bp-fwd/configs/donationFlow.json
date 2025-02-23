@@ -9,8 +9,8 @@
         {
           "name": "optimism",
           "order": 1,
-          "contractAddress": "",
-          "chainId": 0,
+          "contractAddress": "0x333cBAB1F37213D799042609bBF66B3453203a9D",
+          "chainId": 10,
           "tokens": [
             {
               "name": "ETH",
@@ -21,28 +21,28 @@
             },
             {
               "name": "USDC",
-              "token_contract": "0xOptimismUSDC",
+              "token_contract": "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
               "order": 2,
-              "conversionFactor": "",
+              "conversionFactor": "1000000",
               "eip2612": false
             },
             {
               "name": "USDT",
-              "token_contract": "0xOptimismUSDT",
+              "token_contract": "0x94b008aa00579c1307b0ef2c499ad98a8ce58e58",
               "order": 3,
-              "conversionFactor": "",
+              "conversionFactor": 1000000,
               "eip2612": false
             },
             {
               "name": "wBTC",
-              "token_contract": "0xOptimismwBTC",
+              "token_contract": "0x68f180fcce6836688e9084f035309e29bf0a2095",
               "order": 4,
-              "conversionFactor": "",
+              "conversionFactor": 100000000,
               "eip2612": false
             },
             {
               "name": "OP",
-              "token_contract": "0xOptimismARB",
+              "token_contract": "0x4200000000000000000000000000000000000042",
               "order": 5,
               "conversionFactor": "",
               "eip2612": false

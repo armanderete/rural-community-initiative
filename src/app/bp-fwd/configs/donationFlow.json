@@ -181,13 +181,13 @@
         {
           "name": "celo",
           "order": 5,
-          "contractAddress": "",
-          "chainId": 0,
+          "contractAddress": "0x789f24d0f3af9dbace2c62cd3a7def445ff0a7a2",
+          "chainId": 42220,
           "tokens": [
             {
               "name": "ETH",
               "token_contract": "",
-              "order": 1,
+              "order": 0,
               "conversionFactor": "",
               "eip2612": false
             },

@@ -384,14 +384,16 @@ export default function Page() {
             }}
           >
             {sortedNetworks.map((network: any) => (
-              <button
-                key={network.name}
-                className="network-btn bg-blue-500 text-white rounded"
-                style={{ width: "100%", height: "100%" }}
-                onClick={() => handleNetworkSelect(network)}
-              >
-                {network.name}
-              </button>
+              network.order !== 0 && (
+                <button
+                  key={network.name}
+                  className="network-btn bg-blue-500 text-white rounded"
+                  style={{ width: "100%", height: "100%" }}
+                  onClick={() => handleNetworkSelect(network)}
+                >
+                  {network.name}
+                </button>
+              )
             ))}
           </div>
         </div>
@@ -410,14 +412,16 @@ export default function Page() {
             }}
           >
             {sortedTokens.map((token: any) => (
-              <button
-                key={token.name}
-                className="token-btn bg-purple-500 text-white rounded"
-                style={{ width: "100%", height: "100%" }}
-                onClick={() => handleTokenSelect(token)}
-              >
-                {token.name}
-              </button>
+              token.order !== 0 && (
+                <button
+                  key={token.name}
+                  className="token-btn bg-purple-500 text-white rounded"
+                  style={{ width: "100%", height: "100%" }}
+                  onClick={() => handleTokenSelect(token)}
+                >
+                  {token.name}
+                </button>
+              )
             ))}
           </div>
         </div>

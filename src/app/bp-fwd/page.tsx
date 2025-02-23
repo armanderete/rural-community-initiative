@@ -266,9 +266,10 @@ export default function Page() {
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: ethers.utils.hexValue(network.chainId) }],
         });
-        alert(`You are now connected to ${network.name} network`);
+        // Remove success alert
       } catch (switchError: any) {
         console.error("Switch chain error:", switchError);
+        alert("The network was NOT successfully changed. Please do it manually in your wallet.");
         setError(switchError.message);
       }
     }

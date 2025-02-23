@@ -298,7 +298,7 @@ export default function Page() {
         await writeContract.transferEth(amountToSend, "test", { value: amountToSend });
       } else {
         // For ARB and OP tokens, use parseUnits with 18 decimals
-        if (selectedToken.name === "ARB" || selectedToken.name === "OP") {
+        if (selectedToken.name === "ARB" || selectedToken.name === "OP" || selectedToken.name === "POL") {
           amountToSend = ethers.utils.parseUnits(donationAmount, 18);
         } else if (selectedToken.conversionFactor) {
           const converted = Math.floor(parseFloat(donationAmount) * selectedToken.conversionFactor);

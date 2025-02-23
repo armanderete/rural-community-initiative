@@ -131,8 +131,8 @@
         {
           "name": "polygon",
           "order": 4,
-          "contractAddress": "",
-          "chainId": 0,
+          "contractAddress": "0x789F24d0f3AF9DbACE2c62cd3A7dEF445Ff0A7A2",
+          "chainId": 137,
           "tokens": [
             {
               "name": "ETH",
@@ -143,30 +143,30 @@
             },
             {
               "name": "USDC",
-              "token_contract": "0xPolygonUSDC",
+              "token_contract": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
               "order": 2,
-              "conversionFactor": "",
+              "conversionFactor": 1000000,
               "eip2612": false
             },
             {
               "name": "USDT",
-              "token_contract": "0xPolygonUSDT",
+              "token_contract": "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
               "order": 3,
-              "conversionFactor": "",
+              "conversionFactor": 1000000,
               "eip2612": false
             },
             {
               "name": "wBTC",
-              "token_contract": "0xPolygonwBTC",
+              "token_contract": "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
               "order": 4,
-              "conversionFactor": "",
+              "conversionFactor": 100000000,
               "eip2612": false
             },
             {
               "name": "POL",
               "token_contract": "0xPolygonARB",
               "order": 5,
-              "conversionFactor": "",
+              "conversionFactor": "1000000000000000000",
               "eip2612": false
             }
           ]

@@ -193,30 +193,30 @@
             },
             {
               "name": "USDC",
-              "token_contract": "0xCeloUSDC",
+              "token_contract": "0xcebA9300f2b948710d2653dD7B07f33A8B32118C",
               "order": 2,
-              "conversionFactor": "",
+              "conversionFactor": 1000000,
               "eip2612": false
             },
             {
               "name": "USDT",
-              "token_contract": "0xCeloUSDT",
+              "token_contract": "0x48065fbBE25f71C9282ddf5e1cD6D6A887483D5e",
               "order": 3,
-              "conversionFactor": "",
-              "eip2612": false
-            },
-            {
-              "name": "wBTC",
-              "token_contract": "0xCelowBTC",
-              "order": 4,
-              "conversionFactor": "",
+              "conversionFactor": 1000000,
               "eip2612": false
             },
             {
               "name": "CELO",
-              "token_contract": "0xCeloARB",
-              "order": 5,
-              "conversionFactor": "",
+              "token_contract": "0x471ece3750da237f93b8e339c536989b8978a438",
+              "order": 4,
+              "conversionFactor": "1000000000000000000",
+              "eip2612": false
+            },
+            {
+              "name": "wETH",
+              "token_contract": "xxxx",
+              "order": 1,
+              "conversionFactor": "1000000000000000000",
               "eip2612": false
             }
           ]

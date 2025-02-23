@@ -44,7 +44,7 @@
               "name": "OP",
               "token_contract": "0x4200000000000000000000000000000000000042",
               "order": 5,
-              "conversionFactor": "",
+              "conversionFactor": "1000000000000000000",
               "eip2612": false
             }
           ]

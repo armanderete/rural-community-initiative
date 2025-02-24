@@ -144,7 +144,7 @@
             {
               "name": "ETH",
               "token_contract": "",
-              "order": 1,
+              "order": 0,
               "conversionFactor": "",
               "eip2612": false
             },
@@ -173,6 +173,13 @@
               "name": "POL",
               "token_contract": "0x455e53cbb86018ac2b8092fdcd39d8444affc3f6",
               "order": 5,
+              "conversionFactor": "1000000000000000000",
+              "eip2612": false
+            },
+            {
+              "name": "wETH",
+              "token_contract": "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
+              "order": 1,
               "conversionFactor": "1000000000000000000",
               "eip2612": false
             }

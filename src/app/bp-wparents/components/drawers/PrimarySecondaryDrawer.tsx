@@ -1,9 +1,9 @@
-// components/drawers/PrimarySecondaryDrawer.tsx
-
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Lottie from 'lottie-react';
 import DashboardAnimation from '../../animations/dashboard.json';
 import LeaderboardAnimation from '../../animations/leaderboard.json';
+import ReactMarkdown from 'react-markdown';
+import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 
 // Define the props interface
 interface PrimarySecondaryDrawerProps {
@@ -31,6 +31,52 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
   top10UserInfos,
   calculateCompletionPercentage,
 }) => {
+  // We'll hold either markdown string or rich text content
+  const [markdownContent, setMarkdownContent] = useState<string | null>(null);
+  const [richTextContent, setRichTextContent] = useState<React.ReactNode | null>(null);
+
+  useEffect(() => {
+    async function fetchContent() {
+      try {
+        const spaceId = process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID;
+        const environment = process.env.NEXT_PUBLIC_CONTENTFUL_ENVIRONMENT || 'master';
+        const accessToken = process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN;
+        const entryId = "1DoP4pGwKTB6gGREatNrj7"; // Specific content entry id
+
+        console.log('Contentful Config:', { spaceId, environment, accessToken: accessToken?.substring(0, 5) + '...' });
+        const url = `https://cdn.contentful.com/spaces/${spaceId}/environments/${environment}/entries/${entryId}?access_token=${accessToken}`;
+        console.log('Fetching from URL:', url);
+
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log('Contentful Response:', data);
+
+        if (data.fields && data.fields.text) {
+          const fieldValue = data.fields.text;
+          // If it's a plain string, use ReactMarkdown
+          if (typeof fieldValue === 'string') {
+            setMarkdownContent(fieldValue);
+          }
+          // If it's an object with nodeType (Contentful Rich Text)
+          else if (fieldValue.nodeType) {
+            setRichTextContent(documentToReactComponents(fieldValue));
+          }
+          // Otherwise, fallback to stringifying
+          else {
+            setMarkdownContent(JSON.stringify(fieldValue));
+          }
+        } else {
+          console.error('No text field found in response:', data);
+          setMarkdownContent("text failed to load");
+        }
+      } catch (error) {
+        console.error('Error fetching from Contentful:', error);
+        setMarkdownContent("text failed to load");
+      }
+    }
+    fetchContent();
+  }, []);
+
   return (
     <>
       {/* Primary Drawer */}
@@ -69,6 +115,23 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               loop={true} // This animation loops indefinitely
               className="w-full h-full"
             />
+
+            {/* Markdown / Rich Text Overlay */}
+            {markdownContent !== null ? (
+              <div
+                className="absolute inset-0 p-4 overflow-hidden"
+                style={{ zIndex: 50, fontSize: 'clamp(12px, 4vw, 24px)' }}
+              >
+                <ReactMarkdown>{markdownContent}</ReactMarkdown>
+              </div>
+            ) : richTextContent !== null ? (
+              <div
+                className="absolute inset-0 p-4 overflow-hidden"
+                style={{ zIndex: 50, fontSize: 'clamp(12px, 4vw, 24px)' }}
+              >
+                {richTextContent}
+              </div>
+            ) : null}
 
             {/* Loading Progress Message */}
             {loading && (
@@ -172,7 +235,7 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
                 left: '82%',
                 width: '13%',
                 height: '13%',
-                backgroundColor: 'transparent', // Transparent background as per your requirement
+                backgroundColor: 'transparent',
                 border: 'none',
                 padding: 0,
                 margin: 0,
@@ -201,7 +264,7 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
         {/* Drawer Content */}
         <div
           className="relative bg-black rounded-t-lg overflow-hidden transform transition-transform duration-300 ease-in-out w-11/12 md:w-auto md:h-4/5 aspect-square md:aspect-square"
-          onClick={(e) => e.stopPropagation()} // Prevent click from closing drawer
+          onClick={(e) => e.stopPropagation()}
         >
           {/* Close Button */}
           <button
@@ -217,7 +280,7 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
             {/* Leaderboard Lottie Animation */}
             <Lottie
               animationData={LeaderboardAnimation}
-              loop={true} // This animation loops indefinitely
+              loop={true}
               className="w-full h-full"
             />
 
@@ -239,7 +302,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
             )}
 
             {/* Display the top 8 users */}
-            {/* Display the 1st place user */}
             {top10UserInfos.length > 0 && !loading && (
               <div
                 className="absolute left-[35%] bottom-[90%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -248,7 +310,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 1st place balance */}
             {top10UserInfos.length > 0 && !loading && (
               <div
                 className="absolute left-[5%] bottom-[90%] text-[18px] md:text-[23px] font-bold text-pink-500 bg-transparent whitespace-nowrap"
@@ -257,7 +318,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 2nd place user */}
             {top10UserInfos.length > 1 && !loading && (
               <div
                 className="absolute left-[42%] bottom-[76%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -266,7 +326,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 2nd place balance */}
             {top10UserInfos.length > 1 && !loading && (
               <div
                 className="absolute left-[27%] bottom-[75%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -275,7 +334,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 3rd place user */}
             {top10UserInfos.length > 2 && !loading && (
               <div
                 className="absolute left-[47%] bottom-[68%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -284,7 +342,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 3rd place balance */}
             {top10UserInfos.length > 2 && !loading && (
               <div
                 className="absolute left-[30%] bottom-[67%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -293,7 +350,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 4th place user */}
             {top10UserInfos.length > 3 && !loading && (
               <div
                 className="absolute left-[50%] bottom-[61%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -302,7 +358,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 4th place balance */}
             {top10UserInfos.length > 3 && !loading && (
               <div
                 className="absolute left-[32%] bottom-[59%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -311,7 +366,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 5th place user */}
             {top10UserInfos.length > 4 && !loading && (
               <div
                 className="absolute left-[54%] bottom-[54%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -320,7 +374,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 5th place balance */}
             {top10UserInfos.length > 4 && !loading && (
               <div
                 className="absolute left-[33%] bottom-[51%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -329,7 +382,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 6th place user */}
             {top10UserInfos.length > 5 && !loading && (
               <div
                 className="absolute left-[57%] bottom-[46%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -338,7 +390,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 6th place balance */}
             {top10UserInfos.length > 5 && !loading && (
               <div
                 className="absolute left-[35%] bottom-[43%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -347,7 +398,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 7th place user */}
             {top10UserInfos.length > 6 && !loading && (
               <div
                 className="absolute left-[62%] bottom-[37%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -356,7 +406,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 7th place balance */}
             {top10UserInfos.length > 6 && !loading && (
               <div
                 className="absolute left-[33%] bottom-[34%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -365,7 +414,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 8th place user */}
             {top10UserInfos.length > 7 && !loading && (
               <div
                 className="absolute left-[66%] bottom-[27%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -374,7 +422,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the 8th place balance */}
             {top10UserInfos.length > 7 && !loading && (
               <div
                 className="absolute left-[30%] bottom-[22%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"

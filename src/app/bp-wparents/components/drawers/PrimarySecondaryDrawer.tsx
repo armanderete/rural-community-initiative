@@ -147,7 +147,9 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             ) : null}
 
-            {/* Loading Progress Message */}
+            {/*
+            // Uncomment these blocks to restore the rendering of values:
+
             {loading && (
               <div className="absolute bg-yellow-300 text-black px-6 py-4 rounded flex flex-col items-center">
                 <p className="text-lg font-semibold">
@@ -157,7 +159,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Only render the pool balance if it has been populated and not loading */}
             {communityPoolBalance && communityPoolBalance !== '--' && !loading && (
               <div
                 className="absolute"
@@ -174,7 +175,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Render the user's balance if not loading */}
             {userBalance !== null && !loading && (
               <div
                 className="absolute"
@@ -191,7 +191,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Only render the balances if top10 has been populated and not loading */}
             {top10.length > 0 && typeof top10[0].balance === 'number' && !loading && (
               <div
                 className="absolute"
@@ -239,24 +238,7 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
                 ${top10[2].balance}
               </div>
             )}
-
-            {/* Button to Open Secondary Drawer */}
-            <button
-              onClick={handleOpenSecondaryDrawer}
-              className="absolute"
-              style={{
-                bottom: '4%',
-                left: '82%',
-                width: '13%',
-                height: '13%',
-                backgroundColor: 'transparent',
-                border: 'none',
-                padding: 0,
-                margin: 0,
-                cursor: 'pointer',
-              }}
-              aria-label="Open Secondary Drawer"
-            ></button>
+            */}
           </div>
         </div>
       </div>
@@ -298,7 +280,9 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               className="w-full h-full"
             />
 
-            {/* Render the user's balance if not loading */}
+            {/*
+            // Uncomment these blocks to restore the rendering of values:
+
             {userBalance !== null && !loading && (
               <div
                 className="absolute"
@@ -315,7 +299,6 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
               </div>
             )}
 
-            {/* Display the top 8 users */}
             {top10UserInfos.length > 0 && !loading && (
               <div
                 className="absolute left-[35%] bottom-[90%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
@@ -347,102 +330,7 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
                 {`${top10UserInfos[1].balanceInfo}`}
               </div>
             )}
-
-            {top10UserInfos.length > 2 && !loading && (
-              <div
-                className="absolute left-[47%] bottom-[68%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
-              >
-                {`${top10UserInfos[2].userInfo}`}
-              </div>
-            )}
-
-            {top10UserInfos.length > 2 && !loading && (
-              <div
-                className="absolute left-[30%] bottom-[67%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
-              >
-                {`${top10UserInfos[2].balanceInfo}`}
-              </div>
-            )}
-
-            {top10UserInfos.length > 3 && !loading && (
-              <div
-                className="absolute left-[50%] bottom-[61%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
-              >
-                {`${top10UserInfos[3].userInfo}`}
-              </div>
-            )}
-
-            {top10UserInfos.length > 3 && !loading && (
-              <div
-                className="absolute left-[32%] bottom-[59%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
-              >
-                {`${top10UserInfos[3].balanceInfo}`}
-              </div>
-            )}
-
-            {top10UserInfos.length > 4 && !loading && (
-              <div
-                className="absolute left-[54%] bottom-[54%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
-              >
-                {`${top10UserInfos[4].userInfo}`}
-              </div>
-            )}
-
-            {top10UserInfos.length > 4 && !loading && (
-              <div
-                className="absolute left-[33%] bottom-[51%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
-              >
-                {`${top10UserInfos[4].balanceInfo}`}
-              </div>
-            )}
-
-            {top10UserInfos.length > 5 && !loading && (
-              <div
-                className="absolute left-[57%] bottom-[46%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
-              >
-                {`${top10UserInfos[5].userInfo}`}
-              </div>
-            )}
-
-            {top10UserInfos.length > 5 && !loading && (
-              <div
-                className="absolute left-[35%] bottom-[43%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
-              >
-                {`${top10UserInfos[5].balanceInfo}`}
-              </div>
-            )}
-
-            {top10UserInfos.length > 6 && !loading && (
-              <div
-                className="absolute left-[62%] bottom-[37%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
-              >
-                {`${top10UserInfos[6].userInfo}`}
-              </div>
-            )}
-
-            {top10UserInfos.length > 6 && !loading && (
-              <div
-                className="absolute left-[33%] bottom-[34%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
-              >
-                {`${top10UserInfos[6].balanceInfo}`}
-              </div>
-            )}
-
-            {top10UserInfos.length > 7 && !loading && (
-              <div
-                className="absolute left-[66%] bottom-[27%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
-              >
-                {`${top10UserInfos[7].userInfo}`}
-              </div>
-            )}
-
-            {top10UserInfos.length > 7 && !loading && (
-              <div
-                className="absolute left-[30%] bottom-[22%] text-[15px] md:text-[18px] font-bold text-black bg-transparent whitespace-nowrap"
-              >
-                {`${top10UserInfos[7].balanceInfo}`}
-              </div>
-            )}
+            */}
           </div>
         </div>
       </div>

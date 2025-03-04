@@ -120,14 +120,28 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
             {markdownContent !== null ? (
               <div
                 className="absolute inset-0 p-4 overflow-hidden [&>p]:mb-6"
-                style={{ zIndex: 50, fontSize: 'clamp(12px, 4vw, 24px)' }}
+                style={{
+                  zIndex: 50,
+                  fontSize: 'min(3.5vw, 21px)',
+                  lineHeight: '1.2',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%'
+                }}
               >
                 <ReactMarkdown>{markdownContent}</ReactMarkdown>
               </div>
             ) : richTextContent !== null ? (
               <div
                 className="absolute inset-0 p-4 overflow-hidden [&>p]:mb-6"
-                style={{ zIndex: 50, fontSize: 'clamp(12px, 4vw, 24px)' }}
+                style={{
+                  zIndex: 50,
+                  fontSize: 'min(3.5vw, 21px)',
+                  lineHeight: '1.2',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%'
+                }}
               >
                 {richTextContent}
               </div>

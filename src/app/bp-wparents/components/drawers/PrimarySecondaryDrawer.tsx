@@ -119,14 +119,14 @@ const PrimarySecondaryDrawer: React.FC<PrimarySecondaryDrawerProps> = ({
             {/* Markdown / Rich Text Overlay */}
             {markdownContent !== null ? (
               <div
-                className="absolute inset-0 p-4 overflow-hidden"
+                className="absolute inset-0 p-4 overflow-hidden [&>p]:mb-6"
                 style={{ zIndex: 50, fontSize: 'clamp(12px, 4vw, 24px)' }}
               >
                 <ReactMarkdown>{markdownContent}</ReactMarkdown>
               </div>
             ) : richTextContent !== null ? (
               <div
-                className="absolute inset-0 p-4 overflow-hidden"
+                className="absolute inset-0 p-4 overflow-hidden [&>p]:mb-6"
                 style={{ zIndex: 50, fontSize: 'clamp(12px, 4vw, 24px)' }}
               >
                 {richTextContent}

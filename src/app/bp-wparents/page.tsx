@@ -657,18 +657,12 @@ export default function Page() {
             {/* Dashboard Button */}
             {address && dashboardButtonVisible && (
               <button
-                onClick={handleDashboardButtonClick}
-                className="dashboard-button z-20" // Use the class defined in global.css
-                aria-label="Dashboard Button"
-              >
-                <Image
-                  src="/buttons/dashboardbutton.png"
-                  alt="Dashboard Button"
-                  width={100}
-                  height={100}
-                  className="object-contain"
-                />
-              </button>
+              onClick={handleDashboardButtonClick}
+              className="bg-purple-700 text-white py-2 px-4 rounded-md hover:brightness-150 transition duration-200"
+              aria-label="Dashboard Button"
+            >
+              Read Further
+            </button>
             )}
 
             {/* Prev and Next Buttons */}

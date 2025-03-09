@@ -90,6 +90,8 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   // State to handle loading
   const [loading, setLoading] = useState<boolean>(false);
+  // State to track the currently selected program button
+  const [selectedProgramButton, setSelectedProgramButton] = useState<number>(1);
 
   // New state: current contract address from selected network (default from config)
   const [currentContractAddress, setCurrentContractAddress] = useState<string>(config.contractAddress);
@@ -178,6 +180,13 @@ export default function Page() {
     }
   }, [loadingIndex, animationImports]);
 
+  // Effect to set initial animation when animations are loaded
+  useEffect(() => {
+    if (loadedAnimations.length > 0 && currentAnimationIndex === 0) {
+      setCurrentAnimation(loadedAnimations[0]);
+    }
+  }, [loadedAnimations]);
+
   /**
    * Function to get the ordinal suffix for a given number.
    */
@@ -204,6 +213,7 @@ export default function Page() {
     if (newIndex < loadedAnimations.length) {
       setCurrentAnimationIndex(newIndex);
       setCurrentAnimation(loadedAnimations[newIndex]);
+      setSelectedProgramButton(btnNumber);
     }
   };
 
@@ -508,8 +518,8 @@ export default function Page() {
                     height: "100%",
                     marginRight: marginRight,
                     padding: '4px 8px',
-                    backgroundColor: '#5b2c6f',
-                    color: 'white',
+                    backgroundColor: selectedProgramButton === btn.number ? '#FFD700' : '#5b2c6f',
+                    color: selectedProgramButton === btn.number ? 'black' : 'white',
                     border: 'none',
                     borderRadius: '0.5rem',
                     position: 'relative',

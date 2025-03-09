@@ -136,15 +136,7 @@ export default function Page() {
       () => import('./animations/animation6.json'),
       () => import('./animations/animation7.json'),
       () => import('./animations/animation8.json'),
-      () => import('./animations/animation9.json'),
-      () => import('./animations/animation10.json'),
-      () => import('./animations/animation11.json'),
-      () => import('./animations/animation12.json'),
-      () => import('./animations/animation13.json'),
-      () => import('./animations/animation14.json'),
-      () => import('./animations/animation15.json'),
-      () => import('./animations/animation16.json'),
-      () => import('./animations/animation17.json')
+      () => import('./animations/animation9.json')
     ],
     []
   );
@@ -490,13 +482,13 @@ export default function Page() {
     return (
       <div
         className="program-buttons-container absolute bottom-0 w-full"
-        style={{ height: "33%", zIndex: 20 }}
+        style={{ height: "40%", zIndex: 20, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingBottom: '1%' }}
       >
         {programRows.map((row, rowIndex) => (
           <div
             key={rowIndex}
             className="flex justify-center items-center"
-            style={{ marginTop: rowIndex === 0 ? 0 : "1%" }}
+            style={{ height: '25%', marginTop: rowIndex === 0 ? 0 : '1%' }}
           >
             {row.map((btn, btnIndex) => {
               // Determine horizontal margin based on number of buttons in this row
@@ -509,15 +501,57 @@ export default function Page() {
               return (
                 <button
                   key={btn.number}
-                  className="program-button"
+                  className="program-button md:text-base text-[10px] md:font-bold font-normal"
                   onClick={() => handleProgramButtonClick(btn.number)}
                   style={{
                     width: "30%",
                     height: "100%",
-                    marginRight: marginRight
+                    marginRight: marginRight,
+                    padding: '4px 8px',
+                    backgroundColor: '#5b2c6f',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center'
                   }}
                 >
-                  {btn.name}
+                  <div style={{
+                    width: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '1px',
+                    textAlign: 'center'
+                  }}>
+                    {(() => {
+                      const words = btn.name.split(' ');
+                      const midpoint = Math.ceil(words.length / 2);
+                      const firstLine = words.slice(0, midpoint).join(' ');
+                      const secondLine = words.slice(midpoint).join(' ');
+                      
+                      return (
+                        <>
+                          <div style={{ 
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}>
+                            {firstLine}
+                          </div>
+                          <div style={{ 
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }}>
+                            {secondLine || '\u00A0'}
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
                 </button>
               );
             })}
@@ -656,15 +690,6 @@ export default function Page() {
         </div>
       </div>
       <style jsx>{`
-        .program-button {
-          background-color: #6b46c1;
-          color: white;
-          font-weight: bold;
-          border: none;
-          border-radius: 0.375rem;
-          position: relative;
-          overflow: hidden;
-        }
         .program-button:hover::after {
           content: "";
           position: absolute;

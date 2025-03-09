@@ -25,6 +25,9 @@ import config from './page-config.json';
 // Import donation flow configuration
 import donationFlow from './configs/donationFlow.json';
 
+// Import program buttons JSON from ./configs/programButtons.json
+import programButtonsData from './configs/programButtons.json';
+
 // **Import Supabase Client**
 import { createClient } from '@supabase/supabase-js';
 
@@ -37,6 +40,11 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 type Balance = { address: string; balance: number | string };
 type Top10Balance = { address: string; balance: number };
 type UserInfo = { place: string; userInfo: string; balanceInfo: string };
+
+interface ProgramButton {
+  name: string;
+  number: number;
+}
 
 interface PageConfig {
   animations: number;
@@ -78,8 +86,6 @@ export default function Page() {
   const [currentAnimation, setCurrentAnimation] = useState<any>(null);
   // State to track if animations have started loading
   const [animationPlayed, setAnimationPlayed] = useState<boolean>(false);
-  // State to manage visibility of Prev and Next buttons
-  const [showButtons, setShowButtons] = useState<boolean>(false);
   // State to handle errors
   const [error, setError] = useState<string | null>(null);
   // State to handle loading
@@ -149,7 +155,6 @@ export default function Page() {
   useEffect(() => {
     if (address && !animationPlayed) {
       setAnimationPlayed(true);
-      setShowButtons(true);
       setLoading(true);
       setLoadingIndex(0);
     }
@@ -199,29 +204,14 @@ export default function Page() {
     return 'th';
   };
 
-  /**
-   * Handler for the Next button to navigate to the next animation.
-   */
-  const handleNext = () => {
-    if (currentAnimationIndex < config.animations - 1) {
-      const nextIndex = currentAnimationIndex + 1;
-      setCurrentAnimationIndex(nextIndex);
-      setCurrentAnimation(loadedAnimations[nextIndex]);
-    }
-  };
-
-  /**
-   * Handler for the Prev button to navigate to the previous animation.
-   */
-  const handlePrev = () => {
-    if (currentAnimationIndex > 1) {
-      const prevIndex = currentAnimationIndex - 2;
-      setCurrentAnimationIndex(prevIndex);
-      setCurrentAnimation(loadedAnimations[prevIndex]);
-    } else if (currentAnimationIndex === 1) {
-      const prevIndex = 0;
-      setCurrentAnimationIndex(prevIndex);
-      setCurrentAnimation(loadedAnimations[prevIndex]);
+  // Remove Prev/Next buttons from navigation.
+  // Instead, program buttons (from JSON) will update the current animation index instantly.
+  const handleProgramButtonClick = (btnNumber: number) => {
+    // Assuming the program button number corresponds directly to animation index (1-indexed)
+    const newIndex = btnNumber - 1;
+    if (newIndex < loadedAnimations.length) {
+      setCurrentAnimationIndex(newIndex);
+      setCurrentAnimation(loadedAnimations[newIndex]);
     }
   };
 
@@ -266,7 +256,6 @@ export default function Page() {
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: ethers.utils.hexValue(network.chainId) }],
         });
-        // Remove success alert
       } catch (switchError: any) {
         console.error("Switch chain error:", switchError);
         alert("The network was NOT successfully changed. Please do it manually in your wallet.");
@@ -297,8 +286,13 @@ export default function Page() {
         amountToSend = ethers.utils.parseEther(donationAmount);
         await writeContract.transferEth(amountToSend, "test", { value: amountToSend });
       } else {
-        // For ARB and OP tokens, use parseUnits with 18 decimals
-        if (selectedToken.name === "ARB" || selectedToken.name === "OP" || selectedToken.name === "POL" || selectedToken.name === "wETH" || selectedToken.name === "CELO") {
+        if (
+          selectedToken.name === "ARB" ||
+          selectedToken.name === "OP" ||
+          selectedToken.name === "POL" ||
+          selectedToken.name === "wETH" ||
+          selectedToken.name === "CELO"
+        ) {
           amountToSend = ethers.utils.parseUnits(donationAmount, 18);
         } else if (selectedToken.conversionFactor) {
           const converted = Math.floor(parseFloat(donationAmount) * selectedToken.conversionFactor);
@@ -351,7 +345,7 @@ export default function Page() {
   // For desktop: appears in the red container.
   // For mobile: appears in the blue container.
   const renderDonationFlow = () => {
-    const headerStyle: React.CSSProperties = {
+    const headerStyle: CSSProperties = {
       marginLeft: "10%",
       marginRight: "10%",
       fontSize: "16px",
@@ -471,6 +465,71 @@ export default function Page() {
     return null;
   };
 
+  // -------------------
+  // PROGRAM BUTTONS LOGIC
+  // -------------------
+  // Filter out buttons with empty names from the JSON
+  const programButtons = programButtonsData.programButtons.filter(btn => btn.name && btn.name.trim() !== "");
+
+  // Compute rows for up to 9 buttons, arranged as:
+  // 1 button: bottom row, centered horizontally
+  // 2-3 buttons: bottom row, centered as a group (with specified margins)
+  // 4-6 buttons: middle row contains the first 3, bottom row contains the rest
+  // 7-9 buttons: first row (if needed), then subsequent rows until filled with max 3 per row
+  // For simplicity, we always arrange into a 3x3 grid and only render as many buttons as available.
+  const maxButtons = 9;
+  const buttonsToRender = programButtons.slice(0, maxButtons);
+  const numRows = Math.ceil(buttonsToRender.length / 3);
+  const programRows: ProgramButton[][] = [];
+  for (let i = 0; i < numRows; i++) {
+    programRows.push(buttonsToRender.slice(i * 3, i * 3 + 3));
+  }
+
+  const renderProgramButtons = () => {
+    if (buttonsToRender.length === 0) return null;
+    return (
+      <div
+        className="program-buttons-container absolute bottom-0 w-full"
+        style={{ height: "33%", zIndex: 20 }}
+      >
+        {programRows.map((row, rowIndex) => (
+          <div
+            key={rowIndex}
+            className="flex justify-center items-center"
+            style={{ marginTop: rowIndex === 0 ? 0 : "1%" }}
+          >
+            {row.map((btn, btnIndex) => {
+              // Determine horizontal margin based on number of buttons in this row
+              let marginRight: string = "0";
+              if (row.length === 2 && btnIndex === 0) {
+                marginRight = "5%";
+              } else if (row.length === 3 && btnIndex < row.length - 1) {
+                marginRight = "3%";
+              }
+              return (
+                <button
+                  key={btn.number}
+                  className="program-button"
+                  onClick={() => handleProgramButtonClick(btn.number)}
+                  style={{
+                    width: "30%",
+                    height: "100%",
+                    marginRight: marginRight
+                  }}
+                >
+                  {btn.name}
+                </button>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // -------------------
+  // RENDER
+  // -------------------
   return (
     <div className="min-h-screen bg-black flex flex-col relative">
       {/* Desktop View */}
@@ -486,7 +545,7 @@ export default function Page() {
               <Lottie
                 animationData={currentAnimation}
                 loop={config.animationLoopSettings[currentAnimationIndex]}
-                onComplete={handleNext}
+                onComplete={() => {}}
                 style={{
                   width: '100%',
                   height: '100%',
@@ -498,6 +557,8 @@ export default function Page() {
               />
             )}
           </div>
+          {/* Render Program Buttons at the bottom */}
+          {renderProgramButtons()}
           {!address && (
             <div className="absolute inset-0 flex items-center justify-center">
               <p className="text-white text-xl font-semibold">Please connect your wallet</p>
@@ -529,29 +590,6 @@ export default function Page() {
             <SignupButton />
             {!address && <LoginButton />}
           </div>
-          {showButtons && address && (
-            <div className="prev-next-buttons z-20">
-              <button
-                className="prev-button"
-                onClick={handlePrev}
-                aria-label="Previous Animation"
-                style={{ visibility: currentAnimationIndex > 0 ? 'visible' : 'hidden' }}
-              >
-                Prev
-              </button>
-              <button
-                className="next-button ml-4"
-                onClick={handleNext}
-                aria-label="Next Animation"
-                style={{
-                  visibility: currentAnimationIndex === config.animations - 1 ? 'hidden' : 'visible',
-                }}
-              >
-                Next
-              </button>
-            </div>
-          )}
-          {/* Donation Flow appears in the red container on desktop */}
           {address && renderDonationFlow()}
         </div>
       </div>
@@ -573,7 +611,7 @@ export default function Page() {
               <Lottie
                 animationData={currentAnimation}
                 loop={config.animationLoopSettings[currentAnimationIndex]}
-                onComplete={handleNext}
+                onComplete={() => {}}
                 style={{
                   width: '100%',
                   height: '100%',
@@ -585,6 +623,8 @@ export default function Page() {
               />
             )}
           </div>
+          {/* Render Program Buttons at the bottom */}
+          {renderProgramButtons()}
           {!address && (
             <div className="absolute inset-0 flex items-center justify-center">
               <p className="text-white text-xl font-semibold">Please connect your wallet</p>
@@ -612,32 +652,29 @@ export default function Page() {
         </div>
         {/* Blue Container */}
         <div className="blue-container relative">
-          {showButtons && address && (
-            <div className="absolute top-0 right-0 z-20 flex space-x-2" style={{ paddingTop: '5px', paddingRight: '5px' }}>
-              <button
-                className="prev-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition"
-                onClick={handlePrev}
-                aria-label="Previous Animation"
-                style={{ visibility: currentAnimationIndex > 0 ? 'visible' : 'hidden' }}
-              >
-                Prev
-              </button>
-              <button
-                className="next-button px-2 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition ml-2"
-                onClick={handleNext}
-                aria-label="Next Animation"
-                style={{
-                  visibility: currentAnimationIndex === config.animations - 1 ? 'hidden' : 'visible',
-                }}
-              >
-                Next
-              </button>
-            </div>
-          )}
-          {/* Donation Flow appears in the blue container on mobile */}
           {address && renderDonationFlow()}
         </div>
       </div>
+      <style jsx>{`
+        .program-button {
+          background-color: #6b46c1;
+          color: white;
+          font-weight: bold;
+          border: none;
+          border-radius: 0.375rem;
+          position: relative;
+          overflow: hidden;
+        }
+        .program-button:hover::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background-color: rgba(255, 255, 255, 0.5);
+        }
+      `}</style>
     </div>
   );
 }

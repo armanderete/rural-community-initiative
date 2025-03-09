@@ -1,0 +1,13 @@
+{
+    "programButtons": [
+      { "number": 1, "name": "Classroom Building" },
+      { "number": 2, "name": "Free school supplies for children" },
+      { "number": 3, "name": "Web3 and teach courses" },
+      { "number": 4, "name": "Solar system installation " },
+      { "number": 5, "name": "Solar powered drinkable water" },
+      { "number": 6, "name": "No Poverty program" },
+      { "number": 7, "name": "Free healthy meals for kids" },
+      { "number": 8, "name": "Medical outreach in rural communities" }
+    ]
+  }
+  

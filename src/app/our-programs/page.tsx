@@ -246,12 +246,16 @@ export default function Page() {
 
   // Handler for donation flow steps:
   const handleDonateClick = () => {
+    if (!address) {
+      alert("Please connect your wallet to donate");
+      return;
+    }
     setDonationStep(1);
   };
 
   const handleNetworkSelect = async (network: any) => {
     setSelectedNetwork(network);
-    // Attempt to switch chain using window.ethereum.request
+    // Only attempt to switch chain if wallet is connected
     if (network.chainId && network.chainId !== 0 && window.ethereum) {
       try {
         await window.ethereum.request({
@@ -277,6 +281,10 @@ export default function Page() {
   };
 
   const handleAmountDonate = async () => {
+    if (!address) {
+      setError("Please connect your wallet to make a donation");
+      return;
+    }
     if (!donationAmount || !selectedToken) return;
     if (!writeContract) {
       setError("Wallet not connected or writeContract not initialized.");
@@ -582,9 +590,7 @@ export default function Page() {
         <div className="brown-container"></div>
         {/* Yellow Container (center) */}
         <div className="yellow-container relative">
-          <div
-            className={`w-full h-full transition-opacity duration-500 ${address ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-          >
+          <div className="w-full h-full">
             {currentAnimation && (
               <Lottie
                 animationData={currentAnimation}
@@ -603,11 +609,6 @@ export default function Page() {
           </div>
           {/* Render Program Buttons at the bottom */}
           {renderProgramButtons()}
-          {!address && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-white text-xl font-semibold">Please connect your wallet</p>
-            </div>
-          )}
           {error && (
             <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded">
               {error}
@@ -634,7 +635,7 @@ export default function Page() {
             <SignupButton />
             {!address && <LoginButton />}
           </div>
-          {address && renderDonationFlow()}
+          {renderDonationFlow()}
         </div>
       </div>
       {/* Mobile View */}
@@ -648,9 +649,7 @@ export default function Page() {
         </div>
         {/* Yellow Container */}
         <div className="yellow-container relative">
-          <div
-            className={`w-full h-full transition-opacity duration-500 ${address ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-          >
+          <div className="w-full h-full">
             {currentAnimation && (
               <Lottie
                 animationData={currentAnimation}
@@ -669,11 +668,6 @@ export default function Page() {
           </div>
           {/* Render Program Buttons at the bottom */}
           {renderProgramButtons()}
-          {!address && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <p className="text-white text-xl font-semibold">Please connect your wallet</p>
-            </div>
-          )}
           {error && (
             <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-4 py-2 rounded">
               {error}
@@ -696,7 +690,7 @@ export default function Page() {
         </div>
         {/* Blue Container */}
         <div className="blue-container relative">
-          {address && renderDonationFlow()}
+          {renderDonationFlow()}
         </div>
       </div>
       <style jsx>{`

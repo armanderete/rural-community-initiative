@@ -284,7 +284,6 @@ export default function Page() {
       });
 
       const results = (await Promise.all(markdownPromises)).filter(Boolean);
-      console.log("Markdown Buttons Loaded:", results);
       setMarkdownButtons(results.filter((item): item is { text: string; url: string } => item !== null));
     };
 

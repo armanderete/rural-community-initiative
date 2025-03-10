@@ -125,6 +125,10 @@ export default function Page() {
     return null;
   }, [signer, currentContractAddress]);
 
+  // State for dynamically loaded markdown buttons (each with text and URL)
+  const [markdownButtons, setMarkdownButtons] = useState<{ text: string; url: string }[]>([]);
+
+
   /**
    * **Dynamic Import of Animations**
    */
@@ -218,44 +222,83 @@ export default function Page() {
   };
 
   // -------------------
+  // NEW: Dynamic Markdown Text for Animations
+  // -------------------
+  const animationTextUrls = [
+    [
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation1/text1.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation1/text2.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation1/text3.md"
+    ],
+    [
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation2/text1.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation2/text2.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation2/text3.md"
+    ],
+    [
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation3/text1.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation3/text2.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation3/text3.md"
+    ],
+    [
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation4/text1.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation4/text2.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation4/text3.md"
+    ],
+    [
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation5/text1.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation5/text2.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation5/text3.md"
+    ],
+    [
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation6/text1.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation6/text2.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation6/text3.md"
+    ],
+    [
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation7/text1.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation7/text2.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation7/text3.md"
+    ],
+    [
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation8/text1.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation8/text2.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation8/text3.md"
+    ],
+    [
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation9/text1.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation9/text2.md",
+      "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation9/text3.md"
+    ]
+  ];
+
+  useEffect(() => {
+    const loadMarkdownButtons = async () => {
+      if (!animationTextUrls[currentAnimationIndex]) return;
+      const currentUrls = animationTextUrls[currentAnimationIndex];
+      const markdownPromises = currentUrls.map(async (url) => {
+        const timestamp = Date.now(); // Cache busting
+        const response = await fetch(`${url}?t=${timestamp}`);
+        const text = await response.text();
+        return text.trim() ? { text, url } : null;
+      });
+
+      const results = (await Promise.all(markdownPromises)).filter(Boolean);
+      console.log("Markdown Buttons Loaded:", results);
+      setMarkdownButtons(results.filter((item): item is { text: string; url: string } => item !== null));
+    };
+
+    loadMarkdownButtons();
+  }, [currentAnimationIndex]);
+
+  // -------------------
   // DONATION FLOW LOGIC
   // -------------------
   const [donationStep, setDonationStep] = useState<number>(0);
   const [selectedNetwork, setSelectedNetwork] = useState<any>(null);
   const [selectedToken, setSelectedToken] = useState<any>(null);
   const [donationAmount, setDonationAmount] = useState<string>("");
-  const [markdownButtons, setMarkdownButtons] = useState<{ text: string; url: string }[]>([]);
-
-  // Determine device type based on window width (simple approach)
   const [isMobile, setIsMobile] = useState<boolean>(false);
-
-  useEffect(() => {
-    const loadMarkdownButtons = async () => {
-      const baseUrls = [
-        "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation1/text1.md",
-        "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation1/text2.md",
-        "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation1/text3.md",
-      ];
-
-      const currentAnimation = currentAnimationIndex + 1;
-      const startIndex = (currentAnimation - 1) * 3;
-      const currentUrls = baseUrls.slice(startIndex, startIndex + 3);
-
-      const timestamp = new Date().getTime(); // Cache-busting
-
-      const responses = await Promise.all(
-        currentUrls.map(url => fetch(`${url}?t=${Date.now()}`).then(res => res.text()))
-      );
-
-      const buttons = responses
-        .map((text, i) => ({ text: text.trim(), url: currentUrls[i] }))
-        .filter(btn => btn.text.length > 0);
-
-      setMarkdownButtons(buttons);
-    };
-
-    loadMarkdownButtons();
-  }, [currentAnimationIndex]);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -285,7 +328,6 @@ export default function Page() {
 
   const handleNetworkSelect = async (network: any) => {
     setSelectedNetwork(network);
-    // Only attempt to switch chain if wallet is connected
     if (network.chainId && network.chainId !== 0 && window.ethereum) {
       try {
         await window.ethereum.request({
@@ -298,7 +340,6 @@ export default function Page() {
         setError(switchError.message);
       }
     }
-    // Update current contract address based on network selection
     if (network.contractAddress) {
       setCurrentContractAddress(network.contractAddress);
     }
@@ -340,12 +381,9 @@ export default function Page() {
         } else {
           amountToSend = BigNumber.from(donationAmount);
         }
-        // For tokens with standard approval flow (eip2612 false)
         if (!selectedToken.eip2612 && signer) {
-          // Set approval state to pending and hide the green button
           setApprovalState("pending");
           setShowYellowButton(false);
-          // Start a 2-second delay before showing the yellow button
           setTimeout(() => {
             setShowYellowButton(true);
           }, 2000);
@@ -361,7 +399,6 @@ export default function Page() {
         await writeContract.forwardTokens(selectedToken.token_contract, amountToSend, "test");
       }
       alert("Donation transaction submitted!");
-      // Reset flow and approval state
       setDonationStep(0);
       setSelectedNetwork(null);
       setSelectedToken(null);
@@ -508,15 +545,9 @@ export default function Page() {
   // -------------------
   // PROGRAM BUTTONS LOGIC
   // -------------------
-  // Filter out buttons with empty names from the JSON
-  const programButtons = programButtonsData.programButtons.filter(btn => btn.name && btn.name.trim() !== "");
-
-  // Compute rows for up to 9 buttons, arranged as:
-  // 1 button: bottom row, centered horizontally
-  // 2-3 buttons: bottom row, centered as a group (with specified margins)
-  // 4-6 buttons: middle row contains the first 3, bottom row contains the rest
-  // 7-9 buttons: first row (if needed), then subsequent rows until filled with max 3 per row
-  // For simplicity, we always arrange into a 3x3 grid and only render as many buttons as available.
+  const programButtons = programButtonsData.programButtons.filter(
+    (btn) => btn.name && btn.name.trim() !== ""
+  );
   const maxButtons = 9;
   const buttonsToRender = programButtons.slice(0, maxButtons);
   const numRows = Math.ceil(buttonsToRender.length / 3);
@@ -524,22 +555,27 @@ export default function Page() {
   for (let i = 0; i < numRows; i++) {
     programRows.push(buttonsToRender.slice(i * 3, i * 3 + 3));
   }
-
   const renderProgramButtons = () => {
     if (buttonsToRender.length === 0) return null;
     return (
       <div
         className="program-buttons-container absolute bottom-0 w-full"
-        style={{ height: "40%", zIndex: 20, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', paddingBottom: '1%' }}
+        style={{
+          height: "40%",
+          zIndex: 20,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-end",
+          paddingBottom: "1%",
+        }}
       >
         {programRows.map((row, rowIndex) => (
           <div
             key={rowIndex}
             className="flex justify-center items-center"
-            style={{ height: '25%', marginTop: rowIndex === 0 ? 0 : '1%' }}
+            style={{ height: "25%", marginTop: rowIndex === 0 ? 0 : "1%" }}
           >
             {row.map((btn, btnIndex) => {
-              // Determine horizontal margin based on number of buttons in this row
               let marginRight: string = "0";
               if (row.length === 2 && btnIndex === 0) {
                 marginRight = "5%";
@@ -555,46 +591,52 @@ export default function Page() {
                     width: "30%",
                     height: "100%",
                     marginRight: marginRight,
-                    padding: '4px 8px',
-                    backgroundColor: selectedProgramButton === btn.number ? '#FFD700' : '#5b2c6f',
-                    color: selectedProgramButton === btn.number ? 'black' : 'white',
-                    border: 'none',
-                    borderRadius: '0.5rem',
-                    position: 'relative',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center'
+                    padding: "4px 8px",
+                    backgroundColor:
+                      selectedProgramButton === btn.number ? "#FFD700" : "#5b2c6f",
+                    color: selectedProgramButton === btn.number ? "black" : "white",
+                    border: "none",
+                    borderRadius: "0.5rem",
+                    position: "relative",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
                   }}
                 >
-                  <div style={{
-                    width: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '1px',
-                    textAlign: 'center'
-                  }}>
+                  <div
+                    style={{
+                      width: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "1px",
+                      textAlign: "center",
+                    }}
+                  >
                     {(() => {
-                      const words = btn.name.split(' ');
+                      const words = btn.name.split(" ");
                       const midpoint = Math.ceil(words.length / 2);
-                      const firstLine = words.slice(0, midpoint).join(' ');
-                      const secondLine = words.slice(midpoint).join(' ');
-                      
+                      const firstLine = words.slice(0, midpoint).join(" ");
+                      const secondLine = words.slice(midpoint).join(" ");
                       return (
                         <>
-                          <div style={{ 
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis'
-                          }}>
+                          <div
+                            style={{
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
                             {firstLine}
                           </div>
-                          <div style={{ 
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis'
-                          }}>
-                            {secondLine || '\u00A0'}
+                          <div
+                            style={{
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {secondLine || "\u00A0"}
                           </div>
                         </>
                       );
@@ -611,16 +653,15 @@ export default function Page() {
 
   const renderMarkdownButtons = () => {
     if (markdownButtons.length === 0) return null;
-
     return (
       <div
         className="absolute"
         style={{
-          top: '2%',
-          width: '100%',
-          height: '30%',
-          display: 'flex',
-          justifyContent: 'space-evenly',
+          top: "2%",
+          width: "100%",
+          height: "30%",
+          display: "flex",
+          justifyContent: "space-evenly",
           zIndex: 20,
         }}
       >
@@ -628,18 +669,18 @@ export default function Page() {
           <div
             key={idx}
             style={{
-              width: '30%',
-              height: '100%',
-              backgroundColor: '#e0c9fa',
-              color: 'black',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: '8px',
-              fontSize: '1rem',
-              textAlign: 'center',
-              padding: '0.5rem',
-              boxSizing: 'border-box',
+              width: "30%",
+              height: "100%",
+              backgroundColor: "#e0c9fa",
+              color: "black",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              borderRadius: "8px",
+              fontSize: "1rem",
+              textAlign: "center",
+              padding: "0.5rem",
+              boxSizing: "border-box",
             }}
           >
             {btn.text}
@@ -660,6 +701,8 @@ export default function Page() {
         <div className="brown-container"></div>
         {/* Yellow Container (center) */}
         <div className="yellow-container relative">
+          {/* Render Markdown Buttons at the top */}
+          {renderMarkdownButtons()}
           <div className="w-full h-full">
             {currentAnimation && (
               <Lottie
@@ -667,9 +710,9 @@ export default function Page() {
                 loop={config.animationLoopSettings[currentAnimationIndex]}
                 onComplete={() => {}}
                 style={{
-                  width: '100%',
-                  height: '100%',
-                  position: 'absolute',
+                  width: "100%",
+                  height: "100%",
+                  position: "absolute",
                   top: 0,
                   left: 0,
                   zIndex: 10,
@@ -677,8 +720,6 @@ export default function Page() {
               />
             )}
           </div>
-          {/* Render Markdown Buttons at the top */}
-          {renderMarkdownButtons()}
           {/* Render Program Buttons at the bottom */}
           {renderProgramButtons()}
           {error && (
@@ -695,7 +736,11 @@ export default function Page() {
                 viewBox="0 0 24 24"
               >
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
               </svg>
               Loading...
             </div>
@@ -714,13 +759,18 @@ export default function Page() {
       <div className="block md:hidden">
         {/* Green Container */}
         <div className="green-container relative">
-          <div className="absolute top-0 right-0 flex items-center" style={{ paddingTop: '5px', paddingRight: '5px' }}>
+          <div
+            className="absolute top-0 right-0 flex items-center"
+            style={{ paddingTop: "5px", paddingRight: "5px" }}
+          >
             <SignupButton />
             {!address && <LoginButton />}
           </div>
         </div>
         {/* Yellow Container */}
         <div className="yellow-container relative">
+          {/* Render Markdown Buttons at the top */}
+          {renderMarkdownButtons()}
           <div className="w-full h-full">
             {currentAnimation && (
               <Lottie
@@ -728,9 +778,9 @@ export default function Page() {
                 loop={config.animationLoopSettings[currentAnimationIndex]}
                 onComplete={() => {}}
                 style={{
-                  width: '100%',
-                  height: '100%',
-                  position: 'absolute',
+                  width: "100%",
+                  height: "100%",
+                  position: "absolute",
                   top: 0,
                   left: 0,
                   zIndex: 10,
@@ -738,8 +788,6 @@ export default function Page() {
               />
             )}
           </div>
-          {/* Render Markdown Buttons at the top */}
-          {renderMarkdownButtons()}
           {/* Render Program Buttons at the bottom */}
           {renderProgramButtons()}
           {error && (
@@ -756,7 +804,11 @@ export default function Page() {
                 viewBox="0 0 24 24"
               >
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v8H4z"
+                ></path>
               </svg>
               Loading...
             </div>

@@ -18,6 +18,7 @@ import abi from './abi.json'; // Import ABI from the JSON file
 import { getBasename } from '../../basenames';
 import { getEnsName } from '../../ensnames';
 import { truncateWalletAddress } from '../../utils';
+import ReactMarkdown from 'react-markdown'; // NEW: Import react-markdown
 
 // Import the configuration
 import config from './page-config.json';
@@ -127,7 +128,6 @@ export default function Page() {
 
   // State for dynamically loaded markdown buttons (each with text and URL)
   const [markdownButtons, setMarkdownButtons] = useState<{ text: string; url: string }[]>([]);
-
 
   /**
    * **Dynamic Import of Animations**
@@ -277,7 +277,7 @@ export default function Page() {
       if (!animationTextUrls[currentAnimationIndex]) return;
       const currentUrls = animationTextUrls[currentAnimationIndex];
       const markdownPromises = currentUrls.map(async (url) => {
-        const timestamp = Date.now(); // Cache busting
+        const timestamp = Date.now(); // Cache-busting
         const response = await fetch(`${url}?t=${timestamp}`);
         const text = await response.text();
         return text.trim() ? { text, url } : null;
@@ -286,7 +286,6 @@ export default function Page() {
       const results = (await Promise.all(markdownPromises)).filter(Boolean);
       setMarkdownButtons(results.filter((item): item is { text: string; url: string } => item !== null));
     };
-
     loadMarkdownButtons();
   }, [currentAnimationIndex]);
 
@@ -682,7 +681,7 @@ export default function Page() {
               boxSizing: "border-box",
             }}
           >
-            {btn.text}
+            <ReactMarkdown>{btn.text}</ReactMarkdown>
           </div>
         ))}
       </div>

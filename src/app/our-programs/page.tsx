@@ -653,7 +653,7 @@ export default function Page() {
     if (markdownButtons.length === 0) return null;
     return (
       <div
-        className="absolute"
+        className="absolute markdown-container"
         style={{
           top: "2%",
           width: "100%",
@@ -675,9 +675,9 @@ export default function Page() {
               justifyContent: "center",
               alignItems: "center",
               borderRadius: "8px",
-              fontSize: "1rem",
+              fontSize: isMobile ? "10px" : "1rem", // Adjust mobile font size
               textAlign: "center",
-              padding: "0.5rem",
+              padding: isMobile ? "8px" : "0.5rem", // Adjust mobile padding
               boxSizing: "border-box",
             }}
           >
@@ -687,6 +687,7 @@ export default function Page() {
       </div>
     );
   };
+  
 
   // -------------------
   // RENDER

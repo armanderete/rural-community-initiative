@@ -224,9 +224,40 @@ export default function Page() {
   const [selectedNetwork, setSelectedNetwork] = useState<any>(null);
   const [selectedToken, setSelectedToken] = useState<any>(null);
   const [donationAmount, setDonationAmount] = useState<string>("");
+  const [markdownButtons, setMarkdownButtons] = useState<{ text: string; url: string }[]>([]);
 
   // Determine device type based on window width (simple approach)
   const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  useEffect(() => {
+    const loadMarkdownButtons = async () => {
+      const baseUrls = [
+        "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation1/text1.md",
+        "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation1/text2.md",
+        "https://raw.githubusercontent.com/armanderete/rural-community-initiative/main/src/app/our-programs/dynamicText/Animation1/text3.md",
+      ];
+
+      const currentAnimation = currentAnimationIndex + 1;
+      const startIndex = (currentAnimation - 1) * 3;
+      const currentUrls = baseUrls.slice(startIndex, startIndex + 3);
+
+      const timestamp = new Date().getTime(); // Cache-busting
+
+      const responses = await Promise.all(
+        currentUrls.map(url => fetch(`${url}?t=${Date.now()}`).then(res => res.text()))
+      );
+
+      const buttons = responses
+        .map((text, i) => ({ text: text.trim(), url: currentUrls[i] }))
+        .filter(btn => btn.text.length > 0);
+
+      setMarkdownButtons(buttons);
+      console.log("Markdown Buttons Loaded:", buttons); // Debugging line
+    };
+
+    loadMarkdownButtons();
+  }, [currentAnimationIndex]);
+
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -579,6 +610,46 @@ export default function Page() {
     );
   };
 
+  const renderMarkdownButtons = () => {
+    if (markdownButtons.length === 0) return null;
+
+    return (
+      <div
+        className="absolute"
+        style={{
+          top: '5%',
+          width: '100%',
+          height: '40%',
+          display: 'flex',
+          justifyContent: 'space-evenly',
+          zIndex: 20,
+        }}
+      >
+        {markdownButtons.map((btn, idx) => (
+          <div
+            key={idx}
+            style={{
+              width: '30%',
+              height: '100%',
+              backgroundColor: '#e0c9fa',
+              color: 'black',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: '8px',
+              fontSize: '1rem',
+              textAlign: 'center',
+              padding: '0.5rem',
+              boxSizing: 'border-box',
+            }}
+          >
+            {btn.text}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   // -------------------
   // RENDER
   // -------------------
@@ -607,6 +678,8 @@ export default function Page() {
               />
             )}
           </div>
+          {/* Render Markdown Buttons at the top */}
+          {renderMarkdownButtons()}
           {/* Render Program Buttons at the bottom */}
           {renderProgramButtons()}
           {error && (
@@ -666,6 +739,8 @@ export default function Page() {
               />
             )}
           </div>
+          {/* Render Markdown Buttons at the top */}
+          {renderMarkdownButtons()}
           {/* Render Program Buttons at the bottom */}
           {renderProgramButtons()}
           {error && (

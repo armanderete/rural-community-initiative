@@ -1,0 +1,1 @@
+Animation 6. Text 2

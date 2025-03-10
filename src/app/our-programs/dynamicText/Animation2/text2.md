@@ -1,1 +1,1 @@
-Animation 2. Text 1
+Animation 2. Text 2

@@ -617,9 +617,9 @@ export default function Page() {
       <div
         className="absolute"
         style={{
-          top: '5%',
+          top: '2%',
           width: '100%',
-          height: '40%',
+          height: '30%',
           display: 'flex',
           justifyContent: 'space-evenly',
           zIndex: 20,

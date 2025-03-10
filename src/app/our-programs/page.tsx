@@ -252,7 +252,6 @@ export default function Page() {
         .filter(btn => btn.text.length > 0);
 
       setMarkdownButtons(buttons);
-      console.log("Markdown Buttons Loaded:", buttons); // Debugging line
     };
 
     loadMarkdownButtons();

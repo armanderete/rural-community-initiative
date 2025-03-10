@@ -1,0 +1,1 @@
+With your future support, we aim to complete the fencing and start building the **school's basic structure**. 

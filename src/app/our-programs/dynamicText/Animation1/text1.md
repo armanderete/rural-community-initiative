@@ -1,0 +1,1 @@
+Thanks to your generous support, we've successfully **purchased the land** to build a <u>beautiful school<u> for our children.

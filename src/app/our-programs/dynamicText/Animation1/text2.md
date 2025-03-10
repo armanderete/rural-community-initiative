@@ -1,0 +1,1 @@
+On January 26th, we began the **fencing work,** and we're making excellent progress so far!

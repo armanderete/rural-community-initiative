@@ -103,6 +103,13 @@
               "order": 5,
               "conversionFactor": "1000000000000000000",
               "eip2612": false
+            },
+            {
+              "name": "GLO",
+              "token_contract": "0x4F604735c1cF31399C6E711D5962b2B3E0225AD3",
+              "order": 6,
+              "conversionFactor": "1000000000000000000",
+              "eip2612": false
             }
           ]
         },
@@ -137,6 +144,13 @@
               "name": "wBTC",
               "token_contract": "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf",
               "order": 4,
+              "conversionFactor": 100000000,
+              "eip2612": false
+            },
+            {
+              "name": "GLO",
+              "token_contract": "0x4F604735c1cF31399C6E711D5962b2B3E0225AD3",
+              "order": 5,
               "conversionFactor": 100000000,
               "eip2612": false
             }
@@ -189,6 +203,13 @@
               "order": 1,
               "conversionFactor": "1000000000000000000",
               "eip2612": false
+            },
+            {
+              "name": "GLO",
+              "token_contract": "0x4F604735c1cF31399C6E711D5962b2B3E0225AD3",
+              "order": 6,
+              "conversionFactor": "1000000000000000000",
+              "eip2612": false
             }
           ]
         },
@@ -228,7 +249,14 @@
             },
             {
               "name": "wETH",
-              "token_contract": "xxxx",
+              "token_contract": "0x122013fd7dF1C6F636a5bb8f03108E876548b455",
+              "order": 1,
+              "conversionFactor": "1000000000000000000",
+              "eip2612": false
+            },
+            {
+              "name": "GLO",
+              "token_contract": "0x4F604735c1cF31399C6E711D5962b2B3E0225AD3",
               "order": 1,
               "conversionFactor": "1000000000000000000",
               "eip2612": false

@@ -19,11 +19,11 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'ForkinWisdom',
-  description: 'ForkinWisdom',
+  title: 'Web3 Impact Project',
+  description: 'Web3 Impact Project',
   openGraph: {
-    title: 'ForkinWisdom',
-    description: 'ForkinWisdom',
+    title: 'Web3 Impact Project',
+    description: 'Web3 Impact Project',
     images: [`${NEXT_PUBLIC_URL}/vibes/vibes-19.png`],
   },
 };

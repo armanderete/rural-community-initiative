@@ -1,1 +1,1 @@
-Animation 2. Text 2
+In the last quarter of 2024, **we donated 15,000 exercise books** and a variety of learning materials to both public and private schools.

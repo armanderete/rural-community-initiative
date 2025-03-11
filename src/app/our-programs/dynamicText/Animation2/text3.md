@@ -1,0 +1,1 @@
+If our funding goals are met, **we plan to donate an additional 5,000 exercise books** and learning supplies by June 2025—just in time for the new school year.

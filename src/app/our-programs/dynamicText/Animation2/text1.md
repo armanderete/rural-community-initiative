@@ -1,1 +1,1 @@
-Animation 2. Text 1
+Our program ensures that **every child has the tools they need to succeed**. We want **our students to thrive academically** and secure a brighter future.

@@ -370,6 +370,7 @@ export default function Page() {
           selectedToken.name === "OP" ||
           selectedToken.name === "POL" ||
           selectedToken.name === "wETH" ||
+          selectedToken.name === "GLO" ||
           selectedToken.name === "CELO"
         ) {
           amountToSend = ethers.utils.parseUnits(donationAmount, 18);

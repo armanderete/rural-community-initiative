@@ -749,7 +749,9 @@ export default function Page() {
         {/* Red Container (right side) */}
         <div className="red-container">
           <div className="flex justify-center">
-            <SignupButton />
+            <div style={{ visibility: address ? 'visible' : 'hidden' }}>
+              <SignupButton />
+            </div>
             {!address && <LoginButton />}
           </div>
           {renderDonationFlow()}
@@ -763,7 +765,9 @@ export default function Page() {
             className="absolute top-0 right-0 flex items-center"
             style={{ paddingTop: "5px", paddingRight: "5px" }}
           >
-            <SignupButton />
+            <div style={{ visibility: address ? 'visible' : 'hidden' }}>
+              <SignupButton />
+            </div>
             {!address && <LoginButton />}
           </div>
         </div>

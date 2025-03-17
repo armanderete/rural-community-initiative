@@ -48,7 +48,7 @@
               "eip2612": false
             },
             {
-              "name": "GLO",
+              "name": "USDGLO",
               "token_contract": "0x4F604735c1cF31399C6E711D5962b2B3E0225AD3",
               "order": 6,
               "conversionFactor": "1000000000000000000",
@@ -105,7 +105,7 @@
               "eip2612": false
             },
             {
-              "name": "GLO",
+              "name": "USDGLO",
               "token_contract": "0x4F604735c1cF31399C6E711D5962b2B3E0225AD3",
               "order": 6,
               "conversionFactor": "1000000000000000000",
@@ -148,7 +148,7 @@
               "eip2612": false
             },
             {
-              "name": "GLO",
+              "name": "USDGLO",
               "token_contract": "0x4F604735c1cF31399C6E711D5962b2B3E0225AD3",
               "order": 5,
               "conversionFactor": 100000000,
@@ -205,7 +205,7 @@
               "eip2612": false
             },
             {
-              "name": "GLO",
+              "name": "USDGLO",
               "token_contract": "0x4F604735c1cF31399C6E711D5962b2B3E0225AD3",
               "order": 6,
               "conversionFactor": "1000000000000000000",
@@ -255,7 +255,7 @@
               "eip2612": false
             },
             {
-              "name": "GLO",
+              "name": "USDGLO",
               "token_contract": "0x4F604735c1cF31399C6E711D5962b2B3E0225AD3",
               "order": 1,
               "conversionFactor": "1000000000000000000",

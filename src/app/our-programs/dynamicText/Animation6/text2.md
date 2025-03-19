@@ -1,1 +1,1 @@
-Animation 6. Text 2
+Since January 2024, we have **screened and tested over 70,000 individuals** for Tuberculosis, AIDS, Syphilis, Hypertension, and Diabetes.

@@ -1,1 +1,0 @@
-Animation 8. Text 2

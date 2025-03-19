@@ -1,1 +1,1 @@
-Animation 6. Text 1
+With the support of our donors, we are advancing toward **eradicating devastating diseases** through free community testing and treatment.

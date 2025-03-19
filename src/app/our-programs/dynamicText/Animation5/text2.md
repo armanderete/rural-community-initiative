@@ -1,0 +1,1 @@
+One remarkable initiative is our recent **community-based, solar-powered clean water project** at the Ogbunka and Amechi Community School.

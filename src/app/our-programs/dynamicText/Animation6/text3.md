@@ -1,0 +1,1 @@
+**Our rural communities deserve high-quality healthcare** through public-private partnerships, ensuring prompt, patient-centered care.

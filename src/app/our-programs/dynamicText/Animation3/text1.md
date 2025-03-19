@@ -1,1 +1,1 @@
-Animation 3. Text 1
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Sed ultricies tortor non. Aenean.

@@ -1,0 +1,1 @@
+Please donate to our project and **help us bring solar-powered clean water** to schools and communities in need in Africa.

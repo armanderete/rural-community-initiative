@@ -1,1 +1,1 @@
-Animation 4. Text 2
+The portable lanterns **replace polluting kerosene lamps**, providing brighter, healthier and free light along with the **ability to charge mobile phones**. 

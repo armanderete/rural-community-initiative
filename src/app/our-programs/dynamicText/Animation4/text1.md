@@ -1,1 +1,1 @@
-Animation 4. Text 1
+Our Solar Saving Circle **empowers women with renewable energy** and sparks sustainable growth.
